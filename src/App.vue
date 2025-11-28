@@ -22,7 +22,7 @@
     </div>
 
     <!-- Login Component -->
-    <Login 
+    <Login
       v-if="currentPage === 'login'"
       :login-form="loginForm"
       @update:email="loginForm.email = $event"
@@ -31,9 +31,9 @@
       @social-login="socialLogin"
       @go-to-page="goToPage"
     />
-    
+
     <!-- Signup Component -->
-    <Signup 
+    <Signup
       v-else-if="currentPage === 'signup'"
       :signup-form="signupForm"
       :is-signup-form-valid="isSignupFormValid"
@@ -46,9 +46,9 @@
       @handle-signup="handleSignup"
       @go-to-page="goToPage"
     />
-    
+
     <!-- Homepage Component -->
-    <Homepage 
+    <Homepage
       v-else-if="currentPage === 'homepage'"
       :user-name="userName"
       :current-location="currentLocation"
@@ -63,7 +63,7 @@
     />
 
     <!-- Trips Component -->
-    <TripsPage 
+    <TripsPage
       v-else-if="currentPage === 'trips'"
       @go-back="goToPage('homepage')"
       @plan-trip="handlePlanTrip"
@@ -71,14 +71,14 @@
     />
 
     <!-- Notification Component -->
-    <NotificationPage 
+    <NotificationPage
       v-else-if="currentPage === 'notifications'"
       @go-back="goToPage('homepage')"
       @go-to-page="goToPage"
     />
 
     <!-- Profile Component -->
-    <ProfilePage 
+    <ProfilePage
       v-else-if="currentPage === 'profile'"
       :user-name="userName"
       :current-location="currentLocation"
@@ -89,7 +89,7 @@
     />
 
     <!-- Personal Information Component -->
-    <PersonalInformation 
+    <PersonalInformation
       v-else-if="currentPage === 'personal-information'"
       @go-back="goToPage('profile')"
       @save-changes="handleSaveChanges"
@@ -98,13 +98,13 @@
     />
 
     <!-- Change Password Component -->
-    <ChangePassword 
+    <ChangePassword
       v-else-if="currentPage === 'change-password'"
       @go-to-page="goToPage"
     />
 
     <!-- Siargao Details Component -->
-    <SiargaoDetails 
+    <SiargaoDetails
       v-else-if="currentPage === 'siargao-details'"
       @plan-trip="handlePlanTrip"
       @go-back="goToPage('homepage')"
@@ -112,15 +112,15 @@
     />
 
     <!-- Siargao Reviews Component -->
-    <SiargaoReviewsPage 
+    <SiargaoReviewsPage
       v-else-if="currentPage === 'siargao-reviews'"
       @plan-trip="handlePlanTrip"
       @go-back="goToPage('siargao-details')"
       @go-to-details="goToPage('siargao-details')"
     />
-    
+
     <!-- DatePicker Component -->
-    <DatePicker 
+    <DatePicker
       v-else-if="currentPage === 'datepicker'"
       :selected-destination-name="selectedDestinationName"
       :current-date="currentDate"
@@ -136,17 +136,17 @@
       @go-to-accommodation="goToAccommodation"
       @go-to-page="goToPage"
     />
-    
+
     <!-- Accommodation Component -->
-    <Accommodation 
+    <Accommodation
       v-else-if="currentPage === 'accommodation'"
       :selected-destination-name="selectedDestinationName"
       @view-booking="viewBooking"
       @go-to-page="goToPage"
     />
-    
+
     <!-- Booking Component -->
-    <Booking 
+    <Booking
       v-else-if="currentPage === 'booking'"
       :current-booking-view="currentBookingView"
       :selected-property="selectedProperty"
@@ -166,7 +166,7 @@
     />
 
     <!-- GCash Detail Component (Mobile Number Input) -->
-    <GcashDetail 
+    <GcashDetail
       v-else-if="currentPage === 'gcash-detail'"
       :total-amount="parseFloat(totalPrice)"
       @go-back="goToPage('booking')"
@@ -174,7 +174,7 @@
     />
 
     <!-- GCash Payment Confirmation Component -->
-    <GcashPaymentConfirm 
+    <GcashPaymentConfirm
       v-else-if="currentPage === 'gcash-confirm'"
       :total-amount="parseFloat(totalPrice)"
       @go-back="goToPage('gcash-detail')"
@@ -182,7 +182,7 @@
     />
 
     <!-- Mastercard Details Component -->
-    <MastercardDetails 
+    <MastercardDetails
       v-else-if="currentPage === 'mastercard-details'"
       :total-amount="parseFloat(totalPrice)"
       @go-back="goToPage('booking')"
@@ -190,7 +190,7 @@
     />
 
     <!-- Payment Success Component -->
-    <PaymentSuccess 
+    <PaymentSuccess
       v-else-if="currentPage === 'payment-success'"
       :receipt-data="receiptData"
       @go-back="goToPreviousPage"
@@ -198,7 +198,7 @@
     />
 
     <!-- Itinerary Page Component -->
-    <ItineraryPage 
+    <ItineraryPage
       v-else-if="currentPage === 'itinerary'"
       @go-back="goToPage('homepage')"
       @trip-saved="handleTripSaved"
@@ -215,7 +215,7 @@ import TripsPage from './components/TripsPage.vue'
 import NotificationPage from './components/NotificationPage.vue'
 import ProfilePage from './components/ProfilePage.vue'
 import PersonalInformation from './components/PersonalInformation.vue'
-import ChangePassword from './components/ChangePassword.vue'
+import ChangePassword from './components/changePassword.vue'
 import SiargaoDetails from './components/siargao_details.vue'
 import SiargaoReviewsPage from './components/SiargaoReviewsPage.vue'
 import DatePicker from './components/datePicker.vue'
@@ -224,7 +224,7 @@ import Booking from './components/booking.vue'
 import MastercardDetails from './components/mastercard_details.vue'
 import GcashDetail from './components/gcash_detail.vue'
 import GcashPaymentConfirm from './components/GcashPaymentConfirm.vue'
-import PaymentSuccess from './components/PaymentSuccess.vue'
+import PaymentSuccess from './components/paymentsuccess.vue'
 import ItineraryPage from './components/ItineraryPage.vue'
 
 export default {
@@ -254,13 +254,13 @@ export default {
     const currentPage = ref('login')
     const currentBookingView = ref('listing')
     const showDebug = ref(true)
-    
+
     // User data
     const loginForm = ref({
       email: '',
       password: ''
     })
-    
+
     const signupForm = ref({
       fullName: '',
       email: '',
@@ -269,19 +269,19 @@ export default {
       passwordError: '',
       confirmPasswordError: ''
     })
-    
+
     const userName = ref('')
     const currentLocation = ref('Butuan City, Philippines')
     const searchQuery = ref('')
     const activeNav = ref('home')
-    
+
     // Date picker data
     const currentDate = ref(new Date())
     const selectedStart = ref(null)
     const selectedEnd = ref(null)
     const selectedDestinationId = ref(null)
     const selectedDestinationName = ref('')
-    
+
     // Booking data
     const selectedProperty = ref({})
     const selectedPayment = ref(null)
@@ -307,7 +307,7 @@ export default {
       tag: 'For you',
       rating: 4.9
     })
-    
+
     const destinations = ref([
       {
         id: 2,
@@ -374,13 +374,13 @@ export default {
 
     // Payment methods with logos
     const paymentMethods = ref([
-      { 
-        id: 'mastercard', 
+      {
+        id: 'mastercard',
         name: 'Mastercard',
         logo: '/images/mastercard.png'
       },
-      { 
-        id: 'gcash', 
+      {
+        id: 'gcash',
         name: 'GCash',
         logo: '/images/gcash_logo.png'
       }
@@ -392,16 +392,16 @@ export default {
         return destinations.value
       }
       const query = searchQuery.value.toLowerCase()
-      return destinations.value.filter(dest => 
-        dest.name.toLowerCase().includes(query) || 
+      return destinations.value.filter(dest =>
+        dest.name.toLowerCase().includes(query) ||
         dest.description.toLowerCase().includes(query)
       )
     })
 
     const isSignupFormValid = computed(() => {
-      return signupForm.value.fullName && 
-             signupForm.value.email && 
-             signupForm.value.password && 
+      return signupForm.value.fullName &&
+             signupForm.value.email &&
+             signupForm.value.password &&
              signupForm.value.confirmPassword &&
              !signupForm.value.passwordError &&
              !signupForm.value.confirmPasswordError
@@ -433,7 +433,7 @@ export default {
       const month = currentDate.value.getMonth()
       const firstDay = new Date(year, month, 1).getDay()
       const lastDate = new Date(year, month + 1, 0).getDate()
-      
+
       const days = []
       for (let i = 0; i < firstDay; i++) {
         days.push(null)
@@ -465,11 +465,11 @@ export default {
       }
       return 'Select dates'
     })
-    
+
     // Methods
     const validatePassword = () => {
       const password = signupForm.value.password
-      
+
       if (password.length < 8) {
         signupForm.value.passwordError = 'Password must be at least 8 characters long'
       } else if (!/(?=.*[a-z])(?=.*[A-Z])/.test(password)) {
@@ -479,7 +479,7 @@ export default {
       } else {
         signupForm.value.passwordError = ''
       }
-      
+
       if (signupForm.value.confirmPassword) {
         validateConfirmPassword()
       }
@@ -497,29 +497,29 @@ export default {
       if (!email) return 'User'
       return email.split('@')[0]
     }
-    
+
     const handleLogin = () => {
       console.log('Login attempt with:', loginForm.value)
       const nameFromEmail = getNameFromEmail(loginForm.value.email)
       userName.value = nameFromEmail.charAt(0).toUpperCase() + nameFromEmail.slice(1)
       goToPage('homepage')
     }
-    
+
     const handleSignup = () => {
       validatePassword()
       validateConfirmPassword()
-      
+
       if (!isSignupFormValid.value) {
         alert('Please fix the form errors before submitting.')
         return
       }
-      
+
       console.log('Signup attempt with:', {
         fullName: signupForm.value.fullName,
         email: signupForm.value.email,
         password: signupForm.value.password
       })
-      
+
       if (signupForm.value.fullName) {
         userName.value = signupForm.value.fullName
       } else {
@@ -527,16 +527,16 @@ export default {
         const nameFromEmail = getNameFromEmail(signupForm.value.email)
         userName.value = nameFromEmail.charAt(0).toUpperCase() + nameFromEmail.slice(1)
       }
-      
+
       goToPage('homepage')
     }
-    
+
     const socialLogin = (provider) => {
       console.log(`Social login with ${provider}`)
       userName.value = 'User'
       goToPage('homepage')
     }
-    
+
     const goToPage = (page) => {
       console.log('🚀 NAVIGATING TO:', page)
       currentPage.value = page
@@ -565,25 +565,25 @@ export default {
         goToPage('homepage')
       }
     }
-    
+
     const viewDestination = (id) => {
       console.log('🎯 viewDestination called with ID:', id)
-      
+
       let destination
       if (id === featuredDestination.value.id) {
         destination = featuredDestination.value
       } else {
         destination = destinations.value.find(dest => dest.id === id)
       }
-      
+
       if (!destination) {
         console.error('Destination not found for ID:', id)
         return
       }
-      
+
       selectedDestinationId.value = id
       selectedDestinationName.value = destination.name
-      
+
       if (id === 1) {
         goToPage('siargao-details')
       } else {
@@ -600,7 +600,7 @@ export default {
       selectedDestinationName.value = 'Siargao Island'
       goToPage('datepicker')
     }
-    
+
     const setActiveNav = (navItem) => {
       activeNav.value = navItem
       if (navItem === 'trips') {
@@ -619,10 +619,10 @@ export default {
       // Clear user data
       userName.value = ''
       loginForm.value = { email: '', password: '' }
-      signupForm.value = { 
-        fullName: '', 
-        email: '', 
-        password: '', 
+      signupForm.value = {
+        fullName: '',
+        email: '',
+        password: '',
         confirmPassword: '',
         passwordError: '',
         confirmPasswordError: ''
@@ -716,14 +716,14 @@ export default {
 
     const handleNext = () => {
       console.log('handleNext called - selectedPayment:', selectedPayment.value)
-      
+
       if (!selectedPayment.value) {
         alert('Please select a payment method first')
         return
       }
 
       console.log('Selected payment ID:', selectedPayment.value.id)
-      
+
       if (selectedPayment.value.id === 'gcash') {
         goToPage('gcash-detail')
       } else if (selectedPayment.value.id === 'mastercard') {
@@ -744,7 +744,7 @@ export default {
 
     const handlePaymentSuccess = (paymentData) => {
       console.log('Payment completed successfully!', paymentData)
-      
+
       if (paymentData) {
         receiptData.value = {
           amount: paymentData.amount ? paymentData.amount.toFixed(2) : totalPrice.value,
@@ -760,7 +760,7 @@ export default {
           }).replace(',', ' |')
         }
       }
-      
+
       setTimeout(() => {
         goToPage('payment-success')
       }, 1000)

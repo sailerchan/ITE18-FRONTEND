@@ -37,11 +37,11 @@
       <div class="social-buttons">
         <button class="social-btn" @click="$emit('social-login', 'google')">
            <img src="/images/icon-google.svg" alt="Google" class="social-icon">
-         
+
         </button>
         <button class="social-btn" @click="$emit('social-login', 'apple')">
          <img src="/images/icon-apple.webp" alt="Apple" class="social-icon">
-          
+
         </button>
       </div>
 
@@ -119,16 +119,16 @@ export default {
 }
 
 .welcome-text {
-  font-size: 45px;
+  font-size: 30px;
   font-weight: 700;
   margin-top: 15px;
   margin-bottom: 8px;
   text-align: center;
   color: #0c3437;
-} 
+}
 .card-title {
-  font-size: 26px;
-  font-weight: 400;
+  font-size: 18px;
+  font-weight: 300;
   margin-bottom: 40px;
   text-align: center;
   color: #545454;
@@ -140,9 +140,8 @@ export default {
 
 .form-label {
   display: block;
-  margin-bottom: 8px;
+  margin-bottom: 2px;
   margin-left: 4px;
-  font-weight: 300;
   color: #333;
   font-size: 15px;
 }
@@ -155,7 +154,7 @@ export default {
   width: 100%;
   padding: 17px;
   border: 1.5px solid #e1e5e9;
-  border-radius: 16px;
+  border-radius: 24px;
   font-size: 14px;
   font-weight:300;
   background-color: #fafbfc;
@@ -188,7 +187,7 @@ export default {
   background-color: #0c3437;
   color: white;
   border: none;
-  border-radius: 20px;
+  border-radius: 24px;
   padding: 17px;
   font-size: 16px;
   font-weight: 500;
@@ -229,26 +228,30 @@ export default {
 .social-buttons {
   display: flex;
   flex-direction: row;
-  gap: 14px;
+  gap: 0;
 }
 
 
 .social-btn {
-  width: 45px;
+  width: 30px;
   display: flex;
   align-items: center;
   justify-content: center;
-  gap: 10x;
   background-color:#fafbfc;
   border: 1px solid #fcfcfc;
   color: #0c3437;
   border-radius: 14px;
   box-sizing: border-box;
-  padding: 10px;
+  padding: 15px;
+  padding-left: 10px;
+  padding-right:10px;
+  margin-left: 30px;
+  margin-right:30px;
   cursor: pointer;
+  gap: 0;
   transition: background-color 0.3s;
   -webkit-tap-highlight-color: transparent;
-   flex: 1; /* Added this line */ 
+   flex: 1; /* Added this line */
 }
 
 /*.social-btn:hover {
@@ -264,16 +267,14 @@ export default {
 .sign-up-section {
   text-align: center;
   margin-top: 24px;
-  font-size: 15px;
+  font-size: 14px;
   color: #333;
-  font-weight: 200;
 }
 
 .sign-up-link {
   color: #c83232;
   text-decoration: none;
-  font-weight: 500;
-  font-size: 15px;
+  font-size: 14px;
   cursor: pointer;
 }
 
@@ -459,4 +460,4 @@ export default {
     padding-bottom: max(0px, env(safe-area-inset-bottom));
   }
 }
-</style> 
+</style>

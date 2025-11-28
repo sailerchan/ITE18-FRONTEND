@@ -1,20 +1,20 @@
 <template>
   <div class="container">
     <div class="hero-banner">
-      <img src="/images/image.png" alt="Tourmate" class="hero-image">
+      <img src="/images/girlvector.png" alt="Girl with luggage" class="hero-image">
     </div>
 
     <div class="card sign-in-card">
-      <div class="welcome-text">Create your <span>tourmate</span> account</div>
+      <div class="welcome-text">Create your account</div>
       <h2 class="card-title">Sign Up</h2>
 
       <form @submit.prevent="$emit('handle-signup')">
         <div class="form-group">
           <label class="form-label" for="fullname">Full Name</label>
           <div class="input-box">
-            <input type="text" id="fullname" class="form-input" 
-                   placeholder="Enter your full name" 
-                   :value="signupForm.fullName" 
+            <input type="text" id="fullname" class="form-input"
+                   placeholder="Enter your full name"
+                   :value="signupForm.fullName"
                    @input="$emit('update:fullName', $event.target.value)"
                    required>
           </div>
@@ -23,9 +23,9 @@
         <div class="form-group">
           <label class="form-label" for="email">Email Address</label>
           <div class="input-box">
-            <input type="email" id="email" class="form-input" 
-                   placeholder="Enter your email" 
-                   :value="signupForm.email" 
+            <input type="email" id="email" class="form-input"
+                   placeholder="Enter your email"
+                   :value="signupForm.email"
                    @input="$emit('update:email', $event.target.value)"
                    required>
           </div>
@@ -34,10 +34,10 @@
         <div class="form-group">
           <label class="form-label" for="password">Password</label>
           <div class="input-box">
-            <input type="password" id="password" class="form-input" 
+            <input type="password" id="password" class="form-input"
                    :class="{ 'error': signupForm.passwordError, 'success': signupForm.password && !signupForm.passwordError }"
-                   placeholder="Create a password" 
-                   :value="signupForm.password" 
+                   placeholder="Create a password"
+                   :value="signupForm.password"
                    @input="$emit('update:password', $event.target.value)"
                    @blur="$emit('validate-password')"
                    required>
@@ -49,10 +49,10 @@
         <div class="form-group">
           <label class="form-label" for="confirmPassword">Confirm Password</label>
           <div class="input-box">
-            <input type="password" id="confirmPassword" class="form-input" 
+            <input type="password" id="confirmPassword" class="form-input"
                    :class="{ 'error': signupForm.confirmPasswordError, 'success': signupForm.confirmPassword && !signupForm.confirmPasswordError }"
-                   placeholder="Confirm your password" 
-                   :value="signupForm.confirmPassword" 
+                   placeholder="Confirm your password"
+                   :value="signupForm.confirmPassword"
                    @input="$emit('update:confirmPassword', $event.target.value)"
                    @blur="$emit('validate-confirm-password')"
                    required>
@@ -66,8 +66,25 @@
         </button>
       </form>
 
+           <div class="divider">
+        <div class="divider-line"></div>
+        <div class="divider-text">or continue with</div>
+        <div class="divider-line"></div>
+      </div>
+
+      <div class="social-buttons">
+        <button class="social-btn" @click="$emit('social-login', 'google')">
+           <img src="/images/icon-google.svg" alt="Google" class="social-icon">
+
+        </button>
+        <button class="social-btn" @click="$emit('social-login', 'apple')">
+         <img src="/images/icon-apple.webp" alt="Apple" class="social-icon">
+
+        </button>
+      </div>
+
       <div class="sign-up-section">
-        Already have an account? 
+        Already have an account?
         <a href="#" class="sign-up-link" @click="$emit('go-to-page', 'login')">Sign In</a>
       </div>
     </div>
@@ -76,7 +93,7 @@
 
 <script>
 export default {
-  name: 'Signup',
+  name: 'sign_up',
   props: {
     signupForm: {
       type: Object,
@@ -104,72 +121,75 @@ export default {
 /* Base styles matching your login page design */
 .container {
   min-height: 100vh;
+  min-height: 100dvh;
   background: #ffffff;
+  display: flex;
+  flex-direction: column;
+  padding: 0;
+  margin:0;
+  width: 100vw;
+  overflow-x: hidden;
+  overflow-y: hidden;
+
 }
 
 .hero-banner {
-  height: 220px;
+  height: 30vh;
+  min-height: 200px;
+  max-height: 280px;
   background: linear-gradient(180deg, #F7F5ED 0%, #075258 100%);
-  position: relative;
-  overflow: hidden;
   display: flex;
   align-items: flex-end;
   justify-content: center;
   padding-bottom: 30px;
+  flex-shrink: 0;
+  width: 100%;
 }
 
 .hero-image {
-  max-width: 120px;
-  max-height: 120px;
+  width: 181.08px;
+  height: 189px;
   object-fit: contain;
 }
 
 .sign-in-card {
   background: #ffffff;
-  border-radius: 24px;
-  padding: 36px 28px;
+  border-radius: 40px 40px 0 0;
+  padding: 36px 24px;
   margin-top: -40px;
   position: relative;
-  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
-  min-height: 500px;
-  max-width: 380px;
-  margin-left: auto;
-  margin-right: auto;
-  width: calc(100% - 40px);
+  box-shadow: 0 -8px 32px rgba(0, 0, 0, 0.1);
+  flex: 1;
+  width: 100%;
   box-sizing: border-box;
+  min-height: auto;
 }
 
 .welcome-text {
-  font-size: 26px;
-  font-weight: 600;
-  margin-bottom: 10px;
-  text-align: center;
-  color: #333;
-}
-
-.welcome-text span {
-  color: #c83232;
-  font-weight: 700;
   font-size: 30px;
+  font-weight: 700;
+  margin-top: 15px;
+  margin-bottom: 8px;
+  text-align: center;
+  color: #0c3437;
 }
-
 .card-title {
   font-size: 18px;
-  font-weight: 500;
-  margin-bottom: 24px;
+  font-weight: 300;
+  margin-bottom: 40px;
   text-align: center;
-  color: #333;
+  color: #545454;
 }
 
 .form-group {
-  margin-bottom: 20px;
+  margin-bottom: 10px;
 }
 
 .form-label {
   display: block;
-  margin-bottom: 8px;
-  font-weight: 500;
-  color: #333;
+  margin-bottom: 2px;
+  margin-bottom: 4px;
+  color: #333333;
   font-size: 15px;
 }
 
@@ -179,10 +199,11 @@ export default {
 
 .form-input {
   width: 100%;
-  padding: 16px;
+  padding: 17px;
   border: 1.5px solid #e1e5e9;
-  border-radius: 10px;
-  font-size: 16px;
+  border-radius: 24px;
+  font-size: 14px;
+  font-weight:300;
   background-color: #fafbfc;
   transition: all 0.3s ease;
   box-sizing: border-box;
@@ -190,13 +211,14 @@ export default {
 
 .form-input:focus {
   outline: none;
-  border-color: #1f4f5a;
+  border-color: #0c3437;
   background-color: #ffffff;
   box-shadow: 0 0 0 3px rgba(31, 79, 90, 0.1);
 }
 
 .form-input::placeholder {
-  color: #a0a4a8;
+  color: #b6b6b6;
+;
 }
 
 .form-input.error {
@@ -227,16 +249,17 @@ export default {
 
 .sign-in-btn {
   width: 100%;
-  background-color: #1f4f5a;
+  background-color: #0c3437;
   color: white;
   border: none;
-  border-radius: 8px;
-  padding: 16px;
+  border-radius: 24px;
+  padding: 17px;
   font-size: 16px;
-  font-weight: 600;
-  margin-top: 20px;
+  font-weight: 500;
+  margin-top: 10px;
   cursor: pointer;
   transition: background-color 0.3s;
+  -webkit-tap-highlight-color: transparent; /* Remove tap highlight */
 }
 
 .sign-in-btn:hover:not(:disabled) {
@@ -248,233 +271,229 @@ export default {
   cursor: not-allowed;
 }
 
+.divider {
+  display: flex;
+  align-items: center;
+  margin: 20px 0;
+}
+
+.divider-line {
+  flex: 1;
+  height: 1px;
+  background-color: #ddd;
+}
+
+.divider-text {
+  padding: 0 18px;
+  color: #777;
+  font-size: 14px;
+  white-space: nowrap;
+}
+
+.social-buttons {
+  display: flex;
+  flex-direction: row;
+  gap: 0;
+}
+
+
+.social-btn {
+  width: 30px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background-color:#fafbfc;
+  border: 1px solid #fcfcfc;
+  color: #0c3437;
+  border-radius: 14px;
+  box-sizing: border-box;
+  padding: 15px;
+  padding-left: 10px;
+  padding-right:10px;
+  margin-left: 30px;
+  margin-right:30px;
+  cursor: pointer;
+  gap: 0;
+  transition: background-color 0.3s;
+  -webkit-tap-highlight-color: transparent;
+   flex: 1; /* Added this line */
+}
+
+/*.social-btn:hover {
+  background-color: #163a43;
+}*/
+
+.social-icon {
+  width: 20px; /* Adjust size as needed */
+  height: 20px; /* Adjust size as needed */
+  object-fit: contain;
+}
+
+
 .sign-up-section {
   text-align: center;
-  margin-top: 30px;
-  font-size: 15px;
+  margin-top: 24px;
+  font-size: 14px;
   color: #333;
+
 }
 
 .sign-up-link {
   color: #c83232;
   text-decoration: none;
-  font-weight: 600;
+  font-size: 14px;
   cursor: pointer;
 }
 
-/* Responsive adjustments */
-/* Extra Small Mobile (under 320px) */
-@media (max-width: 320px) {
-  .hero-banner {
-    height: 180px;
-    padding-bottom: 20px;
-  }
-
-  .hero-image {
-    max-width: 90px;
-    max-height: 90px;
-  }
-
-  .sign-in-card {
-    padding: 28px 20px;
-    margin-top: -30px;
-    width: calc(100% - 30px);
-    min-height: auto;
-  }
-
-  .welcome-text {
-    font-size: 22px;
-  }
-
-  .welcome-text span {
-    font-size: 26px;
-  }
-
-  .card-title {
-    font-size: 16px;
-  }
-
-  .form-input {
-    padding: 12px 14px;
-    font-size: 15px;
-  }
-
-  .sign-in-btn {
-    padding: 14px;
-    font-size: 15px;
-  }
-
-  .error-message,
-  .success-message {
-    font-size: 13px;
-  }
-}
-
-/* Small Mobile (321px - 374px) */
-@media (min-width: 321px) and (max-width: 374px) {
-  .hero-banner {
-    height: 190px;
-    padding-bottom: 22px;
-  }
-
-  .hero-image {
-    max-width: 95px;
-    max-height: 95px;
-  }
-
-  .sign-in-card {
-    padding: 30px 22px;
-    margin-top: -32px;
-    width: calc(100% - 32px);
-  }
-
-  .welcome-text {
-    font-size: 22px;
-  }
-
-  .welcome-text span {
-    font-size: 26px;
-  }
-
-  .form-input {
-    padding: 14px;
-  }
-
-  .sign-in-btn {
-    padding: 15px;
-  }
-}
-
-/* Medium Mobile (375px - 414px) */
+/* Medium Phones (375px - 414px) */
 @media (min-width: 375px) and (max-width: 414px) {
   .hero-banner {
-    height: 200px;
-    padding-bottom: 25px;
+    height: 30vh;
+    min-height: 200px;
   }
 
   .hero-image {
-    max-width: 100px;
-    max-height: 100px;
+    width: 180px;
+    height: 189px;
   }
 
   .sign-in-card {
-    padding: 32px 24px;
-    margin-top: -35px;
-    width: calc(100% - 36px);
+    padding: 36px 24px;
   }
 }
 
-/* Large Mobile (415px - 767px) */
+/* Large Phones (415px - 767px) */
 @media (min-width: 415px) and (max-width: 767px) {
   .hero-banner {
-    height: 210px;
-    padding-bottom: 28px;
+    height: 32vh;
+    min-height: 220px;
   }
 
   .hero-image {
-    max-width: 110px;
-    max-height: 110px;
+    width: 120px;
+    height: 120px;
   }
 
   .sign-in-card {
-    padding: 34px 26px;
-    margin-top: -38px;
-    width: calc(100% - 40px);
+    padding: 36px 28px;
   }
 }
 
-/* Tablet (768px - 1023px) */
-@media (min-width: 768px) {
+/* Small Tablets (768px - 1023px) */
+@media (min-width: 768px) and (max-width: 1023px) {
+  .container {
+    max-width: 768px;
+    margin: 0 auto;
+  }
+
   .hero-banner {
-    height: 240px;
-    padding-bottom: 35px;
+    height: 35vh;
+    min-height: 250px;
+    max-height: 300px;
+    border-radius: 0;
   }
 
   .hero-image {
-    max-width: 140px;
-    max-height: 140px;
+    width: 140px;
+    height: 140px;
   }
 
   .sign-in-card {
-    max-width: 400px;
-    margin: -32px auto 0 auto;
-    padding: 38px 30px;
-  }
-
-  .welcome-text {
-    font-size: 26px;
-  }
-
-  .welcome-text span {
-    font-size: 30px;
-  }
-
-  .card-title {
-    font-size: 18px;
-  }
-}
-
-/* Desktop (1024px and up) */
-@media (min-width: 1024px) {
-  .hero-banner {
-    height: 260px;
-    padding-bottom: 40px;
-  }
-
-  .hero-image {
-    max-width: 150px;
-    max-height: 150px;
-  }
-
-  .sign-in-card {
-    max-width: 420px;
-    margin: -35px auto 0 auto;
+    max-width: 768px;
+    margin: -50px auto 0 auto;
+    border-radius: 24px;
     padding: 40px 32px;
   }
 }
 
-/* Large Desktop (1440px and up) */
-@media (min-width: 1440px) {
+/* Large Tablets (1024px - 1366px) */
+@media (min-width: 1024px) and (max-width: 1366px) {
+  .container {
+    max-width: 1024px;
+    margin: 0 auto;
+  }
+
   .hero-banner {
-    height: 280px;
-    padding-bottom: 45px;
+    height: 38vh;
+    min-height: 280px;
+    max-height: 350px;
   }
 
   .hero-image {
-    max-width: 160px;
-    max-height: 160px;
+    width: 160px;
+    height: 160px;
   }
 
   .sign-in-card {
-    max-width: 440px;
-    margin: -40px auto 0 auto;
-    padding: 42px 34px;
+    max-width: 500px;
+    margin: -60px auto 0 auto;
+    padding: 44px 36px;
   }
 }
 
-/* Landscape orientation for mobile */
+/* Landscape Mobile */
 @media (max-height: 600px) and (orientation: landscape) {
   .hero-banner {
-    height: 160px;
-    padding-bottom: 15px;
+    height: 40vh;
+    min-height: 160px;
+    padding-bottom: 20px;
   }
-  
+
+  .hero-image {
+    width: 80px;
+    height: 80px;
+  }
+
   .sign-in-card {
     padding: 24px 20px;
-    margin-top: -25px;
-    min-height: auto;
+    margin-top: -30px;
   }
-  
+
+  .form-group {
+    margin-bottom: 16px;
+  }
+
+  .divider {
+    margin: 24px 0;
+  }
+
+  .sign-up-section {
+    margin-top: 24px;
+  }
+}
+
+/* Very short screens */
+@media (max-height: 500px) {
+  .hero-banner {
+    height: 35vh;
+    min-height: 140px;
+    padding-bottom: 15px;
+  }
+
   .hero-image {
-    max-width: 80px;
-    max-height: 80px;
+    width: 70px;
+    height: 70px;
+  }
+
+  .sign-in-card {
+    padding: 20px 16px;
+    margin-top: -25px;
   }
 }
 
 /* Prevent zoom on iOS input focus */
 @media screen and (max-width: 767px) {
   .form-input {
-    font-size: 16px;
+    font-size: 16px; /* Prevents zoom on iOS */
+  }
+}
+
+/* Safe area insets for notched devices */
+@supports(padding: max(0px)) {
+  .container {
+    padding-left: max(0px, env(safe-area-inset-left));
+    padding-right: max(0px, env(safe-area-inset-right));
+    padding-bottom: max(0px, env(safe-area-inset-bottom));
   }
 }
 </style>
