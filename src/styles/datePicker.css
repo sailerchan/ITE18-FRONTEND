@@ -1,0 +1,221 @@
+/* Date Picker Styles */
+.date-picker-container {
+    width: 100%;
+    max-width: 414px;
+    background: white;
+    border-radius: 24px;
+    overflow: hidden;
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+    margin: 0 auto;
+}
+
+.date-picker-inner {
+    padding: 0 24px;
+    display: flex;
+    flex-direction: column;
+    min-height: 80vh;
+}
+
+.date-header {
+    display: flex;
+    align-items: center;
+    padding: 44px 0 24px;
+}
+
+.back-arrow {
+    font-size: 24px;
+    color: #000;
+    margin-right: 16px;
+    text-decoration: none;
+    width: 44px;
+    height: 44px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 12px;
+    transition: background-color 0.2s;
+    cursor: pointer;
+}
+
+.back-arrow:hover {
+    background-color: #f5f5f5;
+}
+
+.header-title {
+    font-size: 22px;
+    font-weight: 700;
+    color: #000;
+}
+
+.date-inputs {
+    display: flex;
+    gap: 12px;
+    margin-bottom: 32px;
+}
+
+.date-input {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+}
+
+.date-label {
+    font-size: 14px;
+    font-weight: 500;
+    color: #666;
+    margin-bottom: 8px;
+}
+
+.date-value {
+    background-color: #f8f8f8;
+    border: 1px solid #e0e0e0;
+    border-radius: 12px;
+    padding: 14px 16px;
+    font-size: 16px;
+    color: #333;
+}
+
+.calendar-container {
+    margin-bottom: 40px;
+}
+
+.month-nav {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 24px;
+    background: #f9f9f9;
+    border-radius: 16px;
+    padding: 12px 16px;
+}
+
+.nav-arrow {
+    width: 36px;
+    height: 36px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 18px;
+    color: #333;
+    cursor: pointer;
+    border-radius: 10px;
+    transition: background-color 0.2s;
+}
+
+.nav-arrow:hover {
+    background-color: #e8f5f8;
+}
+
+.month-year {
+    font-size: 16px;
+    font-weight: 600;
+    color: #333;
+}
+
+.day-headers {
+    display: grid;
+    grid-template-columns: repeat(7, 1fr);
+    margin-bottom: 16px;
+    background: #f9f9f9;
+    border-radius: 12px;
+    padding: 8px 4px;
+}
+
+.day-header {
+    text-align: center;
+    font-size: 14px;
+    font-weight: 500;
+    color: #666;
+    padding: 8px 0;
+}
+
+.date-grid {
+    display: grid;
+    grid-template-columns: repeat(7, 1fr);
+    gap: 6px;
+    background: #f9f9f9;
+    border-radius: 16px;
+    padding: 16px 12px;
+}
+
+.date-cell {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    height: 44px;
+}
+
+.date-pill {
+    width: 40px;
+    height: 40px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 20px;
+    font-size: 15px;
+    font-weight: 500;
+    cursor: pointer;
+    transition: all 0.2s;
+    background-color: #ffffff;
+    color: #333;
+}
+
+.date-pill:hover {
+    background-color: #e8f5f8;
+    transform: scale(1.05);
+}
+
+.date-pill.range-start,
+.date-pill.range-end {
+    background-color: #1f4f5a;
+    color: white;
+    box-shadow: 0 4px 8px rgba(31, 79, 90, 0.2);
+}
+
+.date-pill.range-mid {
+    background-color: #e8f5f8;
+    color: #333;
+    border-radius: 8px;
+}
+
+.action-buttons {
+    display: flex;
+    gap: 12px;
+    margin-top: auto;
+    padding: 24px 0 32px;
+    background: white;
+    border-top: 1px solid #f0f0f0;
+    margin: 0 -24px;
+    padding: 24px 24px 32px;
+}
+
+.btn-cancel {
+    background-color: white;
+    color: #333;
+    border: 1px solid #e0e0e0;
+}
+
+.btn-cancel:hover {
+    background-color: #f8f8f8;
+    transform: translateY(-1px);
+}
+
+.btn-next {
+    background-color: #1f4f5a;
+    color: white;
+    box-shadow: 0 4px 12px rgba(31, 79, 90, 0.2);
+}
+
+.btn-next:hover {
+    background-color: #164148;
+    transform: translateY(-1px);
+    box-shadow: 0 6px 15px rgba(31, 79, 90, 0.3);
+}
+
+/* Responsive adjustments for datepicker */
+@media (max-width: 480px) {
+    .date-picker-container {
+        max-width: 100%;
+        border-radius: 15px;
+    }
+}
