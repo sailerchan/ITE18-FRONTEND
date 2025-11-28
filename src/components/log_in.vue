@@ -1,31 +1,30 @@
 <template>
   <div class="container">
     <div class="hero-banner">
-      <img src="/images/image.png" alt="Tourmate" class="hero-image">
+      <img src="/images/girlvector.png" alt="Girl with luggage" class="hero-image">
     </div>
 
     <div class="card sign-in-card">
-      <div class="welcome-text">Welcome to <span>tourmate</span>.</div>
-      <h2 class="card-title">Sign in to your account</h2>
+      <div class="welcome-text">Welcome back, traveler!</div>
+      <h2 class="card-title">Let's continue your travel plans. Enter your details to sign in.</h2>
 
       <form @submit.prevent="$emit('handle-login')">
         <div class="form-group">
-          <label class="form-label" for="email">Email Address</label>
+          <label class="form-label" for="email">Email</label>
           <div class="input-box">
-            <input type="email" id="email" class="form-input" placeholder="Enter your email" 
+            <input type="email" id="email" class="form-input" placeholder="Enter your email address"
                    :value="loginForm.email" @input="$emit('update:email', $event.target.value)">
           </div>
         </div>
-        
+
         <div class="form-group">
           <label class="form-label" for="password">Password</label>
           <div class="input-box">
-            <input type="password" id="password" class="form-input" placeholder="Enter your password" 
+            <input type="password" id="password" class="form-input" placeholder="Enter your password"
                    :value="loginForm.password" @input="$emit('update:password', $event.target.value)">
           </div>
           <a href="#" class="forgot-password">Forgot Password?</a>
         </div>
-
         <button type="submit" class="sign-in-btn">Sign In</button>
       </form>
 
@@ -37,12 +36,12 @@
 
       <div class="social-buttons">
         <button class="social-btn" @click="$emit('social-login', 'google')">
-          <i class="fab fa-google social-icon"></i>
-          <span>Sign in with Google</span>
+           <img src="/images/icon-google.svg" alt="Google" class="social-icon">
+         
         </button>
         <button class="social-btn" @click="$emit('social-login', 'apple')">
-          <i class="fab fa-apple social-icon"></i>
-          <span>Sign in with Apple</span>
+         <img src="/images/icon-apple.webp" alt="Apple" class="social-icon">
+          
         </button>
       </div>
 
@@ -55,7 +54,7 @@
 
 <script>
 export default {
-  name: 'Login',
+  name: 'log_in',
   props: {
     loginForm: {
       type: Object,
@@ -64,7 +63,7 @@ export default {
   },
   emits: [
     'update:email',
-    'update:password', 
+    'update:password',
     'handle-login',
     'social-login',
     'go-to-page'
@@ -84,6 +83,7 @@ export default {
   margin: 0;
   width: 100vw;
   overflow-x: hidden;
+  overflow-y: hidden;
 }
 
 .hero-banner {
@@ -100,14 +100,14 @@ export default {
 }
 
 .hero-image {
-  width: 120px;
-  height: 120px;
+  width: 181.08px;
+  height: 189px;
   object-fit: contain;
 }
 
 .sign-in-card {
   background: #ffffff;
-  border-radius: 24px 24px 0 0;
+  border-radius: 40px 40px 0 0;
   padding: 36px 24px;
   margin-top: -40px;
   position: relative;
@@ -119,35 +119,30 @@ export default {
 }
 
 .welcome-text {
-  font-size: 24px;
-  font-weight: 600;
-  margin-bottom: 12px;
-  text-align: center;
-  color: #333;
-}
-
-.welcome-text span {
-  color: #c83232;
+  font-size: 45px;
   font-weight: 700;
-  font-size: 28px;
-}
-
-.card-title {
-  font-size: 17px;
-  font-weight: 500;
-  margin-bottom: 28px;
+  margin-top: 15px;
+  margin-bottom: 8px;
   text-align: center;
-  color: #333;
+  color: #0c3437;
+} 
+.card-title {
+  font-size: 26px;
+  font-weight: 400;
+  margin-bottom: 40px;
+  text-align: center;
+  color: #545454;
 }
 
 .form-group {
-  margin-bottom: 20px;
+  margin-bottom: 10px;
 }
 
 .form-label {
   display: block;
   margin-bottom: 8px;
-  font-weight: 500;
+  margin-left: 4px;
+  font-weight: 300;
   color: #333;
   font-size: 15px;
 }
@@ -158,46 +153,46 @@ export default {
 
 .form-input {
   width: 100%;
-  padding: 16px;
+  padding: 17px;
   border: 1.5px solid #e1e5e9;
-  border-radius: 10px;
-  font-size: 16px;
+  border-radius: 16px;
+  font-size: 14px;
+  font-weight:300;
   background-color: #fafbfc;
   transition: all 0.3s ease;
   box-sizing: border-box;
-  -webkit-appearance: none; /* Remove iOS styling */
 }
 
 .form-input:focus {
   outline: none;
-  border-color: #1f4f5a;
+  border-color: #0c3437;
   background-color: #ffffff;
   box-shadow: 0 0 0 3px rgba(31, 79, 90, 0.1);
 }
 
 .form-input::placeholder {
-  color: #a0a4a8;
+  color: #b6b6b6;
 }
 
 .forgot-password {
   display: block;
   text-align: right;
-  color: #1f4f5a;
+  color: #ff1509;
   text-decoration: none;
-  font-size: 15px;
-  margin-top: 10px;
+  font-size: 12px;
+  margin-top: 5px;
 }
 
 .sign-in-btn {
   width: 100%;
-  background-color: #1f4f5a;
+  background-color: #0c3437;
   color: white;
   border: none;
-  border-radius: 10px;
+  border-radius: 20px;
   padding: 17px;
-  font-size: 17px;
-  font-weight: 600;
-  margin-top: 24px;
+  font-size: 16px;
+  font-weight: 500;
+  margin-top: 10px;
   cursor: pointer;
   transition: background-color 0.3s;
   -webkit-tap-highlight-color: transparent; /* Remove tap highlight */
@@ -215,7 +210,7 @@ export default {
 .divider {
   display: flex;
   align-items: center;
-  margin: 32px 0;
+  margin: 20px 0;
 }
 
 .divider-line {
@@ -227,52 +222,58 @@ export default {
 .divider-text {
   padding: 0 18px;
   color: #777;
-  font-size: 15px;
+  font-size: 14px;
   white-space: nowrap;
 }
 
 .social-buttons {
   display: flex;
-  flex-direction: column;
+  flex-direction: row;
   gap: 14px;
 }
 
+
 .social-btn {
+  width: 45px;
   display: flex;
   align-items: center;
   justify-content: center;
-  gap: 14px;
-  background-color: #1f4f5a;
-  color: white;
-  border: none;
-  border-radius: 10px;
-  padding: 16px;
-  font-size: 17px;
-  font-weight: 500;
+  gap: 10x;
+  background-color:#fafbfc;
+  border: 1px solid #fcfcfc;
+  color: #0c3437;
+  border-radius: 14px;
+  box-sizing: border-box;
+  padding: 10px;
   cursor: pointer;
   transition: background-color 0.3s;
   -webkit-tap-highlight-color: transparent;
+   flex: 1; /* Added this line */ 
 }
 
-.social-btn:hover {
+/*.social-btn:hover {
   background-color: #163a43;
-}
+}*/
 
 .social-icon {
-  font-size: 19px;
+  width: 20px; /* Adjust size as needed */
+  height: 20px; /* Adjust size as needed */
+  object-fit: contain;
 }
 
 .sign-up-section {
   text-align: center;
-  margin-top: 32px;
-  font-size: 16px;
+  margin-top: 24px;
+  font-size: 15px;
   color: #333;
+  font-weight: 200;
 }
 
 .sign-up-link {
   color: #c83232;
   text-decoration: none;
-  font-weight: 600;
+  font-weight: 500;
+  font-size: 15px;
   cursor: pointer;
 }
 
@@ -315,8 +316,8 @@ export default {
   }
 
   .hero-image {
-    width: 110px;
-    height: 110px;
+    width: 180px;
+    height: 189px;
   }
 
   .sign-in-card {
@@ -447,7 +448,7 @@ export default {
 @media screen and (max-width: 767px) {
   .form-input {
     font-size: 16px; /* Prevents zoom on iOS */
-  } 
+  }
 }
 
 /* Safe area insets for notched devices */
@@ -458,4 +459,4 @@ export default {
     padding-bottom: max(0px, env(safe-area-inset-bottom));
   }
 }
-</style>
+</style> 
