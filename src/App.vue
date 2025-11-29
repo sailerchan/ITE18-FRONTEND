@@ -303,7 +303,7 @@ export default {
       id: 1,
       name: 'Siargao Island',
       description: 'Siargao sits on the far eastern edge of the Philippines, facing the open Pacific.',
-      image: '/images/siargao.jpg',
+      image: '/images/destinations/siargao.jpg',
       tag: 'For you',
       rating: 4.9
     })
@@ -313,14 +313,14 @@ export default {
         id: 2,
         name: 'Naked Island',
         description: 'A stunning sandbar surrounded by crystal-clear waters.',
-        image: '/images/naked_island.jpg',
+        image: '/images/destinations/naked_island.jpg',
         rating: 4.9
       },
       {
         id: 3,
         name: 'Guyam Island',
         description: 'A small, peaceful island ideal for relaxation and snorkeling.',
-        image: '/images/guyam.jpg',
+        image: '/images/destinations/guyam.jpg',
         rating: 4.7
 
       },
@@ -328,14 +328,43 @@ export default {
         id: 4,
         name: 'Cloud 9',
         description: 'World-famous surf spot known for its powerful waves.',
-        image: '/images/cloud9.jpg',
+        image: '/images/destinations/cloud9.jpg',
         rating: 4.8
       }
 
     ])
 
 
+    /*const destination_properties = ref({
+      'naked_island':{
+        name: 'Naked Island',
+        description: [
+        'It is a popular stop on island-hopping tours and is known for its powdery white sand and clear, warm waters, making it ideal for activities like sunbathing, swimming, and taking pictures. Due to the lack of shade, it is best to visit for a short time and bring sun protection.'
+        ],
+        address: ' General Luna, Siargao Island, Surigao del Norte, Philippines',
+        image: '/images/destinations/naked-island1.jpg'
+      },
 
+      'guyam_island':{
+        name: 'Guyam Island',
+        description: [
+        'Guyam Island is relatively small surrounded by a crystal clear beach filled with palm trees. It is known for its picturesque scenery, white sandy beaches and vibrant coral reefs. Visitors to Guyam Island can enjoy various activities such as swimming, snorkeling, and relaxing on its pristine beaches.'
+        ],
+        address:'General Luna, Siargao Island, Surigao del Norte, Philippines',
+        image: '/images/destinations/guyam1.jpg'
+      },
+
+      'cloud_9': {
+        name: 'Cloud 9 Surfing Area',
+        description:
+        [
+        'Whether you dip your toes in, snorkel with fish, or paddle across the reef, Cloud9 makes the water part of the experience.'
+      ],
+        address: 'General Luna, Siargao Island, Surigao del Norte, Philippines',
+        image: '/images/destinations/cloud91.jpg'
+      }
+    })
+*/
     // Property data
     const properties = ref({
       'paradiso': {
@@ -347,35 +376,34 @@ export default {
           'The hostel has its own kitchen should you wish to just chill in your room or if you\'re just feeling lazy (or nursing a hangover).'
         ],
         price: 700.00,
-        image: '/images/paradiso.avif',
-        confirmationImage: '/images/paradiso.1.avif'
+        image: '/images/accommodations/paradiso.1.avif',
+        confirmationImage: '/images/accommodations/paradiso.1.avif'
       },
       'copacabana': {
         title: 'Copacabana Siargao',
-        subtitle: 'Deluxe Room - 1 double bed',
+        subtitle: 'Solo - 1 queen-sized bed',
         location: 'General Luna, Philippines',
         description: [
-          'Copacabana Siargao offers comfortable accommodations with modern amenities and stunning ocean views.',
+          'Copacabana Siargao rooms with air-conditioning, private  bathrooms, bidets, work desks, free toiletries, showers, and wardrobes. Each room includes a terrace and free WiFi.',
           'Located just steps away from the famous Cloud 9 surf break, this hotel is perfect for surf enthusiasts and beach lovers alike.'
         ],
         price: 2950.00,
-        image: '/images/copacabana.jpg',
-        confirmationImage: '/images/copacabana.jpg'
+        image: '/images/accommodations/copacabana.1.jpg',
+        confirmationImage: '/images/accommodations/copacabana.1.jpg'
       },
-      'retreat': {
-        title: 'Paradiso Island Retreat',
-        subtitle: 'Luxury Villa - 2 bedrooms',
+      'casavia': {
+        title: 'Casavia Siargao',
+        subtitle: 'Solo - 1 bunked bed',
         location: 'General Luna, Philippines',
         description: [
-          'Experience luxury and tranquility at Paradiso Island Retreat, featuring private villas with panoramic ocean views.',
-          'Each villa comes with a private pool, dedicated butler service, and access to our exclusive beachfront.'
-        ],
-        price: 4200.00,
-        image: '/images/paradiso.1.avif',
-        confirmationImage: '/images/paradiso.1.avif'
+          'Casavia Siargao in General Luna offers a garden, bar, and free WiFi. Guests can relax in the lounge or prepare meals in the shared kitchen. Additional amenities include air-conditioning, bidet, shower, and wardrobe.',
+          'General Luna Beach is an 8-minute walk away. Nearby attractions include Guyam Island (4 km), Naked Island (14 km), and Magpupungko Rock Pools (38 km).'
+          ],
+        price: 890.00,
+        image: '/images/accommodations/casavia.1.jpg',
+        confirmationImage: '/images/accommodations/casavia.1.jpg'
       }
     })
-
     // Payment methods with logos
     const paymentMethods = ref([
       {
