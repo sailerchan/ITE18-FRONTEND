@@ -39,8 +39,8 @@
 
         <div class="date-grid">
           <div v-for="(day, index) in calendarDays" :key="index" class="date-cell">
-            <div v-if="day" 
-                 class="date-pill" 
+            <div v-if="day"
+                 class="date-pill"
                  :class="getDateClass(day)"
                  @click="$emit('select-date', day)">
               {{ day }}
@@ -108,7 +108,7 @@ export default {
         return 'range-start'
       } else if (day === this.selectedEnd) {
         return 'range-end'
-      } else if (this.selectedStart && this.selectedEnd && 
+      } else if (this.selectedStart && this.selectedEnd &&
                  day > this.selectedStart && day < this.selectedEnd) {
         return 'range-mid'
       }
@@ -232,7 +232,7 @@ export default {
 
 .nav-arrow {
   font-size: 24px;
-  color: #0C3437;
+  color:#0c3437;
   cursor: pointer;
   padding: 8px 12px;
   border-radius: 8px;
@@ -247,7 +247,7 @@ export default {
 .month-year {
   font-size: 18px;
   font-weight: 600;
-  color: #333;
+  color: #0c3437;
 }
 
 /* Day Headers */
@@ -261,18 +261,19 @@ export default {
 
 .day-header {
   text-align: center;
-  font-size: 12px;
+  font-size: 14px;
   font-weight: 600;
-  color: #666;
+  color: #0c3437;
   padding: 8px 0;
+  gap: 5px;
 }
 
 /* Date Grid - using #0C3437 for selected dates */
 .date-grid {
   display: grid;
   grid-template-columns: repeat(7, 1fr);
-  gap: 8px;
-  padding: 0 4px;
+  gap: 5px;
+  padding: 0 px;
 }
 
 .date-cell {
@@ -280,7 +281,7 @@ export default {
   display: flex;
   align-items: center;
   justify-content: center;
-  padding: 4px;
+  padding: 1px;
 }
 
 .date-pill {
@@ -291,11 +292,15 @@ export default {
   justify-content: center;
   border-radius: 50%;
   font-size: 14px;
-  font-weight: 500;
-  color: #333;
+  font-weight: 800;
+  color: #0c3437;
   cursor: pointer;
   transition: all 0.3s ease;
   -webkit-tap-highlight-color: transparent;
+  background:#ededed61;
+  padding:2px;
+  border-radius: 8px;
+
 }
 
 .date-pill:hover {
@@ -304,13 +309,17 @@ export default {
 
 .date-pill.range-start,
 .date-pill.range-end {
-  background-color: #0C3437;
+  background-color: #0c3437;
   color: white;
+  border-radius: 8px;
 }
 
 .date-pill.range-mid {
-  background-color: #e8f4f3;
+  background-color: #95bbb799;
+  backdrop-filter: blur(10px);
   color: #0C3437;
+  padding: 5px;
+  border-radius: 8px;
 }
 
 /* Action Buttons - using #0C3437 */
@@ -325,7 +334,7 @@ export default {
   flex: 1;
   padding: 16px 24px;
   border: none;
-  border-radius: 10px;
+  border-radius: 30px;
   font-size: 16px;
   font-weight: 600;
   cursor: pointer;
@@ -337,6 +346,7 @@ export default {
   background-color: #f8f9fa;
   color: #666;
   border: 1.5px solid #e1e5e9;
+    border-radius: 30px;
 }
 
 .btn-cancel:hover {

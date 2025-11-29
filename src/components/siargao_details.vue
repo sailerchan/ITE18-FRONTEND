@@ -3,10 +3,8 @@
     <div class="header">
       <img :src="headerImage" alt="Siargao Island" class="header-image" />
       <div class="overlay">
-        <div class="location">{{ location }}</div>
-        <h1>{{ title }}</h1>
       </div>
-      <div class="distance">{{ distance }}</div>
+
       <!-- Back Button -->
       <button class="back-btn" @click="goBack">
         <i class="fas fa-arrow-left"></i>
@@ -15,21 +13,19 @@
 
     <div class="content">
       <div class="tabs">
-        <div 
-          class="tab" 
+        <div
+          class="tab"
           :class="{ active: activeTab === 'details' }"
-          @click="setActiveTab('details')"
-        >
+          @click="setActiveTab('details')">
           Details
         </div>
-        <div 
-          class="tab" 
-          :class="{ active: activeTab === 'reviews' }"
-          @click="goToReviewsPage"
-        >
+      <div
+        class="tab"
+        :class="{ active: activeTab === 'reviews' }"
+        @click="goToReviewsPage">
           Reviews
-        </div>
       </div>
+    </div>
 
       <div class="tab-content">
         <!-- Details Tab Content -->
@@ -49,6 +45,7 @@
                 loading="lazy"
                 referrerpolicy="no-referrer-when-downgrade"
                 title="Siargao Island Map"
+
               ></iframe>
             </div>
             <div class="map-actions">
@@ -62,13 +59,12 @@
               </button>
             </div>
           </div>
-
           <!-- Plan Trip Button -->
-          <div class="plan-trip-section">
-            <button class="plan-trip-btn" @click="planTrip">
-              Plan My Trip
-            </button>
-          </div>
+            <div class="plan-trip-section">
+              <button class="plan-trip-btn" @click="planTrip">
+                Plan My Trip
+              </button>
+            </div>
         </div>
 
         <!-- Reviews Preview Tab Content -->
@@ -87,9 +83,9 @@
 
           <!-- Sample Reviews Preview -->
           <div class="reviews-preview-list">
-            <div 
-              v-for="review in previewReviews" 
-              :key="review.id" 
+            <div
+              v-for="review in previewReviews"
+              :key="review.id"
               class="review-preview-card"
               @click="goToReviewsPage"
             >
@@ -189,23 +185,28 @@ export default {
   margin: 0;
   width: 100vw;
   overflow-x: hidden;
-  font-family: 'Poppins', sans-serif;
 }
 
 .header {
+  background: #ffffff;
+  border-radius: 24px 24px 0 0;
+  padding: 0;
+  margin-top: 0;
   position: relative;
-  height: 30vh;
-  min-height: 200px;
-  max-height: 280px;
-  flex-shrink: 0;
+  box-shadow: 0 -8px 32px rgba(0, 0, 0, 0.1);
+  flex: 1;
   width: 100%;
+  box-sizing: border-box;
+  min-height: auto;
+  display: flex;
+  flex-direction: column;
 }
 
 .header-image {
-  width: 100%;
-  height: 100%;
-  object-fit: cover;
-  background: #007EA7;
+    height: 45vh;
+    background-size: cover;
+    background-position: center;
+    position: relative;
 }
 
 .back-btn {
@@ -266,12 +267,17 @@ export default {
 }
 
 .content {
-  padding: 20px;
-  overflow-y: auto;
-  flex: 1;
-  width: 100%;
-  box-sizing: border-box;
-  font-family: 'Poppins', sans-serif;
+    background-color: white;
+    border-radius: 30px 30px 15px 15px;
+    margin-top: -30px;
+    position: relative;
+    z-index: 2;
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    padding: 30px 25px 20px;
+
+
 }
 
 .tabs {
@@ -281,6 +287,7 @@ export default {
   border-bottom: 1px solid #e0e0e0;
   padding-bottom: 10px;
   font-family: 'Poppins', sans-serif;
+
 }
 
 .tab {
@@ -296,7 +303,7 @@ export default {
 }
 
 .tab.active {
-  color: #00796b;
+  color: #0c3437;
   font-weight: 600;
   font-size: 16px; /* Consistent tab text size */
   font-family: 'Poppins', sans-serif;
@@ -309,7 +316,7 @@ export default {
   bottom: -11px;
   width: 100%;
   height: 2px;
-  background-color: #00796b;
+  background-color: #0c3437;
   border-radius: 2px;
 }
 
@@ -338,9 +345,9 @@ export default {
 
 .map {
   width: 100%;
-  height: 189px;
+  height: 250px;
   background: #e0e0e0;
-  border-radius: 21px;
+  border-radius: 15px;
   overflow: hidden;
   display: flex;
   justify-content: center;
@@ -358,19 +365,21 @@ export default {
 }
 
 .map-action-btn {
-  background: #00796b;
-  color: white;
-  border: none;
-  border-radius: 20px;
+  background: none;
+  color: #0c3437;
+  border: 1px solid #0c34371e;
+  border-radius: 5px;
   padding: 8px 16px;
-  font-size: 13px;
+  font-size: 10px;
   font-weight: 500;
   cursor: pointer;
   display: flex;
   align-items: center;
-  gap: 6px;
+  gap: 20px;
   transition: background-color 0.3s;
   font-family: 'Poppins', sans-serif;
+  flex:1;
+  text-align: center;
 }
 
 .plan-trip-section {
@@ -381,10 +390,10 @@ export default {
 
 .plan-trip-btn {
   width: 100%;
-  background-color: #00312d;
+  background-color: #0c3437;
   color: white;
   border: none;
-  border-radius: 12px;
+  border-radius: 30px;
   padding: 16px;
   font-size: 16px;
   font-weight: 600;

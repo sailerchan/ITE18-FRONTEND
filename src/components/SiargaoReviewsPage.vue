@@ -3,42 +3,30 @@
     <!-- Header Section -->
     <div class="header-section">
       <img :src="heroImage" alt="Siargao Island" class="hero-image" />
-      
+
       <!-- Back Arrow -->
       <button class="back-btn" @click="goBack">
-        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-          <path d="M15 18L9 12L15 6" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
-        </svg>
+          <i class="fas fa-arrow-left"></i>
       </button>
-      
-      <!-- Location Info Overlay - Matching Details Page -->
-      <div class="overlay">
-        <div class="location">{{ location }}</div>
-        <h1>{{ title }}</h1>
-      </div>
-      
-      <!-- Distance Info - Matching Details Page -->
-      <div class="distance">{{ distance }}</div>
+
+
     </div>
 
-    <!-- Content Area -->
     <div class="content-area">
-      <!-- Navigation Tabs -->
       <div class="nav-tabs">
-        <button 
-          class="tab" 
+        <div
+          class="tab"
           :class="{ active: activeTab === 'details' }"
           @click="goToDetails"
         >
           Details
-        </button>
-        <button 
-          class="tab active" 
-          :class="{ active: activeTab === 'reviews' }"
-        >
-          Reviews
-        </button>
       </div>
+        <div
+          class="tab active"
+          :class="{ active: activeTab === 'reviews' }">
+          Reviews
+    </div>
+  </div>
 
       <!-- Overall Rating -->
       <div class="overall-rating">
@@ -52,9 +40,9 @@
 
       <!-- Reviews List -->
       <div class="reviews-list">
-        <div 
-          v-for="review in reviews" 
-          :key="review.id" 
+        <div
+          v-for="review in reviews"
+          :key="review.id"
           class="review-card"
         >
           <div class="review-header">
@@ -63,19 +51,18 @@
                 {{ star <= review.rating ? '★' : '☆' }}
               </span>
             </div>
-            <div class="reviewer-info">
-              {{ review.reviewerName }}, {{ review.reviewerOrigin }}
-            </div>
+            <div class="reviewer-info">{{ review.reviewerName }}, {{ review.reviewerOrigin }}</div>
           </div>
           <p class="review-text">{{ review.text }}</p>
         </div>
       </div>
-    </div>
-
-    <!-- Call-to-Action Button -->
+          <!-- Call-to-Action Button -->
     <button class="plan-trip-btn" @click="planTrip">
       Plan Trip
     </button>
+    </div>
+
+
   </div>
 </template>
 
@@ -146,24 +133,29 @@ export default {
   margin: 0;
   width: 100vw;
   overflow-x: hidden;
-  font-family: 'Poppins', sans-serif;
 }
 
 /* Header Section - EXACTLY matching Details page */
 .header-section {
+  background: #ffffff;
+  border-radius: 24px 24px 0 0;
+  padding: 0;
+  margin-top: 0;
   position: relative;
-  height: 30vh;
-  min-height: 200px;
-  max-height: 280px;
-  flex-shrink: 0;
+  box-shadow: 0 -8px 32px rgba(0, 0, 0, 0.1);
+  flex: 1;
   width: 100%;
+  box-sizing: border-box;
+  min-height: auto;
+  display: flex;
+  flex-direction: column;
 }
 
-.hero-image {
-  width: 100%;
-  height: 100%;
-  object-fit: cover;
-  background: #007EA7;
+.header-image {
+    height: 45vh;
+    background-size: cover;
+    background-position: center;
+    position: relative;
 }
 
 .back-btn {
@@ -227,42 +219,42 @@ export default {
 
 /* Content Area */
 .content-area {
-  flex: 1;
-  background: white;
-  border-radius: 30px 30px 0 0;
-  margin-top: -20px;
-  padding: 0 20px;
-  overflow-y: auto;
-  width: 100%;
-  box-sizing: border-box;
-  font-family: 'Poppins', sans-serif;
-}
+    background-color: white;
+    border-radius: 30px 30px 15px 15px;
+    margin-top: -30px;
+    position: relative;
+    z-index: 2;
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    padding: 30px 25px 20px;
 
+}
 /* Navigation Tabs - EXACTLY matching Details page */
 .nav-tabs {
   display: flex;
-  gap: 20px; /* Same gap as Details page */
-  margin: 25px 0;
-  border-bottom: 1px solid #e0e0e0; /* Same border as Details page */
-  padding-bottom: 10px; /* Same padding as Details page */
+  gap: 20px;
+  margin-top: 10px;
+  border-bottom: 1px solid #e0e0e0;
+  padding-bottom: 10px;
   font-family: 'Poppins', sans-serif;
+
 }
 
 .tab {
+font-weight: 500;
+  font-size: 16px; /* Consistent tab text size */
+  color: #555;
+  cursor: pointer;
+  position: relative;
   background: none;
   border: none;
-  font-size: 16px; /* EXACTLY same size as Details page */
-  font-weight: 500; /* EXACTLY same weight as Details page */
-  color: #555; /* EXACTLY same color as Details page */
-  cursor: pointer;
-  padding: 0; /* EXACTLY same padding as Details page */
-  position: relative;
-  transition: color 0.3s;
+  padding: 0;
   font-family: 'Poppins', sans-serif;
 }
 
 .tab.active {
-  color: #00796b; /* EXACTLY same color as Details page */
+  color: #0c3437; /* EXACTLY same color as Details page */
   font-weight: 600; /* EXACTLY same weight as Details page */
   font-size: 16px; /* EXACTLY same size as Details page */
   font-family: 'Poppins', sans-serif;
@@ -275,7 +267,7 @@ export default {
   bottom: -11px; /* EXACTLY same position as Details page */
   width: 100%;
   height: 2px; /* EXACTLY same height as Details page */
-  background-color: #00796b; /* EXACTLY same color as Details page */
+  background-color: #0c3437; /* EXACTLY same color as Details page */
   border-radius: 2px; /* EXACTLY same radius as Details page */
 }
 
@@ -365,26 +357,18 @@ export default {
 
 /* Plan Trip Button */
 .plan-trip-btn {
-  position: fixed;
-  bottom: 20px;
-  left: 50%;
-  transform: translateX(-50%);
-  width: calc(100% - 40px);
-  max-width: 350px;
-  background-color: #00312d;
+  width: 100%;
+  background-color: #0c3437;
   color: white;
   border: none;
-  padding: 16px 24px;
   border-radius: 30px;
+  padding: 16px;
   font-size: 16px;
   font-weight: 600;
   cursor: pointer;
-  transition: all 0.3s ease;
-  box-shadow: 0 4px 20px rgba(0, 49, 45, 0.3);
-  z-index: 100;
+  transition: background-color 0.3s;
   font-family: 'Poppins', sans-serif;
 }
-
 /* Responsive styles remain the same... */
 /* ... (all the responsive CSS from previous implementation remains exactly the same) ... */
 

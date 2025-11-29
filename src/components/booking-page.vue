@@ -77,9 +77,9 @@
               <i class="fas fa-check radio-check"></i>
             </div>
             <div class="payment-method-content">
-              <img 
-                :src="method.logo" 
-                :alt="method.name" 
+              <img
+                :src="method.logo"
+                :alt="method.name"
                 class="payment-logo"
                 @error="handleImageError"
               >
@@ -100,7 +100,7 @@
 
 <script>
 export default {
-  name: 'Booking',
+  name: 'booking-page',
   props: {
     currentBookingView: {
       type: String,
@@ -316,11 +316,11 @@ export default {
 }
 
 .book-button {
-    background-color: #1f4f5a;
+    background-color: #0c3437;
     color: white;
     border: none;
     padding: 14px 30px;
-    border-radius: 10px;
+    border-radius: 30px;
     font-weight: 600;
     font-size: 16px;
     cursor: pointer;
@@ -535,53 +535,53 @@ export default {
     .booking-inner {
         border-radius: 20px 20px 0 0;
     }
-    
+
     .image-header {
         height: 35vh;
     }
-    
+
     .details-content {
         padding: 20px 16px 16px;
     }
-    
+
     .property-title {
         font-size: 20px;
     }
-    
+
     .property-subtitle {
         font-size: 14px;
     }
-    
+
     .action-bar {
         padding: 16px;
     }
-    
+
     .price {
         font-size: 20px;
     }
-    
+
     .book-button {
         padding: 12px 20px;
         font-size: 14px;
     }
-    
+
     .confirmation-image {
         height: 180px;
     }
-    
+
     .payment-logo {
         width: 35px;
         height: 22px;
     }
-    
+
     .payment-name {
         font-size: 14px;
     }
-    
+
     .payment-option {
         padding: 14px;
     }
-    
+
     .confirmation-header,
     .booking-summary,
     .payment-section {
@@ -611,7 +611,7 @@ export default {
         background: #f8f9fa;
         padding: 20px 0;
     }
-    
+
     .booking-inner {
         max-width: 768px;
         margin: -50px auto 0 auto;
@@ -628,7 +628,7 @@ export default {
         background: #f8f9fa;
         padding: 40px 0;
     }
-    
+
     .booking-inner {
         max-width: 500px;
         margin: -60px auto 0 auto;
@@ -645,7 +645,7 @@ export default {
         background: #f8f9fa;
         padding: 40px 0;
     }
-    
+
     .booking-inner {
         max-width: 500px;
         margin: 0 auto;
@@ -659,17 +659,17 @@ export default {
     .image-header {
         height: 35vh;
     }
-    
+
     .details-content {
         padding: 20px 16px 16px;
     }
-    
+
     .confirmation-header,
     .booking-summary,
     .payment-section {
         padding: 12px;
     }
-    
+
     .confirmation-image {
         height: 160px;
     }
@@ -680,25 +680,25 @@ export default {
     .image-header {
         height: 30vh;
     }
-    
+
     .details-content {
         padding: 16px 12px 12px;
     }
-    
+
     .confirmation-header,
     .booking-summary,
     .payment-section {
         padding: 10px;
     }
-    
+
     .confirmation-image {
         height: 140px;
     }
-    
+
     .property-title {
         font-size: 18px;
     }
-    
+
     .book-button,
     .next-button {
         padding: 12px 16px;

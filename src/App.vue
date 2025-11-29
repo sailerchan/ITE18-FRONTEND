@@ -220,7 +220,7 @@ import SiargaoDetails from './components/siargao_details.vue'
 import SiargaoReviewsPage from './components/SiargaoReviewsPage.vue'
 import DatePicker from './components/datePicker.vue'
 import Accommodation from './components/accomodation_page.vue'
-import Booking from './components/booking.vue'
+import Booking from './components/booking-page.vue'
 import MastercardDetails from './components/mastercard_details.vue'
 import GcashDetail from './components/gcash_detail.vue'
 import GcashPaymentConfirm from './components/GcashPaymentConfirm.vue'
@@ -318,19 +318,23 @@ export default {
       },
       {
         id: 3,
-        name: 'Cloud 9',
-        description: 'World-famous surf spot known for its powerful waves.',
-        image: '/images/cloud.jpg',
-        rating: 4.8
-      },
-      {
-        id: 4,
         name: 'Guyam Island',
         description: 'A small, peaceful island ideal for relaxation and snorkeling.',
         image: '/images/guyam.jpg',
         rating: 4.7
+
+      },
+      {
+        id: 4,
+        name: 'Cloud 9',
+        description: 'World-famous surf spot known for its powerful waves.',
+        image: '/images/cloud9.jpg',
+        rating: 4.8
       }
+
     ])
+
+
 
     // Property data
     const properties = ref({
@@ -594,7 +598,7 @@ export default {
     }
 
     const handlePlanTrip = () => {
-      console.log('📅 Planning trip for Siargao Island')
+      console.log('Planning trip for Siargao Island')
       selectedStart.value = null
       selectedEnd.value = null
       selectedDestinationName.value = 'Siargao Island'

@@ -103,6 +103,7 @@ export default {
   width: 181.08px;
   height: 189px;
   object-fit: contain;
+  position: relative;
 }
 
 .sign-in-card {

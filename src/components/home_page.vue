@@ -241,7 +241,7 @@ export default {
   width: 100%;
   font-size: 12px;
   color: #495057;
-    font-weight: 500;
+
 }
 .search-input input::placeholder {
   color: #adb5bd;
@@ -260,7 +260,7 @@ export default {
 .hero-card {
     width: 90%;
     margin:auto;
-    height: 300px;
+    height: 350px;
     border-radius: 40px;
     overflow: hidden;
     position: relative;
@@ -416,27 +416,28 @@ export default {
   bottom: 12px;
   left: 12px;
   right: 12px;
-  background: #ffffff00;
+  background: #847b7b4d;
   backdrop-filter: blur(10px);
   -webkit-backdrop-filter: blur(10px);
   border-radius: 20px;
-  padding: 5px;
+  padding: 3px;
   display: flex;
   justify-content: space-between;
   align-items: flex-end;
-  border: 1px solid rgba(255, 255, 255, 0.211);
+  border: 1px solid rgba(255, 255, 255, 0.388);
   box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
 }
   .destination-card h5 {
     font-size: 15px;
-    margin: 14px 14px 6px;
+    margin: 14px 14px 1px;
+    margin-top: 5px;
     font-weight: 700;
     color: white;
 }
 .destination-card p {
     font-size: 12px;
     color: #ffffff;
-    margin: 0 14px 16px;
+    margin: 0 14px 5px;
 }
 
 /* Bottom nav */

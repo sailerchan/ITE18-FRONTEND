@@ -8,8 +8,8 @@
       </div>
 
       <!-- Section Title -->
-      <h2 class="accommodation-section-title">Popular Places To Stay</h2>
-      <h2 class="accommodation-section-subtitle">In {{ selectedDestinationName }}</h2>
+      <h2 class="accommodation-section-title">Popular places to stay in</h2>
+      <span class="accommodation-section-subtitle">{{ selectedDestinationName }}</span>
 
       <!-- Accommodation List -->
       <div class="accommodation-list">
@@ -30,7 +30,7 @@
             </div>
             <div class="price-tag">
               <div class="property-price">₱700.00</div>
-              <div class="property-per-night">/night</div>
+                <span class="property-per-night">/ night</span>
             </div>
           </div>
         </div>
@@ -52,7 +52,7 @@
             </div>
             <div class="price-tag">
               <div class="property-price">₱2,950.00</div>
-              <div class="property-per-night">/night</div>
+              <div class="property-per-night">/ night</div>
             </div>
           </div>
         </div>
@@ -74,7 +74,7 @@
             </div>
             <div class="price-tag">
               <div class="property-price">₱4,200.00</div>
-              <div class="property-per-night">/night</div>
+              <div class="property-per-night">/ night</div>
             </div>
           </div>
         </div>
@@ -143,14 +143,14 @@ export default {
   left: 0;
   top: 50%;
   transform: translateY(-50%);
-  font-size: 24px;
+  font-size: 20px;
   cursor: pointer;
   color: #333;
   width: 30px;
-  height: 30px;
+  height:20px;
   display: flex;
   align-items: center;
-  justify-content: center;
+  justify-content: left;
   -webkit-tap-highlight-color: transparent;
 }
 
@@ -159,32 +159,34 @@ export default {
 }
 
 .accommodation-header h1 {
-  font-size: 18px;
+  font-size: 24px;
   font-weight: 600;
   color: #333;
-  text-align: center;
-  margin: 0;
-  padding: 0 40px;
+  text-align: left;
+  margin-top: 10px;
+  margin-left: 0;
+  padding: 0 50px;
+  padding-top: 4px;
 }
 
 /* Section Titles - maintaining original design */
 .accommodation-section-title {
   padding: 0 0 4px 0;
-  font-size: 22px;
+  font-size: 18px;
   font-weight: 700;
-  color: #1a1a1a;
+  color: #817d7d;
   margin: 0;
-  text-align: center;
+  text-align: left;
 }
 
 .accommodation-section-subtitle {
   padding: 0 0 16px 0;
   font-size: 22px;
   font-weight: 700;
-  color: #1a1a1a;
+  color: #0c3437;
   margin-top: -6px;
   margin-bottom: 0;
-  text-align: center;
+  text-align: left;
 }
 
 /* Accommodation List - maintaining original design */
@@ -227,7 +229,7 @@ export default {
   bottom: 12px;
   left: 12px;
   right: 12px;
-  background: rgba(132, 123, 123, 0.3);
+  background: #847b7b4d;
   backdrop-filter: blur(10px);
   -webkit-backdrop-filter: blur(10px);
   border-radius: 16px;
@@ -243,7 +245,7 @@ export default {
   font-size: 16px;
   font-weight: 700;
   margin-bottom: 4px;
-  color: #000;
+  color: #ffffff;
   margin: 0 0 4px 0;
 }
 
@@ -251,7 +253,7 @@ export default {
   display: flex;
   align-items: center;
   font-size: 13px;
-  color: #333;
+  color: #ffffff;
   font-weight: 500;
   margin-bottom: 6px;
 }
@@ -276,24 +278,25 @@ export default {
 .property-rating-value {
   font-size: 12px;
   font-weight: 600;
-  color: #4a5568;
+  color: #ffffff;
 }
 
 .price-tag {
   text-align: right;
+  display: inside;
 }
 
 .property-price {
   font-size: 18px;
   font-weight: 700;
-  color: #000;
-  margin: 0;
+  color: #ffffff;
+  margin-right: 20px;
 }
 
 .property-per-night {
   font-size: 12px;
-  color: #555;
-  margin: 0;
+  color: #ffffff;
+    margin-right: 10px;
 }
 
 .property-type {
