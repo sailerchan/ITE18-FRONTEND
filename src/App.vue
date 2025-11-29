@@ -1,7 +1,7 @@
 <template>
   <div id="app">
     <!-- Debug Info -->
-    <div class="debug-info" v-if="showDebug">
+    <!--<div class="debug-info" v-if="showDebug">
       <p><strong>Current Page:</strong> {{ currentPage }}</p>
       <p><strong>Last Destination ID:</strong> {{ selectedDestinationId }}</p>
       <div class="debug-buttons">
@@ -19,7 +19,7 @@
         <button @click="goToPage('payment-success')">Payment Success</button>
         <button @click="goToPage('gcash-confirm')">GCash Confirm</button>
       </div>
-    </div>
+    </div>-->
 
     <!-- Login Component -->
     <Login
@@ -210,7 +210,7 @@
 import { ref, computed } from 'vue'
 import Login from './components/log_in.vue'
 import Signup from './components/sign_up.vue'
-import Homepage from './components/homepage.vue'
+import Homepage from './components/home_page.vue'
 import TripsPage from './components/TripsPage.vue'
 import NotificationPage from './components/NotificationPage.vue'
 import ProfilePage from './components/ProfilePage.vue'
@@ -219,7 +219,7 @@ import ChangePassword from './components/changePassword.vue'
 import SiargaoDetails from './components/siargao_details.vue'
 import SiargaoReviewsPage from './components/SiargaoReviewsPage.vue'
 import DatePicker from './components/datePicker.vue'
-import Accommodation from './components/accomodation.vue'
+import Accommodation from './components/accomodation_page.vue'
 import Booking from './components/booking.vue'
 import MastercardDetails from './components/mastercard_details.vue'
 import GcashDetail from './components/gcash_detail.vue'

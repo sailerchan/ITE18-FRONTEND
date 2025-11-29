@@ -5,8 +5,8 @@
     </div>
 
     <div class="card sign-in-card">
-      <div class="welcome-text">Create your account</div>
-      <h2 class="card-title">Sign Up</h2>
+      <div class="welcome-text">Create an Account</div>
+      <h2 class="card-title">Join now and start planning you trip.</h2>
 
       <form @submit.prevent="$emit('handle-signup')">
         <div class="form-group">
