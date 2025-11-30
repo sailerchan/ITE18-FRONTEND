@@ -6,56 +6,78 @@
 
     <div class="card sign-in-card">
       <div class="welcome-text">Create an Account</div>
-      <h2 class="card-title">Join now and start planning you trip.</h2>
+      <h2 class="card-title">Join now and start planning your trip.</h2>
 
       <form @submit.prevent="$emit('handle-signup')">
-        <div class="form-group">
-          <label class="form-label" for="fullname">Full Name</label>
-          <div class="input-box">
-            <input type="text" id="fullname" class="form-input"
-                   placeholder="Enter your full name"
-                   :value="signupForm.fullName"
-                   @input="$emit('update:fullName', $event.target.value)"
-                   required>
+        <!-- First Name and Last Name in a row -->
+        <div class="name-row">
+          <div class="form-group floating-group">
+            <div class="input-box">
+              <input type="text" id="firstname" class="form-input"
+                     placeholder=" "
+                     :value="signupForm.firstName"
+                     @input="$emit('update:firstName', $event.target.value)"
+                     @focus="handleFocus"
+                     @blur="handleBlur"
+                     required>
+              <label for="firstname" class="floating-label">First Name</label>
+            </div>
+          </div>
+
+          <div class="form-group floating-group">
+            <div class="input-box">
+              <input type="text" id="lastname" class="form-input"
+                     placeholder=" "
+                     :value="signupForm.lastName"
+                     @input="$emit('update:lastName', $event.target.value)"
+                     @focus="handleFocus"
+                     @blur="handleBlur"
+                     required>
+              <label for="lastname" class="floating-label">Last Name</label>
+            </div>
           </div>
         </div>
 
-        <div class="form-group">
-          <label class="form-label" for="email">Email Address</label>
+        <div class="form-group floating-group">
           <div class="input-box">
             <input type="email" id="email" class="form-input"
-                   placeholder="Enter your email"
+                   placeholder=" "
                    :value="signupForm.email"
                    @input="$emit('update:email', $event.target.value)"
+                   @focus="handleFocus"
+                   @blur="handleBlur"
                    required>
+            <label for="email" class="floating-label">Email Address</label>
           </div>
         </div>
 
-        <div class="form-group">
-          <label class="form-label" for="password">Password</label>
+        <div class="form-group floating-group">
           <div class="input-box">
             <input type="password" id="password" class="form-input"
                    :class="{ 'error': signupForm.passwordError, 'success': signupForm.password && !signupForm.passwordError }"
-                   placeholder="Create a password"
+                   placeholder=" "
                    :value="signupForm.password"
                    @input="$emit('update:password', $event.target.value)"
-                   @blur="$emit('validate-password')"
+                   @focus="handleFocus"
+                   @blur="handleBlurAndValidatePassword"
                    required>
+            <label for="password" class="floating-label">Password</label>
             <span class="error-message" v-if="signupForm.passwordError">{{ signupForm.passwordError }}</span>
             <span class="success-message" v-if="signupForm.password && !signupForm.passwordError">Password looks good!</span>
           </div>
         </div>
 
-        <div class="form-group">
-          <label class="form-label" for="confirmPassword">Confirm Password</label>
+        <div class="form-group floating-group">
           <div class="input-box">
             <input type="password" id="confirmPassword" class="form-input"
                    :class="{ 'error': signupForm.confirmPasswordError, 'success': signupForm.confirmPassword && !signupForm.confirmPasswordError }"
-                   placeholder="Confirm your password"
+                   placeholder=" "
                    :value="signupForm.confirmPassword"
                    @input="$emit('update:confirmPassword', $event.target.value)"
-                   @blur="$emit('validate-confirm-password')"
+                   @focus="handleFocus"
+                   @blur="handleBlurAndValidateConfirmPassword"
                    required>
+            <label for="confirmPassword" class="floating-label">Confirm Password</label>
             <span class="error-message" v-if="signupForm.confirmPasswordError">{{ signupForm.confirmPasswordError }}</span>
             <span class="success-message" v-if="signupForm.confirmPassword && !signupForm.confirmPasswordError">Passwords match!</span>
           </div>
@@ -66,7 +88,7 @@
         </button>
       </form>
 
-           <div class="divider">
+      <div class="divider">
         <div class="divider-line"></div>
         <div class="divider-text">or continue with</div>
         <div class="divider-line"></div>
@@ -74,12 +96,10 @@
 
       <div class="social-buttons">
         <button class="social-btn" @click="$emit('social-login', 'google')">
-           <img src="/images/logos/icon-google.svg" alt="Google" class="social-icon">
-
+          <img src="/images/logos/icon-google.svg" alt="Google" class="social-icon">
         </button>
         <button class="social-btn" @click="$emit('social-login', 'apple')">
-         <img src="/images/logos/icon-apple.webp" alt="Apple" class="social-icon">
-
+          <img src="/images/logos/icon-apple.webp" alt="Apple" class="social-icon">
         </button>
       </div>
 
@@ -105,7 +125,8 @@ export default {
     }
   },
   emits: [
-    'update:fullName',
+    'update:firstName',
+    'update:lastName',
     'update:email',
     'update:password',
     'update:confirmPassword',
@@ -168,19 +189,36 @@ export default {
 .welcome-text {
   font-size: 30px;
   font-weight: 700;
-  margin-top: 15px;
+  margin-top: 5px;
   margin-bottom: 8px;
   text-align: center;
   color: #0c3437;
 }
 .card-title {
-  font-size: 18px;
-  font-weight: 300;
+  font-size: 12px;
+  font-weight: 400;
   margin-bottom: 40px;
   text-align: center;
   color: #545454;
 }
+.name-row {
+  display: flex;
+  gap: 12px;
+  margin-bottom: 10px;
+}
 
+.name-group {
+  flex: 1;
+  margin-bottom: 0;
+}
+
+.name-group .form-input {
+  width: 100%;
+}
+.floating-group {
+  position: relative;
+  margin-bottom: 20px;
+}
 .form-group {
   margin-bottom: 10px;
 }
@@ -199,17 +237,39 @@ export default {
 
 .form-input {
   width: 100%;
-  padding: 17px;
+  padding: 20px 18px 8px 18px;
   border: 1.5px solid #e1e5e9;
-  border-radius: 24px;
+  border-radius: 10px;
   font-size: 14px;
-  font-weight:300;
+  font-weight: 400;
   background-color: #fafbfc;
   transition: all 0.3s ease;
   box-sizing: border-box;
 }
+.floating-label {
+  position: absolute;
+  top: 50%;
+  left: 18px;
+  transform: translateY(-50%);
+  color: #b6b6b6;
+  font-size: 14px;
+  font-weight: 400;
+  pointer-events: none;
+  transition: all 0.3s ease;
+  background: #fafbfc;
+  padding: 0 4px;
+}
+
+.form-input:focus + .floating-label,
+.form-input:not(:placeholder-shown) + .floating-label {
+  top: 0;
+  transform: translateY(-50%) scale(0.85);
+  color: #0c3437;
+  font-weight: 500;
+}
 
 .form-input:focus {
+  padding: 20px 18px 8px 18px;
   outline: none;
   border-color: #0c3437;
   background-color: #ffffff;
@@ -252,9 +312,9 @@ export default {
   background-color: #0c3437;
   color: white;
   border: none;
-  border-radius: 24px;
-  padding: 17px;
-  font-size: 16px;
+  border-radius: 10px;
+  padding: 14px;
+  font-size: 15px;
   font-weight: 500;
   margin-top: 10px;
   cursor: pointer;
@@ -298,52 +358,76 @@ export default {
 
 
 .social-btn {
-  width: 30px;
+  width: 15px;
   display: flex;
   align-items: center;
   justify-content: center;
-  background-color:#fafbfc;
-  border: 1px solid #fcfcfc;
+  background:none;
+  border: 1px solid #ffffff;
   color: #0c3437;
   border-radius: 14px;
-  box-sizing: border-box;
-  padding: 15px;
-  padding-left: 10px;
-  padding-right:10px;
-  margin-left: 30px;
-  margin-right:30px;
+  padding: 5px;
   cursor: pointer;
-  gap: 0;
   transition: background-color 0.3s;
   -webkit-tap-highlight-color: transparent;
    flex: 1; /* Added this line */
 }
-
-/*.social-btn:hover {
-  background-color: #163a43;
-}*/
 
 .social-icon {
   width: 20px; /* Adjust size as needed */
   height: 20px; /* Adjust size as needed */
   object-fit: contain;
 }
-
-
 .sign-up-section {
   text-align: center;
   margin-top: 24px;
-  font-size: 14px;
+  font-size: 13px;
   color: #333;
 
 }
 
 .sign-up-link {
-  color: #c83232;
+  color: #ff1509;
   text-decoration: none;
-  font-size: 14px;
+  font-size: 13px;
   cursor: pointer;
 }
+
+/* Small Phones (320px - 374px) */
+@media (max-width: 374px) {
+  .hero-banner {
+    height: 28vh;
+    min-height: 200px;
+    padding-bottom: 25px;
+
+  }
+  .name-row {
+    gap: 8px;
+  }
+
+  .hero-image {
+    width: 180px;
+    height: 189px;
+  }
+
+  .sign-in-card {
+    padding: 32px 20px;
+    margin-top: -35px;
+  }
+
+  .welcome-text {
+    font-size: 22px;
+  }
+
+  .welcome-text span {
+    font-size: 26px;
+  }
+
+  .card-title {
+    font-size: 14px;
+  }
+}
+
 
 /* Medium Phones (375px - 414px) */
 @media (min-width: 375px) and (max-width: 414px) {
@@ -484,7 +568,7 @@ export default {
 /* Prevent zoom on iOS input focus */
 @media screen and (max-width: 767px) {
   .form-input {
-    font-size: 16px; /* Prevents zoom on iOS */
+    font-size: 15px; /* Prevents zoom on iOS */
   }
 }
 

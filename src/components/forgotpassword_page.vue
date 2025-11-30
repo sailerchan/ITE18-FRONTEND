@@ -5,38 +5,31 @@
     </div>
 
     <div class="card sign-in-card">
-      <div class="welcome-text">Welcome back, traveler!</div>
-      <p class="card-title">Let's continue your travel plans. Enter your details to sign in.</p>
+      <div class="welcome-text">Reset Password</div>
+      <p class="card-title">Enter your email address and we'll send you instructions to reset your password.</p>
 
-      <form @submit.prevent="$emit('handle-login')">
+      <form @submit.prevent="handleResetPassword">
         <div class="form-group floating-group">
           <div class="input-box">
             <input type="email" id="email" class="form-input"
                    placeholder=" "
-                   :value="loginForm.email"
-                   @input="$emit('update:email', $event.target.value)"
+                   v-model="email"
                    @focus="handleFocus"
                    @blur="handleBlur"
                    required>
-            <label for="email" class="floating-label">Email</label>
+            <label for="email" class="floating-label">Email Address</label>
           </div>
         </div>
 
-        <div class="form-group floating-group">
-          <div class="input-box">
-            <input type="password" id="password" class="form-input"
-                   placeholder=" "
-                   :value="loginForm.password"
-                   @input="$emit('update:password', $event.target.value)"
-                   @focus="handleFocus"
-                   @blur="handleBlur"
-                   required>
-            <label for="password" class="floating-label">Password</label>
-          </div>
-          <a href="#" class="forgot-password" @click="$emit('go-to-page', 'forgot-password')">Forgot Password?</a>
-        </div>
+        <button type="submit" class="sign-in-btn" :disabled="!email">
+          Send Reset Instructions
+        </button>
 
-        <button type="submit" class="sign-in-btn">Sign In</button>
+        <div class="back-to-login">
+          <a href="#" class="back-link" @click="$emit('go-to-page', 'login')">
+            ← Back to Sign In
+          </a>
+        </div>
       </form>
 
       <div class="divider">
@@ -63,33 +56,32 @@
 
 <script>
 export default {
-  name: 'log_in',
-  props: {
-    loginForm: {
-      type: Object,
-      required: true
+  name: 'forgot_password',
+  data() {
+    return {
+      email: ''
     }
   },
   emits: [
-    'update:email',
-    'update:password',
-    'handle-login',
-    'social-login',
-    'go-to-page'
+    'go-to-page',
+    'social-login'
   ],
   methods: {
     handleFocus(event) {
       // This method ensures the label moves up when input is focused
-      // The CSS will handle the visual effect
     },
     handleBlur(event) {
       // This method ensures the label stays up if there's content
-      // The CSS will handle the visual effect
+    },
+    handleResetPassword() {
+      // Handle password reset logic here
+      console.log('Password reset requested for:', this.email);
+      // You can emit an event to parent component or handle API call here
+      this.$emit('reset-password', this.email);
     }
   }
 }
 </script>
-
 
 <style scoped>
 /* Mobile-first base styles */
@@ -188,7 +180,7 @@ export default {
   pointer-events: none;
   transition: all 0.3s ease;
   background: #fafbfc;
-  padding: 0 4px;
+  padding:  2px;
 }
 
 /* Label moves up when input is focused or has value */
@@ -218,23 +210,13 @@ export default {
   display: none;
 }
 
-.forgot-password {
-  display: block;
-  text-align: right;
-  color: #ff1509;
-  text-decoration: none;
-  font-size: 12px;
-  margin-top: 5px;
-  font-weight:500;
-}
-
 .sign-in-btn {
   width: 100%;
   background-color: #0c3437;
   color: white;
   border: none;
   border-radius: 10px;
-  padding: 14px;
+  padding: 13px;
   font-size: 15px;
   font-weight: 500;
   margin-top: 10px;
@@ -243,13 +225,31 @@ export default {
   -webkit-tap-highlight-color: transparent; /* Remove tap highlight */
 }
 
-.sign-in-btn:hover {
+.sign-in-btn:hover:not(:disabled) {
   background-color: #163a43;
 }
 
 .sign-in-btn:disabled {
   background-color: #cccccc;
   cursor: not-allowed;
+}
+
+.back-to-login {
+  text-align: center;
+  margin-top: 20px;
+}
+
+.back-link {
+  color: #0c3437;
+  text-decoration: none;
+  font-size: 14px;
+  font-weight: 500;
+  cursor: pointer;
+  transition: color 0.3s ease;
+}
+
+.back-link:hover {
+  color: #075258;
 }
 
 .divider {
@@ -302,18 +302,16 @@ export default {
 .sign-up-section {
   text-align: center;
   margin-top: 24px;
-  font-size: 13px;
+  font-size: 14px;
   color: #333;
 }
 
 .sign-up-link {
-  color: #ff1509;
+  color: #c83232;
   text-decoration: none;
-  font-size: 13px;
+  font-size: 14px;
   cursor: pointer;
-  font-weight:500;
 }
-
 
 /* Small Phones (320px - 374px) */
 @media (max-width: 374px) {
@@ -509,3 +507,4 @@ export default {
   }
 }
 </style>
+

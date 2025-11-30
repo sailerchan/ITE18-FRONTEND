@@ -7,6 +7,7 @@
       <div class="debug-buttons">
         <button @click="goToPage('login')">Login</button>
         <button @click="goToPage('signup')">Signup</button>
+        <button @click="goToPage('forgot-password')">Forgot Password</button>
         <button @click="goToPage('homepage')">Homepage</button>
         <button @click="goToPage('trips')">Trips</button>
         <button @click="goToPage('notifications')">Notifications</button>
@@ -37,13 +38,22 @@
       v-else-if="currentPage === 'signup'"
       :signup-form="signupForm"
       :is-signup-form-valid="isSignupFormValid"
-      @update:fullName="signupForm.fullName = $event"
+      @update:firstName="signupForm.firstName = $event"
+      @update:lastName="signupForm.lastName = $event"
       @update:email="signupForm.email = $event"
       @update:password="signupForm.password = $event"
       @update:confirmPassword="signupForm.confirmPassword = $event"
       @validate-password="validatePassword"
       @validate-confirm-password="validateConfirmPassword"
       @handle-signup="handleSignup"
+      @go-to-page="goToPage"
+    />
+
+    <!-- Forgot Password Component -->
+    <ForgotPassword
+      v-else-if="currentPage === 'forgot-password'"
+      @reset-password="handleResetPassword"
+      @social-login="socialLogin"
       @go-to-page="goToPage"
     />
 
@@ -210,6 +220,7 @@
 import { ref, computed } from 'vue'
 import Login from './components/log_in.vue'
 import Signup from './components/sign_up.vue'
+import ForgotPassword from './components/forgotpassword_page.vue' // ADDED
 import Homepage from './components/home_page.vue'
 import TripsPage from './components/TripsPage.vue'
 import NotificationPage from './components/NotificationPage.vue'
@@ -232,6 +243,7 @@ export default {
   components: {
     Login,
     Signup,
+    ForgotPassword, // ADDED
     Homepage,
     TripsPage,
     NotificationPage,
@@ -262,7 +274,8 @@ export default {
     })
 
     const signupForm = ref({
-      fullName: '',
+      firstName: '',
+      lastName: '',
       email: '',
       password: '',
       confirmPassword: '',
@@ -271,7 +284,7 @@ export default {
     })
 
     const userName = ref('')
-    const currentLocation = ref('Butuan City, Philippines')
+    const currentLocation = ref('')
     const searchQuery = ref('')
     const activeNav = ref('home')
 
@@ -431,7 +444,8 @@ export default {
     })
 
     const isSignupFormValid = computed(() => {
-      return signupForm.value.fullName &&
+      return signupForm.value.firstName &&
+            signupForm.value.lastName &&
              signupForm.value.email &&
              signupForm.value.password &&
              signupForm.value.confirmPassword &&
@@ -547,20 +561,30 @@ export default {
       }
 
       console.log('Signup attempt with:', {
-        fullName: signupForm.value.fullName,
+        firstName: signupForm.value.firstName,
+        lastName: signupForm.value.lastName,
         email: signupForm.value.email,
         password: signupForm.value.password
       })
 
-      if (signupForm.value.fullName) {
-        userName.value = signupForm.value.fullName
-      } else {
-        // If no full name provided, use email name
-        const nameFromEmail = getNameFromEmail(signupForm.value.email)
-        userName.value = nameFromEmail.charAt(0).toUpperCase() + nameFromEmail.slice(1)
-      }
+      if (signupForm.value.firstName) {
+  userName.value = signupForm.value.firstName
+} else {
+  // If no first name provided, use email name
+  const nameFromEmail = getNameFromEmail(signupForm.value.email)
+  userName.value = nameFromEmail.charAt(0).toUpperCase() + nameFromEmail.slice(1)
+}
 
       goToPage('homepage')
+    }
+
+    // ADDED: Forgot password handler
+    const handleResetPassword = (email) => {
+      console.log('Password reset requested for:', email)
+      // Handle password reset logic here
+      alert(`Password reset instructions sent to ${email}`)
+      // Optionally navigate back to login
+      goToPage('login')
     }
 
     const socialLogin = (provider) => {
@@ -591,6 +615,8 @@ export default {
         goToPage('profile')
       } else if (currentPage.value === 'change-password') {
         goToPage('profile')
+      } else if (currentPage.value === 'forgot-password') { // ADDED
+        goToPage('login')
       } else if (currentPage.value === 'trips' || currentPage.value === 'notifications' || currentPage.value === 'profile') {
         goToPage('homepage')
       } else {
@@ -652,7 +678,8 @@ export default {
       userName.value = ''
       loginForm.value = { email: '', password: '' }
       signupForm.value = {
-        fullName: '',
+        firstName: '',
+        lastName: '',
         email: '',
         password: '',
         confirmPassword: '',
@@ -825,6 +852,7 @@ export default {
       validateConfirmPassword,
       handleLogin,
       handleSignup,
+      handleResetPassword, // ADDED
       socialLogin,
       goToPage,
       goToPreviousPage,
