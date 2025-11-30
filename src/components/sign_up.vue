@@ -1,7 +1,7 @@
 <template>
   <div class="container">
     <div class="hero-banner">
-      <img src="/images/girlvector.png" alt="Girl with luggage" class="hero-image">
+      <img src="/images/logos/girlvector.png" alt="Girl with luggage" class="hero-image">
     </div>
 
     <div class="card sign-in-card">
@@ -74,11 +74,11 @@
 
       <div class="social-buttons">
         <button class="social-btn" @click="$emit('social-login', 'google')">
-           <img src="/images/icon-google.svg" alt="Google" class="social-icon">
+           <img src="/images/logos/icon-google.svg" alt="Google" class="social-icon">
 
         </button>
         <button class="social-btn" @click="$emit('social-login', 'apple')">
-         <img src="/images/icon-apple.webp" alt="Apple" class="social-icon">
+         <img src="/images/logos/icon-apple.webp" alt="Apple" class="social-icon">
 
         </button>
       </div>

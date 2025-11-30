@@ -38,13 +38,12 @@
           <div class="destination-card" v-for="destination in filteredDestinations" :key="destination.id" @click="$emit('view-destination', destination.id)">
             <div class="thumb">
               <img :src="destination.image" :alt="destination.name">
-                <div class="rating-pill"><i class="fas fa-star"></i> {{ destination.rating }}
-                </div>
-                  <div class="details-overlay">
-                    <div class="destination-info">
-                      <h5>{{ destination.name }}</h5>
-                      <p>{{ destination.description }}</p>
-                    </div>
+                <div class="rating-pill"><i class="fas fa-star"></i> {{ destination.rating }}</div>
+                    <div class="details-overlay">
+                      <div class="destination-info">
+                        <h5>{{ destination.name }}</h5>
+                        <p>{{ destination.description }}</p>
+                      </div>
                   </div>
                 </div>
             </div>
@@ -294,18 +293,19 @@ export default {
     font-weight: 700;
 }
 .hero-rating {
-    position: absolute;
-    top: 16px;
-    right: 16px;
-    background: #ffffff5f;
-    padding: 8px 14px;
-    border-radius: 20px;
-    display: flex;
-    align-items: center;
-    gap: 6px;
-    font-weight: 700;
-    color: #2d3436;
-    box-shadow: 0 4px 16px rgba(0,0,0,0.1);
+  position: absolute;
+  top: 16px;
+  right: 20px;
+  background: rgba(255, 255, 255, 0.279);
+  backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px);
+  padding: 4px 10px;
+  border-radius: 12px;
+  font-size: 11px;
+  font-weight: 600;
+  color: #fdfdfd;
+  border: 1px solid rgba(255, 255, 255, 0.5);
+  margin: 0;
 }
 .hero-rating i {
   color: #ffc107;
@@ -368,17 +368,17 @@ export default {
 }
 
 .destination-card {
-    width: 8%;
-    min-width: 300px;
-    height: 350px;
-    background: #ffffff33;
-    border-radius: 30px;
-    overflow: hidden;
-    box-shadow: var(--card-shadow);
-    flex: 1;
-    cursor: pointer;
-    transition: all .3s ease;
-    -webkit-tap-highlight-color: transparent;
+  min-width: 280px;
+  width: 280px;
+  height: 350px;
+  background: #ffffffff;
+  border-radius: 24px;
+  overflow: hidden;
+  box-shadow: var(--card-shadow);
+  cursor: pointer;
+  transition: all 0.3s ease;
+  -webkit-tap-highlight-color: transparent;
+  flex-shrink: 0; 
 }
 .destination-card:hover {
   transform: translateY(-4px);
@@ -386,7 +386,8 @@ export default {
 }
 .thumb {
   position: relative;
-  height: 350px;
+  height: 100%;
+  width: 100%;
 }
 .thumb img {
   width: 100%;
@@ -394,19 +395,19 @@ export default {
   object-position: center;
 }
 .rating-pill {
-    position: absolute;
-    top: 10px;
-    right: 10px;
-    background: #ffffff5f;
-    padding: 6px 10px;
-    border-radius: 20px;
-    font-weight: 700;
-    display: flex;
-    gap: 4px;
-    align-items: center;
-    font-size: 12px;
-    margin-right: 10px;
-    margin-top: 8px;
+  position: absolute;
+  top: 16px;
+  right: 20px;
+  background: rgba(255, 255, 255, 0.279);
+  backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px);
+  padding: 4px 10px;
+  border-radius: 12px;
+  font-size: 11px;
+  font-weight: 600;
+  color: #fdfdfd;
+  border: 1px solid rgba(255, 255, 255, 0.5);
+  margin: 0;
 }
 .rating-pill i {
   color: #ffc107;
@@ -480,7 +481,106 @@ export default {
   background: rgba(0,0,0,0.03);
 }
 
-/* Exact same responsive breakpoints as login page */
+/* RESPONSIVE BREAKPOINTS - OPTIMIZED FOR 1080x2040 */
+@media (max-width: 374px) {
+  .destination-card {
+    min-width: 240px;
+    height: 300px;
+  }
+  
+  .details-overlay {
+    bottom: 12px;
+    left: 12px;
+    right: 12px;
+    padding: 12px;
+  }
+  
+  .destination-info h5 {
+    font-size: 15px;
+  }
+  
+  .destination-info p {
+    font-size: 12px;
+  }
+}
+
+/* Medium Phones (375px - 414px) */
+@media (min-width: 375px) and (max-width: 414px) {
+  .destination-card {
+    min-width: 260px;
+    height: 320px;
+  }
+}
+
+/* Large Phones (415px - 767px) */
+@media (min-width: 415px) and (max-width: 767px) {
+  .destination-card {
+    min-width: 280px;
+    height: 350px;
+  }
+}
+
+/* TARGETING 1080x2040 SCREENS (typical phone dimensions) */
+@media (min-width: 400px) and (max-height: 900px) {
+  .destination-card {
+    min-width: 300px;
+    height: 380px;
+  }
+  
+  .scroll-wrapper {
+    gap: 20px;
+  }
+  
+  .details-overlay {
+    bottom: 20px;
+    left: 20px;
+    right: 20px;
+  }
+}
+
+/* Small Tablets (768px - 1023px) */
+@media (min-width: 768px) and (max-width: 1023px) {
+  .destination-card {
+    min-width: 320px;
+    height: 400px;
+  }
+  
+  .scroll-wrapper {
+    gap: 24px;
+  }
+}
+
+/* Large Tablets (1024px - 1366px) */
+@media (min-width: 1024px) and (max-width: 1366px) {
+  .destination-card {
+    min-width: 300px;
+    height: 380px;
+  }
+}
+
+/* Desktop (1367px and up) */
+@media (min-width: 1367px) {
+  .destination-card {
+    min-width: 320px;
+    height: 400px;
+  }
+}
+
+/* Landscape Mobile */
+@media (max-height: 600px) and (orientation: landscape) {
+  .destination-card {
+    min-width: 280px;
+    height: 320px;
+  }
+}
+
+/* Very short screens */
+@media (max-height: 500px) {
+  .destination-card {
+    min-width: 260px;
+    height: 300px;
+  }
+}
 
 /* Small Phones (320px - 374px) */
 @media (max-width: 374px) {

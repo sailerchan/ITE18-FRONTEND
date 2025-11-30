@@ -15,17 +15,17 @@
       <div class="accommodation-list">
         <!-- Property Card 1 -->
         <div class="property-card" @click="$emit('view-booking', 'paradiso')">
-          <img src="/images/paradiso.avif" alt="Paradiso Hotel Bunks" class="property-image">
-          <div class="property-type">HOSTEL</div>
+          <img src="/images/accommodations/paradiso.avif" alt="Paradiso Hotel Bunks" class="property-image">
+          <div class="property-type">
+            <span class="property-stars"><i class="fas fa-star"></i></span>4.9</div>
           <div class="details-overlay">
             <div class="property-info">
               <h3>Paradiso Hotel Bunks</h3>
               <div class="property-location">
-                <span class="property-location-icon">📍</span>General Luna, Philippines
+                <span class="property-location-icon"></span>General Luna, Philippines
               </div>
               <div class="property-rating">
-                <div class="property-stars">★★★★☆</div>
-                <div class="property-rating-value">4.5 (86 reviews)</div>
+                <div class="property-rating-value">(86 reviews)</div>
               </div>
             </div>
             <div class="price-tag">
@@ -37,17 +37,17 @@
 
         <!-- Property Card 2 -->
         <div class="property-card" @click="$emit('view-booking', 'copacabana')">
-          <img src="/images/copacabana.jpg" alt="Copacabana Siargao" class="property-image">
-          <div class="property-type">HOTEL</div>
+          <img src="/images/accommodations/copacabana.jpg" alt="Copacabana Siargao" class="property-image">
+          <div class="property-type">
+            <span class="property-stars">★</span>4.7</div>
           <div class="details-overlay">
             <div class="property-info">
               <h3>Copacabana Siargao</h3>
               <div class="property-location">
-                <span class="property-location-icon">📍</span>General Luna, Philippines
+                <span class="property-location-icon"></span>General Luna, Philippines
               </div>
               <div class="property-rating">
-                <div class="property-stars">★★★★☆</div>
-                <div class="property-rating-value">4.7 (96 reviews)</div>
+                <div class="property-rating-value">(96 reviews)</div>
               </div>
             </div>
             <div class="price-tag">
@@ -58,22 +58,22 @@
         </div>
 
         <!-- Property Card 3 -->
-        <div class="property-card" @click="$emit('view-booking', 'retreat')">
-          <img src="/images/paradiso.1.avif" alt="Paradiso Island Retreat" class="property-image">
-          <div class="property-type">RETREAT</div>
+        <div class="property-card" @click="$emit('view-booking', 'casavia')">
+          <img src="/images/accommodations/casavia.jpg" alt="Paradiso Island Retreat" class="property-image">
+          <div class="property-type">
+                  <span class="property-stars">★</span>4.9</div>
           <div class="details-overlay">
             <div class="property-info">
-              <h3>Paradiso Island Retreat</h3>
+              <h3>Casavia Siargao</h3>
               <div class="property-location">
-                <span class="property-location-icon">📍</span>General Luna, Philippines
+                <span class="property-location-icon"></span>General Luna, Philippines
               </div>
               <div class="property-rating">
-                <div class="property-stars">★★★★★</div>
-                <div class="property-rating-value">4.8 (142 reviews)</div>
+                <div class="property-rating-value">(142 reviews)</div>
               </div>
             </div>
             <div class="price-tag">
-              <div class="property-price">₱4,200.00</div>
+              <div class="property-price">₱890.00</div>
               <div class="property-per-night">/ night</div>
             </div>
           </div>
@@ -203,7 +203,7 @@ export default {
   position: relative;
   width: 100%;
   height: 350px;
-  border-radius: 20px;
+  border-radius: 30px;
   overflow: hidden;
   box-shadow: 0 6px 20px rgba(0, 0, 0, 0.1);
   transition: transform 0.3s ease, box-shadow 0.3s ease;
@@ -227,13 +227,13 @@ export default {
 .details-overlay {
   position: absolute;
   bottom: 12px;
-  left: 12px;
-  right: 12px;
+  left: 16px;
+  right: 16px;
   background: #847b7b4d;
   backdrop-filter: blur(10px);
   -webkit-backdrop-filter: blur(10px);
-  border-radius: 16px;
-  padding: 14px;
+  border-radius: 14px;
+  padding: 10px;
   display: flex;
   justify-content: space-between;
   align-items: flex-end;
@@ -242,37 +242,37 @@ export default {
 }
 
 .property-info h3 {
-  font-size: 16px;
+  font-size: 20px;
   font-weight: 700;
   margin-bottom: 4px;
   color: #ffffff;
   margin: 0 0 4px 0;
+  margin-left:6px;
 }
 
 .property-location {
   display: flex;
-  align-items: center;
   font-size: 13px;
-  color: #ffffff;
+  color: #fff7f7e4;
   font-weight: 500;
-  margin-bottom: 6px;
+  margin-bottom: 3px;
+  margin-left: 4px;
 }
 
-.property-location-icon {
-  margin-right: 4px;
-  font-size: 14px;
-}
 
 .property-rating {
   display: flex;
   align-items: center;
-  margin-top: 6px;
+  margin-top: 0px;
+  margin-left: 4px;
+  color: #fff7f7e4;
+  font-weight: 400;
 }
 
 .property-stars {
   color: #FFC107;
   margin-right: 4px;
-  font-size: 13px;
+  font-size: 12px;
 }
 
 .property-rating-value {
@@ -302,7 +302,7 @@ export default {
 .property-type {
   position: absolute;
   top: 12px;
-  right: 12px;
+  right: 20px;
   background: rgba(255, 255, 255, 0.279);
   backdrop-filter: blur(8px);
   -webkit-backdrop-filter: blur(8px);
@@ -310,7 +310,7 @@ export default {
   border-radius: 12px;
   font-size: 11px;
   font-weight: 600;
-  color: #000000;
+  color: #fdfdfd;
   border: 1px solid rgba(255, 255, 255, 0.5);
   margin: 0;
 }

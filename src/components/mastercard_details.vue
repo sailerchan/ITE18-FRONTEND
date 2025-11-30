@@ -11,7 +11,7 @@
 
       <!-- Mastercard Logo -->
       <div class="mastercard-logo">
-        <img src="/images/mastercard.png" alt="Mastercard" class="logo-image">
+        <img src="/images/logos/mastercard.png" alt="Mastercard" class="logo-image">
       </div>
 
       <!-- Payment Form -->
@@ -20,8 +20,8 @@
         <div class="form-group">
           <label class="form-label">Name on Card</label>
           <div class="input-box">
-            <input 
-              type="text" 
+            <input
+              type="text"
               placeholder="Enter full name"
               v-model="paymentDetails.name"
               class="form-input"
@@ -33,8 +33,8 @@
         <div class="form-group">
           <label class="form-label">Card Number</label>
           <div class="input-box card-input-container">
-            <input 
-              type="text" 
+            <input
+              type="text"
               placeholder="1234 5678 9012 3456"
               v-model="paymentDetails.cardNumber"
               class="form-input card-number"
@@ -50,8 +50,8 @@
           <div class="form-group">
             <label class="form-label">Expiration</label>
             <div class="input-box">
-              <input 
-                type="text" 
+              <input
+                type="text"
                 placeholder="MM/YY"
                 v-model="paymentDetails.expiry"
                 class="form-input"
@@ -60,12 +60,12 @@
               >
             </div>
           </div>
-          
+
           <div class="form-group">
             <label class="form-label">CVV</label>
             <div class="input-box">
-              <input 
-                type="text" 
+              <input
+                type="text"
                 placeholder="123"
                 v-model="paymentDetails.cvv"
                 class="form-input"
@@ -80,8 +80,8 @@
         <div class="form-group">
           <label class="form-label">Postal Code</label>
           <div class="input-box">
-            <input 
-              type="text" 
+            <input
+              type="text"
               placeholder="Enter postal code"
               v-model="paymentDetails.postalCode"
               class="form-input"
@@ -103,19 +103,19 @@
       <!-- Payment Details -->
       <div class="payment-details">
         <h2>Payment Details</h2>
-        
+
         <div class="amount-row">
           <span>Amount</span>
           <span>₱{{ totalAmount.toFixed(2) }}</span>
         </div>
-        
+
         <div class="amount-row">
           <span>Additional fee</span>
           <span>₱{{ additionalFee.toFixed(2) }}</span>
         </div>
-        
+
         <div class="divider"></div>
-        
+
         <div class="total-row">
           <span>Total</span>
           <span class="total-amount">₱{{ (totalAmount + additionalFee).toFixed(2) }}</span>
@@ -160,7 +160,7 @@ export default {
     const saveCard = ref(false)
 
     const isFormValid = computed(() => {
-      return paymentDetails.value.name && 
+      return paymentDetails.value.name &&
              paymentDetails.value.cardNumber.replace(/\s/g, '').length === 16 &&
              paymentDetails.value.expiry.length === 5 &&
              paymentDetails.value.cvv.length === 3 &&
@@ -172,11 +172,11 @@ export default {
       const matches = value.match(/\d{4,16}/g)
       const match = matches ? matches[0] : ''
       const parts = []
-      
+
       for (let i = 0, len = match.length; i < len; i += 4) {
         parts.push(match.substring(i, i + 4))
       }
-      
+
       if (parts.length) {
         paymentDetails.value.cardNumber = parts.join(' ')
       } else {
@@ -216,7 +216,7 @@ export default {
 
       // Simulate Mastercard payment processing
       console.log('Processing Mastercard payment...', paymentDetails.value)
-      
+
       // Simulate API call delay
       setTimeout(() => {
         emit('payment-success')
@@ -504,25 +504,25 @@ export default {
     width: 70px;
     height: 45px;
   }
-  
+
   .form-input {
     padding: 14px;
     font-size: 15px;
   }
-  
+
   .row-inputs {
     gap: 12px;
   }
-  
+
   .payment-details {
     padding: 20px;
   }
-  
+
   .amount-row,
   .total-row {
     font-size: 14px;
   }
-  
+
   .total-amount {
     font-size: 16px;
   }

@@ -17,9 +17,9 @@
 
             <div class="location-info">
               <i class="fas fa-map-marker-alt"></i>
-              <span>{{ selectedProperty.location }}</span>
-              <button class="view-map" @click="$emit('handle-view-map')">View Map</button>
-            </div>
+              <span>{{ selectedProperty.location }} - <button class="view-map" @click="$emit('handle-view-map')"> View Map</button>
+            </span>
+             </div>
 
             <div class="separator"></div>
 
@@ -157,7 +157,7 @@ export default {
 </script>
 
 <style scoped>
-/* Exact same container as login page */
+
 .container {
   min-height: 100vh;
   min-height: 100dvh;
@@ -188,10 +188,11 @@ export default {
 
 /* Header image */
 .image-header {
-    height: 45vh;
+    height: 70vh;
     background-size: cover;
     background-position: center;
     position: relative;
+
 }
 
 .close-btn {
@@ -201,7 +202,9 @@ export default {
     width: 40px;
     height: 40px;
     border-radius: 50%;
-    background-color: rgba(255, 255, 255, 0.8);
+    background: rgba(209, 201, 201, 0.061);
+    backdrop-filter: blur(8px);
+    -webkit-backdrop-filter: blur(8px);
     display: flex;
     justify-content: center;
     align-items: center;
@@ -209,6 +212,7 @@ export default {
     cursor: pointer;
     transition: background-color 0.2s;
     -webkit-tap-highlight-color: transparent;
+    border: 1px solid rgba(255, 255, 255, 0.5);
 }
 
 .close-btn:hover {
@@ -216,7 +220,7 @@ export default {
 }
 
 .close-btn i {
-    color: #333;
+    color: #ffffff;
     font-size: 18px;
 }
 
@@ -229,6 +233,7 @@ export default {
     flex: 1;
     display: flex;
     flex-direction: column;
+    overflow-y: auto;
 }
 
 .details-content {
@@ -256,24 +261,25 @@ export default {
     align-items: center;
     margin-bottom: 24px;
     font-size: 15px;
-    color: #666;
+    color: #0c3437;
+
 }
 
 .location-info i {
-    color: #1f4f5a;
+    color: #0c3437;
     margin-right: 8px;
-    font-size: 16px;
+    font-size: 15px;
 }
 
 .view-map {
-    color: #1f7a8c;
+    color: #0c3437;
     text-decoration: underline;
     font-weight: 500;
     margin-left: auto;
     cursor: pointer;
     background: none;
     border: none;
-    font-size: 15px;
+    font-size: 13px;
     -webkit-tap-highlight-color: transparent;
 }
 

@@ -11,7 +11,7 @@
 
       <!-- Logo -->
       <div class="logo-container">
-        <img src="/images/gcash_logo.png" alt="GCash" class="gcash-logo">
+        <img src="/images/logos/gcash_logo.png" alt="GCash" class="gcash-logo">
       </div>
 
       <!-- Transaction Details Card -->
@@ -26,7 +26,7 @@
           <div class="summary-header">
             <h3>YOU ARE ABOUT TO PAY</h3>
           </div>
-          
+
           <div class="amount-breakdown">
             <div class="amount-row">
               <span class="amount-label">Amount</span>
@@ -282,48 +282,48 @@ export default {
     padding: 32px 20px;
     border-radius: 20px 20px 0 0;
   }
-  
+
   .header {
     margin-bottom: 30px;
   }
-  
+
   .header-title {
     font-size: 16px;
   }
-  
+
   .back-btn {
     font-size: 16px;
     width: 36px;
     height: 36px;
   }
-  
+
   .gcash-logo {
     width: 100px;
     height: 100px;
   }
-  
+
   .payee-header {
     padding: 18px;
   }
-  
+
   .payee-name {
     font-size: 16px;
   }
-  
+
   .payment-summary {
     padding: 20px;
   }
-  
+
   .amount-label,
   .amount-value {
     font-size: 15px;
   }
-  
+
   .total-label,
   .total-value {
     font-size: 17px;
   }
-  
+
   .pay-button {
     padding: 16px;
     font-size: 16px;
@@ -352,7 +352,7 @@ export default {
     background: #f8f9fa;
     padding: 20px 0;
   }
-  
+
   .gcash-confirm-inner {
     max-width: 768px;
     margin: -50px auto 0 auto;
@@ -370,7 +370,7 @@ export default {
     background: #f8f9fa;
     padding: 40px 0;
   }
-  
+
   .gcash-confirm-inner {
     max-width: 500px;
     margin: -60px auto 0 auto;
@@ -386,7 +386,7 @@ export default {
     background: #f8f9fa;
     padding: 40px 0;
   }
-  
+
   .gcash-confirm-inner {
     max-width: 500px;
     margin: 0 auto;
@@ -399,28 +399,28 @@ export default {
   .gcash-confirm-inner {
     padding: 24px 20px;
   }
-  
+
   .header {
     margin-bottom: 24px;
   }
-  
+
   .logo-container {
     margin-bottom: 24px;
   }
-  
+
   .gcash-logo {
     width: 80px;
     height: 80px;
   }
-  
+
   .payee-header {
     padding: 16px;
   }
-  
+
   .payment-summary {
     padding: 20px;
   }
-  
+
   .pay-button-section {
     padding: 16px 0 0 0;
   }
@@ -431,32 +431,32 @@ export default {
   .gcash-confirm-inner {
     padding: 20px 16px;
   }
-  
+
   .header {
     margin-bottom: 20px;
   }
-  
+
   .logo-container {
     margin-bottom: 20px;
   }
-  
+
   .gcash-logo {
     width: 60px;
     height: 60px;
   }
-  
+
   .payee-header {
     padding: 14px;
   }
-  
+
   .payment-summary {
     padding: 16px;
   }
-  
+
   .amount-row {
     margin-bottom: 12px;
   }
-  
+
   .pay-button {
     padding: 14px;
     font-size: 16px;

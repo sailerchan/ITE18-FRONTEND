@@ -12,7 +12,7 @@
       <main class="main-content">
         <!-- GCash Logo -->
         <div class="logo-container">
-          <img src="/images/gcash_logo.png" alt="GCash" class="gcash-logo-image">
+          <img src="/images/logos/gcash_logo.png" alt="GCash" class="gcash-logo-image">
         </div>
 
         <!-- Payment Card -->
@@ -36,9 +36,9 @@
             <div class="input-container">
               <div class="input-group">
                 <span class="country-code">+63</span>
-                <input 
-                  type="tel" 
-                  placeholder="Mobile Number" 
+                <input
+                  type="tel"
+                  placeholder="Mobile Number"
                   class="mobile-input"
                   maxlength="10"
                   v-model="mobileNumber"
@@ -49,7 +49,7 @@
             </div>
 
             <!-- Next Button -->
-            <button 
+            <button
               class="next-button"
               @click="proceedToPayment"
               :disabled="!isValidMobileNumber"
@@ -101,7 +101,7 @@ export default {
     validateMobileNumber() {
       // Remove any non-digit characters
       this.mobileNumber = this.mobileNumber.replace(/\D/g, '');
-      
+
       if (this.mobileNumber.length === 0) {
         this.mobileError = '';
       } else if (this.mobileNumber.length < 10) {
@@ -123,10 +123,10 @@ export default {
 
       try {
         console.log('Processing payment with mobile number: +63' + this.mobileNumber);
-        
+
         // Simulate API call or payment processing
         await this.simulatePaymentProcessing();
-        
+
         // Emit payment success with receipt data
         this.$emit('payment-success', {
           amount: this.totalAmount,
@@ -142,7 +142,7 @@ export default {
         this.isProcessing = false;
       }
     },
-    
+
     simulatePaymentProcessing() {
       return new Promise((resolve) => {
         // Simulate network delay
@@ -424,38 +424,38 @@ export default {
     padding: 32px 20px;
     border-radius: 20px 20px 0 0;
   }
-  
+
   .main-content {
     padding: 32px 0;
   }
-  
+
   .payment-card {
     border-radius: 12px;
   }
-  
+
   .transaction-details {
     padding: 20px;
   }
-  
+
   .login-form {
     padding: 24px 20px;
   }
-  
+
   .gcash-logo-image {
     width: 100px;
     height: 100px;
   }
-  
+
   .logo-container {
     margin-bottom: 32px;
   }
-  
+
   .back-button {
     font-size: 18px;
     width: 36px;
     height: 36px;
   }
-  
+
   .value.amount {
     font-size: 18px;
   }
@@ -483,7 +483,7 @@ export default {
     background: #f8f9fa;
     padding: 20px 0;
   }
-  
+
   .gcash-detail-inner {
     max-width: 768px;
     margin: -50px auto 0 auto;
@@ -501,7 +501,7 @@ export default {
     background: #f8f9fa;
     padding: 40px 0;
   }
-  
+
   .gcash-detail-inner {
     max-width: 500px;
     margin: -60px auto 0 auto;
@@ -517,7 +517,7 @@ export default {
     background: #f8f9fa;
     padding: 40px 0;
   }
-  
+
   .gcash-detail-inner {
     max-width: 500px;
     margin: 0 auto;
@@ -530,24 +530,24 @@ export default {
   .gcash-detail-inner {
     padding: 24px 20px;
   }
-  
+
   .main-content {
     padding: 24px 0;
   }
-  
+
   .logo-container {
     margin-bottom: 24px;
   }
-  
+
   .gcash-logo-image {
     width: 80px;
     height: 80px;
   }
-  
+
   .login-form {
     padding: 20px;
   }
-  
+
   .transaction-details {
     padding: 20px;
   }
@@ -558,33 +558,33 @@ export default {
   .gcash-detail-inner {
     padding: 20px 16px;
   }
-  
+
   .main-content {
     padding: 16px 0;
   }
-  
+
   .logo-container {
     margin-bottom: 16px;
   }
-  
+
   .gcash-logo-image {
     width: 60px;
     height: 60px;
   }
-  
+
   .transaction-details {
     padding: 16px;
   }
-  
+
   .login-form {
     padding: 16px;
   }
-  
+
   .next-button {
     padding: 12px;
     font-size: 14px;
   }
-  
+
   .value.amount {
     font-size: 16px;
   }
