@@ -20,7 +20,7 @@
             <span class="property-stars"><i class="fas fa-star"></i></span>4.9</div>
           <div class="details-overlay">
             <div class="property-info">
-              <h3>Paradiso Hotel Bunks</h3>
+              <p>Paradiso Hotel Bunks</p>
               <div class="property-location">
                 <span class="property-location-icon"></span>General Luna, Philippines
               </div>
@@ -39,10 +39,10 @@
         <div class="property-card" @click="$emit('view-booking', 'copacabana')">
           <img src="/images/accommodations/copacabana.jpg" alt="Copacabana Siargao" class="property-image">
           <div class="property-type">
-            <span class="property-stars">★</span>4.7</div>
+            <span class="property-stars"><i class="fas fa-star"></i> </span>4.7</div>
           <div class="details-overlay">
             <div class="property-info">
-              <h3>Copacabana Siargao</h3>
+              <p>Copacabana Siargao</p>
               <div class="property-location">
                 <span class="property-location-icon"></span>General Luna, Philippines
               </div>
@@ -61,10 +61,10 @@
         <div class="property-card" @click="$emit('view-booking', 'casavia')">
           <img src="/images/accommodations/casavia.jpg" alt="Paradiso Island Retreat" class="property-image">
           <div class="property-type">
-                  <span class="property-stars">★</span>4.9</div>
+                  <span class="property-stars"><i class="fas fa-star"></i> </span>4.9</div>
           <div class="details-overlay">
             <div class="property-info">
-              <h3>Casavia Siargao</h3>
+              <p>Casavia Siargao</p>
               <div class="property-location">
                 <span class="property-location-icon"></span>General Luna, Philippines
               </div>
@@ -226,13 +226,13 @@ export default {
 
 .details-overlay {
   position: absolute;
-  bottom: 12px;
-  left: 16px;
-  right: 16px;
-  background: #847b7b4d;
+  bottom: 10px;
+  left: 10px;
+  right: 10px;
+  background: #00000005;
   backdrop-filter: blur(10px);
   -webkit-backdrop-filter: blur(10px);
-  border-radius: 14px;
+  border-radius: 16px;
   padding: 10px;
   display: flex;
   justify-content: space-between;
@@ -241,22 +241,22 @@ export default {
   box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
 }
 
-.property-info h3 {
-  font-size: 20px;
+.property-info {
+  font-size: 15px;
   font-weight: 700;
-  margin-bottom: 4px;
+  margin-bottom: 8px;
   color: #ffffff;
-  margin: 0 0 4px 0;
-  margin-left:6px;
+  margin: 0 0 0px 0;
+  margin-left:0px;
 }
 
 .property-location {
   display: flex;
-  font-size: 13px;
+  font-size: 12px;
   color: #fff7f7e4;
   font-weight: 500;
   margin-bottom: 3px;
-  margin-left: 4px;
+  margin-left: 0px;
 }
 
 
@@ -264,7 +264,7 @@ export default {
   display: flex;
   align-items: center;
   margin-top: 0px;
-  margin-left: 4px;
+  margin-left: 0px;
   color: #fff7f7e4;
   font-weight: 400;
 }
@@ -276,9 +276,10 @@ export default {
 }
 
 .property-rating-value {
-  font-size: 12px;
-  font-weight: 600;
+  font-size: 10px;
+  font-weight: 500;
   color: #ffffff;
+
 }
 
 .price-tag {
@@ -290,19 +291,19 @@ export default {
   font-size: 18px;
   font-weight: 700;
   color: #ffffff;
-  margin-right: 20px;
+  margin-right: 0px;
 }
 
 .property-per-night {
   font-size: 12px;
   color: #ffffff;
-    margin-right: 10px;
+    margin-right: 5px;
 }
 
 .property-type {
   position: absolute;
   top: 12px;
-  right: 20px;
+  right: 15px;
   background: rgba(255, 255, 255, 0.279);
   backdrop-filter: blur(8px);
   -webkit-backdrop-filter: blur(8px);
@@ -315,75 +316,188 @@ export default {
   margin: 0;
 }
 
-/* Exact same responsive breakpoints as login page */
+/* ================= RESPONSIVE BREAKPOINTS ================= */
 
-/* Small Phones (320px - 374px) */
-@media (max-width: 374px) {
+/* Extra Small Phones (under 320px) */
+@media (max-width: 320px) {
   .accommodation-inner {
-    padding: 32px 20px;
+    padding: 20px 16px;
   }
 
   .accommodation-header h1 {
-    font-size: 16px;
+    font-size: 18px;
     padding: 0 36px;
   }
 
   .accommodation-back-arrow {
-    font-size: 20px;
-    width: 28px;
-    height: 28px;
+    width: 24px;
+    height: 24px;
+    font-size: 18px;
   }
 
-  .accommodation-section-title,
+  .accommodation-section-title {
+    font-size: 16px;
+    padding: 0 0 2px 0;
+  }
+
   .accommodation-section-subtitle {
-    font-size: 20px;
+    font-size: 18px;
+    padding: 0 0 12px 0;
+    margin-top: -4px;
   }
 
   .property-card {
-    height: 200px;
+    height: 280px;
+    border-radius: 20px;
   }
 
   .details-overlay {
-    padding: 12px;
+    bottom: 10px;
+    left: 12px;
+    right: 12px;
+    padding: 8px;
+    border-radius: 12px;
   }
 
   .property-info h3 {
-    font-size: 15px;
+    font-size: 16px;
+    margin-left: 4px;
+    margin-bottom: 2px;
+  }
+
+  .property-location {
+    font-size: 11px;
+    margin-left: 4px;
+    margin-bottom: 2px;
+  }
+
+  .property-rating {
+    margin-left: 4px;
+  }
+
+  .property-rating-value {
+    font-size: 10px;
   }
 
   .property-price {
     font-size: 16px;
+    margin-right: 8px;
+  }
+
+  .property-per-night {
+    font-size: 10px;
+    margin-right: 8px;
+  }
+
+  .property-type {
+    top: 10px;
+    right: 12px;
+    padding: 3px 8px;
+    font-size: 10px;
   }
 }
 
-/* Medium Phones (375px - 414px) */
+/* Small Phones (321px - 374px) */
+@media (min-width: 321px) and (max-width: 374px) {
+  .accommodation-inner {
+    padding: 22px 18px;
+  }
+
+  .property-card {
+    height: 300px;
+    border-radius: 24px;
+  }
+
+  .property-info h3 {
+    font-size: 17px;
+  }
+
+  .property-price {
+    font-size: 17px;
+  }
+}
+
+/* Medium Phones (375px - 414px) - Standard modern phones */
 @media (min-width: 375px) and (max-width: 414px) {
   .accommodation-inner {
-    padding: 36px 24px;
+    padding: 24px 20px;
+  }
+
+  .property-card {
+    height: 320px;
+  }
+
+  .property-info h3 {
+    font-size: 18px;
   }
 }
 
-/* Large Phones (415px - 767px) */
-@media (min-width: 415px) and (max-width: 767px) {
+/* Large Phones (415px - 480px) */
+@media (min-width: 415px) and (max-width: 480px) {
   .accommodation-inner {
-    padding: 36px 28px;
+    padding: 26px 22px;
+  }
+
+  .property-card {
+    height: 340px;
+  }
+}
+
+/* Large Phones (481px - 767px) */
+@media (min-width: 481px) and (max-width: 767px) {
+  .accommodation-inner {
+    padding: 28px 24px;
+  }
+
+  .property-card {
+    height: 360px;
+  }
+
+  .details-overlay {
+    bottom: 16px;
+    left: 20px;
+    right: 20px;
+    padding: 12px;
+  }
+
+  .property-info h3 {
+    font-size: 21px;
+  }
+
+  .property-price {
+    font-size: 20px;
   }
 }
 
 /* Small Tablets (768px - 1023px) */
 @media (min-width: 768px) and (max-width: 1023px) {
   .container {
-    max-width: 768px;
-    margin: 0 auto;
     background: #f8f9fa;
+    padding: 20px;
   }
 
   .accommodation-inner {
     max-width: 768px;
-    margin: -50px auto 0 auto;
+    margin: 0 auto;
     border-radius: 24px;
     padding: 40px 32px;
     box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
+  }
+
+  .accommodation-header h1 {
+    font-size: 26px;
+    padding: 0 60px;
+  }
+
+  .accommodation-section-title {
+    font-size: 20px;
+    padding: 0 0 6px 0;
+  }
+
+  .accommodation-section-subtitle {
+    font-size: 24px;
+    padding: 0 0 20px 0;
+    margin-top: -8px;
   }
 
   .accommodation-list {
@@ -393,22 +507,54 @@ export default {
   }
 
   .property-card {
-    height: 250px;
+    height: 320px;
+  }
+
+  .property-info h3 {
+    font-size: 22px;
+  }
+
+  .property-price {
+    font-size: 22px;
+  }
+
+  .property-type {
+    top: 16px;
+    right: 24px;
+    padding: 6px 12px;
+    font-size: 12px;
   }
 }
 
-/* Large Tablets (1024px - 1366px) */
-@media (min-width: 1024px) and (max-width: 1366px) {
+/* Large Tablets (1024px - 1199px) */
+@media (min-width: 1024px) and (max-width: 1199px) {
   .container {
-    max-width: 1024px;
-    margin: 0 auto;
     background: #f8f9fa;
+    padding: 30px;
   }
 
   .accommodation-inner {
-    max-width: 800px;
-    margin: -60px auto 0 auto;
+    max-width: 900px;
+    margin: 0 auto;
+    border-radius: 24px;
     padding: 44px 36px;
+    box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
+  }
+
+  .accommodation-header h1 {
+    font-size: 28px;
+    padding: 0 70px;
+  }
+
+  .accommodation-section-title {
+    font-size: 22px;
+    padding: 0 0 8px 0;
+  }
+
+  .accommodation-section-subtitle {
+    font-size: 26px;
+    padding: 0 0 24px 0;
+    margin-top: -10px;
   }
 
   .accommodation-list {
@@ -418,22 +564,71 @@ export default {
   }
 
   .property-card {
-    height: 280px;
+    height: 340px;
+  }
+
+  .details-overlay {
+    bottom: 20px;
+    left: 24px;
+    right: 24px;
+    padding: 14px;
+  }
+
+  .property-info h3 {
+    font-size: 24px;
+  }
+
+  .property-location {
+    font-size: 15px;
+  }
+
+  .property-price {
+    font-size: 24px;
+  }
+
+  .property-per-night {
+    font-size: 14px;
+  }
+
+  .property-type {
+    top: 20px;
+    right: 28px;
+    padding: 8px 14px;
+    font-size: 13px;
   }
 }
 
-/* Desktop (1367px and up) */
-@media (min-width: 1367px) {
+/* Desktop (1200px and up) */
+@media (min-width: 1200px) {
   .container {
+    background: #f8f9fa;
+    padding: 40px;
     max-width: 1200px;
     margin: 0 auto;
-    background: #f8f9fa;
   }
 
   .accommodation-inner {
-    max-width: 900px;
-    margin: -60px auto 0 auto;
+    max-width: 1000px;
+    margin: 0 auto;
+    border-radius: 24px;
     padding: 48px 40px;
+    box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
+  }
+
+  .accommodation-header h1 {
+    font-size: 30px;
+    padding: 0 80px;
+  }
+
+  .accommodation-section-title {
+    font-size: 24px;
+    padding: 0 0 10px 0;
+  }
+
+  .accommodation-section-subtitle {
+    font-size: 28px;
+    padding: 0 0 28px 0;
+    margin-top: -12px;
   }
 
   .accommodation-list {
@@ -443,43 +638,48 @@ export default {
   }
 
   .property-card {
-    height: 300px;
+    height: 380px;
+  }
+
+  .details-overlay {
+    bottom: 24px;
+    left: 28px;
+    right: 28px;
+    padding: 16px;
+  }
+
+  .property-info h3 {
+    font-size: 26px;
+  }
+
+  .property-location {
+    font-size: 16px;
+  }
+
+  .property-rating-value {
+    font-size: 14px;
+  }
+
+  .property-price {
+    font-size: 26px;
+    margin-right: 24px;
+  }
+
+  .property-per-night {
+    font-size: 15px;
+    margin-right: 14px;
+  }
+
+  .property-type {
+    top: 24px;
+    right: 32px;
+    padding: 10px 16px;
+    font-size: 14px;
   }
 }
 
 /* Landscape Mobile */
 @media (max-height: 600px) and (orientation: landscape) {
-  .accommodation-inner {
-    padding: 24px 20px;
-  }
-
-  .accommodation-header {
-    padding: 0 0 16px 0;
-    margin-bottom: 16px;
-  }
-
-  .accommodation-section-title {
-    margin-bottom: 4px;
-  }
-
-  .accommodation-section-subtitle {
-    margin-bottom: 20px;
-  }
-
-  .property-card {
-    height: 180px;
-  }
-
-  .details-overlay {
-    padding: 10px;
-    bottom: 8px;
-    left: 8px;
-    right: 8px;
-  }
-}
-
-/* Very short screens */
-@media (max-height: 500px) {
   .accommodation-inner {
     padding: 20px 16px;
   }
@@ -490,30 +690,96 @@ export default {
   }
 
   .accommodation-section-title {
-    margin-bottom: 2px;
+    padding: 0 0 2px 0;
   }
 
   .accommodation-section-subtitle {
-    margin-bottom: 16px;
+    padding: 0 0 12px 0;
+    margin-top: -4px;
+  }
+
+  .accommodation-list {
+    gap: 12px;
   }
 
   .property-card {
-    height: 160px;
+    height: 200px;
   }
 
   .details-overlay {
+    bottom: 8px;
+    left: 12px;
+    right: 12px;
     padding: 8px;
+  }
+
+  .property-info h3 {
+    font-size: 16px;
+    margin-left: 4px;
+    margin-bottom: 2px;
+  }
+
+  .property-location {
+    font-size: 11px;
+    margin-left: 4px;
+    margin-bottom: 1px;
+  }
+
+  .property-rating {
+    margin-left: 4px;
+  }
+
+  .property-rating-value {
+    font-size: 10px;
+  }
+
+  .property-price {
+    font-size: 16px;
+    margin-right: 8px;
+  }
+
+  .property-per-night {
+    font-size: 10px;
+    margin-right: 8px;
+  }
+
+  .property-type {
+    top: 8px;
+    right: 12px;
+    padding: 3px 8px;
+    font-size: 10px;
+  }
+}
+
+/* Very short screens */
+@media (max-height: 500px) {
+  .accommodation-inner {
+    padding: 16px 12px;
+  }
+
+  .property-card {
+    height: 180px;
+  }
+
+  .details-overlay {
+    padding: 6px;
     bottom: 6px;
-    left: 6px;
-    right: 6px;
+    left: 10px;
+    right: 10px;
   }
 
   .property-info h3 {
     font-size: 14px;
   }
 
+  .property-location,
+  .property-rating-value,
+  .property-per-night {
+    font-size: 10px;
+  }
+
   .property-price {
-    font-size: 15px;
+    font-size: 14px;
   }
 }
 
@@ -530,6 +796,38 @@ export default {
     padding-left: max(0px, env(safe-area-inset-left));
     padding-right: max(0px, env(safe-area-inset-right));
     padding-bottom: max(0px, env(safe-area-inset-bottom));
+  }
+}
+
+/* Ensure images don't overflow on very small screens */
+img {
+  max-width: 100%;
+  height: auto;
+}
+
+/* Improve scrolling experience on mobile */
+.accommodation-list {
+  -webkit-overflow-scrolling: touch;
+  scrollbar-width: none; /* Firefox */
+}
+
+/* Fix for Android Chrome */
+@media (-webkit-min-device-pixel-ratio: 0) and (min-resolution: 0.001dpcm) {
+  .accommodation-header h1 {
+    font-size: 16px;
+  }
+}
+
+/* Touch device optimizations */
+@media (hover: none) and (pointer: coarse) {
+  .property-card:hover {
+    transform: none;
+    box-shadow: 0 6px 20px rgba(0, 0, 0, 0.1);
+  }
+
+  .property-card:active {
+    transform: scale(0.98);
+    box-shadow: 0 3px 10px rgba(0, 0, 0, 0.15);
   }
 }
 </style>

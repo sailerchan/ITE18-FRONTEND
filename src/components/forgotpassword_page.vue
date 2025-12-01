@@ -27,29 +27,14 @@
 
         <div class="back-to-login">
           <a href="#" class="back-link" @click="$emit('go-to-page', 'login')">
-            ← Back to Sign In
+             Back to Sign In
           </a>
         </div>
       </form>
 
-      <div class="divider">
-        <div class="divider-line"></div>
-        <div class="divider-text">or continue with</div>
-        <div class="divider-line"></div>
-      </div>
 
-      <div class="social-buttons">
-        <button class="social-btn" @click="$emit('social-login', 'google')">
-          <img src="/images/logos/icon-google.svg" alt="Google" class="social-icon">
-        </button>
-        <button class="social-btn" @click="$emit('social-login', 'apple')">
-          <img src="/images/logos/icon-apple.webp" alt="Apple" class="social-icon">
-        </button>
-      </div>
 
-      <div class="sign-up-section">
-        Don't have an account? <a href="#" class="sign-up-link" @click="$emit('go-to-page', 'signup')">Sign Up</a>
-      </div>
+
     </div>
   </div>
 </template>
@@ -190,7 +175,7 @@ export default {
   transform: translateY(-50%) scale(0.85);
   color: #0c3437;
   font-weight: 500;
-  background: #ffffff;
+  background: none;
 }
 
 .form-input:focus {
@@ -215,7 +200,7 @@ export default {
   background-color: #0c3437;
   color: white;
   border: none;
-  border-radius: 10px;
+  border-radius: 28px;
   padding: 13px;
   font-size: 15px;
   font-weight: 500;

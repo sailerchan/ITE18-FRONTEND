@@ -3,26 +3,46 @@
     <div class="date-picker-inner">
       <!-- Header -->
       <div class="date-header">
-        <div class="back-arrow" @click="$emit('go-to-page', 'homepage')">←</div>
-        <h1 class="header-title">Pick date for {{ selectedDestinationName }}</h1>
+        <div class="back-arrow" @click="$emit('go-to-page', 'destination-details')">←</div>
+        </div>
+        <h1 class="header-title">Pick date for your trip to {{ selectedDestinationName }}</h1>
+
+      <!-- Manual Date Inputs -->
+      <div class="manual-inputs">
+        <div class="input-group">
+          <label class="input-label">From Date</label>
+          <div class="input-wrapper">
+            <input
+              type="date"
+              v-model="manualStartDate"
+              :min="todayFormatted"
+              @change="handleManualStartDateChange"
+              class="date-input-field"
+            >
+            <i class="fas fa-calendar-alt input-icon"></i>
+          </div>
+        </div>
+
+        <div class="input-group">
+          <label class="input-label">To Date</label>
+          <div class="input-wrapper">
+            <input
+              type="date"
+              v-model="manualEndDate"
+              :min="manualStartDate || todayFormatted"
+              @change="handleManualEndDateChange"
+              class="date-input-field"
+            >
+            <i class="fas fa-calendar-alt input-icon"></i>
+          </div>
+        </div>
       </div>
 
-      <!-- Date Range Input -->
-      <div class="date-inputs">
-        <div class="date-input">
-          <div class="date-label">From date</div>
-          <div class="date-value">{{ fromDateDisplay }}</div>
-        </div>
-        <div class="date-input">
-          <div class="date-label">To date</div>
-          <div class="date-value">{{ toDateDisplay }}</div>
-        </div>
-      </div>
 
       <!-- Calendar -->
       <div class="calendar-container">
         <div class="month-nav">
-          <div class="nav-arrow" @click="$emit('prev-month')">‹</div>
+          <div class="nav-arrow" @click="handlePrevMonth" :class="{ disabled: isCurrentMonth }">‹</div>
           <div class="month-year">{{ currentMonthYear }}</div>
           <div class="nav-arrow" @click="$emit('next-month')">›</div>
         </div>
@@ -42,9 +62,48 @@
             <div v-if="day"
                  class="date-pill"
                  :class="getDateClass(day)"
-                 @click="$emit('select-date', day)">
+                 @click="handleDateClick(day)">
               {{ day }}
             </div>
+          </div>
+        </div>
+      </div>
+         <!-- Date Range Display -->
+      <div class="date-inputs">
+        <div class="date-label">Selected Dates</div>
+        <div class="date-range-display">
+          <div class="date-display-item">
+            <div class="date-display-label">From</div>
+            <div class="date-display-value">{{ fromDateDisplay }}</div>
+          </div>
+          <div class="date-display-separator">
+            <i class="fas fa-arrow-right"></i>
+          </div>
+          <div class="date-display-item">
+            <div class="date-display-label">To</div>
+            <div class="date-display-value">{{ toDateDisplay }}</div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Selected Dates Summary -->
+      <div v-if="selectedStart && selectedEnd" class="date-summary">
+        <div class="summary-header">
+          <i class="fas fa-calendar-check"></i>
+          <span>Trip Duration</span>
+        </div>
+        <div class="summary-details">
+          <div class="summary-item">
+            <span class="summary-label">Nights:</span>
+            <span class="summary-value">{{ calculateNights() }}</span>
+          </div>
+          <div class="summary-item">
+            <span class="summary-label">Days:</span>
+            <span class="summary-value">{{ calculateNights() + 1 }}</span>
+          </div>
+          <div class="summary-item">
+            <span class="summary-label">Period:</span>
+            <span class="summary-value">{{ selectedStart }} - {{ selectedEnd }} {{ currentMonthYear.split(' ')[0] }}</span>
           </div>
         </div>
       </div>
@@ -52,7 +111,12 @@
       <!-- Action Buttons -->
       <div class="action-buttons">
         <button class="btn btn-cancel" @click="$emit('go-to-page', 'homepage')">Cancel</button>
-        <button class="btn btn-next" @click="$emit('go-to-accommodation')">Next</button>
+        <button
+          class="btn btn-next"
+          @click="handleNextClick"
+          :disabled="!selectedStart || !selectedEnd">
+          {{ selectedStart && selectedEnd ? 'Next' : 'Select Dates' }}
+        </button>
       </div>
     </div>
   </div>
@@ -100,19 +164,172 @@ export default {
     'next-month',
     'select-date',
     'go-to-accommodation',
-    'go-to-page'
+    'go-to-page',
+    'update-selected-dates'
   ],
+  data() {
+    return {
+      manualStartDate: '',
+      manualEndDate: '',
+      today: new Date()
+    }
+  },
+  computed: {
+    todayFormatted() {
+      return this.formatDateForInput(this.today);
+    },
+    isCurrentMonth() {
+      const now = new Date();
+      return this.currentDate.getMonth() === now.getMonth() &&
+             this.currentDate.getFullYear() === now.getFullYear();
+    },
+    todayDate() {
+      const now = new Date();
+      return now.getDate();
+    },
+    currentMonth() {
+      return this.currentDate.getMonth();
+    },
+    currentYear() {
+      return this.currentDate.getFullYear();
+    }
+  },
   methods: {
     getDateClass(day) {
+      const classes = [];
+
+      // Check if this is today's date
+      if (this.isToday(day)) {
+        classes.push('today');
+      }
+
+      // Check if date is in the past
+      if (this.isPastDate(day)) {
+        classes.push('past-date');
+      }
+
+      // Check selection range
       if (day === this.selectedStart) {
-        return 'range-start'
+        classes.push('range-start');
       } else if (day === this.selectedEnd) {
-        return 'range-end'
+        classes.push('range-end');
       } else if (this.selectedStart && this.selectedEnd &&
                  day > this.selectedStart && day < this.selectedEnd) {
-        return 'range-mid'
+        classes.push('range-mid');
       }
-      return ''
+
+      return classes.join(' ');
+    },
+
+    isToday(day) {
+      const now = new Date();
+      return day === now.getDate() &&
+             this.currentMonth === now.getMonth() &&
+             this.currentYear === now.getFullYear();
+    },
+
+    isPastDate(day) {
+      const now = new Date();
+      const selectedDate = new Date(this.currentYear, this.currentMonth, day);
+      const today = new Date(now.getFullYear(), now.getMonth(), now.getDate());
+
+      return selectedDate < today;
+    },
+
+    handleDateClick(day) {
+      // Don't allow clicking on past dates
+      if (this.isPastDate(day)) {
+        return;
+      }
+
+      this.$emit('select-date', day);
+    },
+
+    handlePrevMonth() {
+      // Don't allow going to past months from current month
+      if (!this.isCurrentMonth) {
+        this.$emit('prev-month');
+      }
+    },
+
+    formatDateForInput(date) {
+      const year = date.getFullYear();
+      const month = String(date.getMonth() + 1).padStart(2, '0');
+      const day = String(date.getDate()).padStart(2, '0');
+      return `${year}-${month}-${day}`;
+    },
+
+    handleManualStartDateChange() {
+      if (this.manualStartDate) {
+        const date = new Date(this.manualStartDate);
+        // Only emit if date is not in the past
+        if (date >= new Date(this.today.getFullYear(), this.today.getMonth(), this.today.getDate())) {
+          const day = date.getDate();
+          this.$emit('select-date', day);
+
+          // If end date is before start date, clear it
+          if (this.manualEndDate && new Date(this.manualEndDate) < date) {
+            this.manualEndDate = '';
+          }
+        } else {
+          this.manualStartDate = '';
+          alert('Cannot select past dates');
+        }
+      }
+    },
+
+    handleManualEndDateChange() {
+      if (this.manualEndDate) {
+        const date = new Date(this.manualEndDate);
+        const startDate = this.manualStartDate ? new Date(this.manualStartDate) : null;
+
+        // Check if end date is after start date and not in the past
+        if (!startDate || date >= startDate) {
+          if (date >= new Date(this.today.getFullYear(), this.today.getMonth(), this.today.getDate())) {
+            const day = date.getDate();
+            this.$emit('select-date', day);
+          } else {
+            this.manualEndDate = '';
+            alert('Cannot select past dates');
+          }
+        } else {
+          this.manualEndDate = '';
+          alert('End date must be after start date');
+        }
+      }
+    },
+
+    calculateNights() {
+      if (this.selectedStart && this.selectedEnd) {
+        return this.selectedEnd - this.selectedStart;
+      }
+      return 0;
+    },
+
+    handleNextClick() {
+      if (this.selectedStart && this.selectedEnd) {
+        this.$emit('go-to-accommodation');
+      } else {
+        alert('Please select both start and end dates');
+      }
+    }
+  },
+  watch: {
+    selectedStart(newVal) {
+      if (newVal) {
+        const date = new Date(this.currentYear, this.currentMonth, newVal);
+        this.manualStartDate = this.formatDateForInput(date);
+      } else {
+        this.manualStartDate = '';
+      }
+    },
+    selectedEnd(newVal) {
+      if (newVal) {
+        const date = new Date(this.currentYear, this.currentMonth, newVal);
+        this.manualEndDate = this.formatDateForInput(date);
+      } else {
+        this.manualEndDate = '';
+      }
     }
   }
 }
@@ -135,7 +352,6 @@ export default {
 /* Same card styling as login page */
 .date-picker-inner {
   background: #ffffff;
-  border-radius: 24px 24px 0 0;
   padding: 36px 24px;
   margin-top: 0;
   position: relative;
@@ -177,38 +393,106 @@ export default {
   font-size: 18px;
   font-weight: 600;
   color: #333;
-  text-align: center;
+  text-align: left;
   margin: 0;
-  padding: 0 40px;
+  padding: 0 0px;
+  margin-left:10px;
 }
 
-/* Date Inputs - same spacing as login form */
-.date-inputs {
+/* Manual Inputs */
+.manual-inputs {
   display: flex;
-  gap: 12px;
-  margin-bottom: 28px;
+  gap: 15px;
+  margin-bottom: 20px;
 }
 
-.date-input {
+.input-group {
   flex: 1;
-  background: #f8f9fa;
-  border: 1.5px solid #e1e5e9;
-  border-radius: 10px;
-  padding: 16px;
-  text-align: center;
 }
 
-.date-label {
-  font-size: 13px;
+.input-label {
+  display: block;
+  font-size: 14px;
   color: #666;
-  margin-bottom: 6px;
+  margin-bottom: 8px;
   font-weight: 500;
 }
 
-.date-value {
+.input-wrapper {
+  position: relative;
+  width: 100%;
+}
+
+.date-input-field {
+  width: 100%;
+  padding: 16px 16px 16px 45px;
+  border: 1.5px solid #e1e5e9;
+  border-radius: 12px;
+  font-size: 16px;
+  font-family: 'Poppins', sans-serif;
+  color: #333;
+  background: #f8f9fa;
+  transition: all 0.3s ease;
+}
+
+.date-input-field:focus {
+  outline: none;
+  border-color: #0c3437;
+  background: white;
+  box-shadow: 0 0 0 3px rgba(12, 52, 55, 0.1);
+}
+
+.input-icon {
+  position: absolute;
+  left: 16px;
+  top: 50%;
+  transform: translateY(-50%);
+  color: #0c3437;
+  font-size: 16px;
+}
+
+/* Date Range Display */
+
+.date-inputs {
+  margin-bottom: 25px;
+}
+
+.date-label {
+  font-size: 14px;
+  color: #666;
+  margin-bottom: 10px;
+  font-weight: 500;
+}
+
+.date-range-display {
+  display: flex;
+  align-items: center;
+  gap: 15px;
+  background: #f8f9fa;
+  border: 1.5px solid #e1e5e9;
+  border-radius: 12px;
+  padding: 15px;
+}
+
+.date-display-item {
+  flex: 1;
+}
+
+.date-display-label {
+  font-size: 12px;
+  color: #666;
+  margin-bottom: 4px;
+}
+
+.date-display-value {
   font-size: 16px;
   font-weight: 600;
-  color: #333;
+  color: #0c3437;
+}
+
+.date-display-separator {
+  color: #0c3437;
+  font-size: 14px;
 }
 
 /* Calendar Container */
@@ -216,7 +500,7 @@ export default {
   background: #ffffff;
   border-radius: 16px;
   padding: 20px;
-  margin-bottom: 30px;
+  margin-bottom: 25px;
   box-shadow: 0 2px 12px rgba(0, 0, 0, 0.04);
   border: 1px solid #e8ecef;
 }
@@ -232,7 +516,7 @@ export default {
 
 .nav-arrow {
   font-size: 24px;
-  color:#0c3437;
+  color: #0c3437;
   cursor: pointer;
   padding: 8px 12px;
   border-radius: 8px;
@@ -240,8 +524,14 @@ export default {
   -webkit-tap-highlight-color: transparent;
 }
 
-.nav-arrow:hover {
+.nav-arrow:hover:not(.disabled) {
   background-color: #f0f0f0;
+}
+
+.nav-arrow.disabled {
+  color: #ccc;
+  cursor: not-allowed;
+  opacity: 0.5;
 }
 
 .month-year {
@@ -273,7 +563,7 @@ export default {
   display: grid;
   grid-template-columns: repeat(7, 1fr);
   gap: 5px;
-  padding: 0 px;
+  padding: 0 4px;
 }
 
 .date-cell {
@@ -297,16 +587,32 @@ export default {
   cursor: pointer;
   transition: all 0.3s ease;
   -webkit-tap-highlight-color: transparent;
-  background:#ededed61;
-  padding:2px;
+  background: #ededed61;
+  padding: 2px;
   border-radius: 8px;
-
+  position: relative;
 }
 
-.date-pill:hover {
+.date-pill:hover:not(.past-date) {
   background-color: #f0f0f0;
 }
 
+/* Today's date styling */
+.date-pill.today {
+  border: 2px solid #0c3437;
+  background: white;
+  font-weight: bold;
+}
+
+/* Past date styling */
+.date-pill.past-date {
+  color: #ccc;
+  background: #f5f5f5;
+  cursor: not-allowed;
+  opacity: 0.6;
+}
+
+/* Date selection styling */
 .date-pill.range-start,
 .date-pill.range-end {
   background-color: #0c3437;
@@ -322,20 +628,67 @@ export default {
   border-radius: 8px;
 }
 
+/* Date Summary */
+.date-summary {
+  background: #f8f9fa;
+  border-radius: 12px;
+  padding: 20px;
+  margin-bottom: 25px;
+  border: 1.5px solid #e1e5e9;
+}
+
+.summary-header {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin-bottom: 15px;
+  color: #0c3437;
+  font-weight: 600;
+  font-size: 16px;
+}
+
+.summary-header i {
+  font-size: 18px;
+}
+
+.summary-details {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 15px;
+}
+
+.summary-item {
+  text-align: center;
+}
+
+.summary-label {
+  display: block;
+  font-size: 12px;
+  color: #666;
+  margin-bottom: 4px;
+}
+
+.summary-value {
+  display: block;
+  font-size: 16px;
+  font-weight: 600;
+  color: #0c3437;
+}
+
 /* Action Buttons - using #0C3437 */
 .action-buttons {
   display: flex;
   gap: 12px;
   margin-top: auto;
-  padding: 20px 0 0 0;
+  padding: px 0 0 0;
 }
 
 .btn {
   flex: 1;
-  padding: 16px 24px;
+  padding: 14px;
   border: none;
-  border-radius: 30px;
-  font-size: 16px;
+  border-radius: 28px;
+  font-size: 15px;
   font-weight: 600;
   cursor: pointer;
   transition: all 0.3s ease;
@@ -346,7 +699,8 @@ export default {
   background-color: #f8f9fa;
   color: #666;
   border: 1.5px solid #e1e5e9;
-    border-radius: 30px;
+  border-radius: 28px;
+  padding:14;
 }
 
 .btn-cancel:hover {
@@ -358,8 +712,14 @@ export default {
   color: white;
 }
 
-.btn-next:hover {
+.btn-next:hover:not(:disabled) {
   background-color: #0A2B2E;
+}
+
+.btn-next:disabled {
+  background-color: #ccc;
+  cursor: not-allowed;
+  opacity: 0.7;
 }
 
 /* Exact same responsive breakpoints as login page */
@@ -381,13 +741,24 @@ export default {
     height: 28px;
   }
 
-  .date-inputs {
-    gap: 8px;
-    margin-bottom: 24px;
+  .manual-inputs {
+    flex-direction: column;
+    gap: 12px;
   }
 
-  .date-input {
-    padding: 14px;
+  .date-range-display {
+    flex-direction: column;
+    gap: 10px;
+    text-align: center;
+  }
+
+  .date-display-separator {
+    transform: rotate(90deg);
+  }
+
+  .summary-details {
+    grid-template-columns: 1fr;
+    gap: 10px;
   }
 
   .calendar-container {
@@ -447,6 +818,10 @@ export default {
     padding: 40px 32px;
     box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
   }
+
+  .manual-inputs {
+    gap: 20px;
+  }
 }
 
 /* Large Tablets (1024px - 1366px) */
@@ -476,11 +851,11 @@ export default {
   }
 
   .date-inputs {
-    margin-bottom: 20px;
+    margin-bottom: 15px;
   }
 
   .calendar-container {
-    margin-bottom: 20px;
+    margin-bottom: 15px;
     padding: 16px;
   }
 
@@ -501,11 +876,11 @@ export default {
   }
 
   .date-inputs {
-    margin-bottom: 16px;
+    margin-bottom: 12px;
   }
 
   .calendar-container {
-    margin-bottom: 16px;
+    margin-bottom: 12px;
     padding: 12px;
   }
 
@@ -521,7 +896,8 @@ export default {
 
 /* Prevent zoom on iOS */
 @media screen and (max-width: 767px) {
-  .date-value,
+  .date-input-field,
+  .date-display-value,
   .btn {
     font-size: 16px;
   }

@@ -36,7 +36,7 @@
           <a href="#" class="forgot-password" @click="$emit('go-to-page', 'forgot-password')">Forgot Password?</a>
         </div>
 
-        <button type="submit" class="sign-in-btn">Sign In</button>
+        <button type="submit" class="sign-in-btn">Log In</button>
       </form>
 
       <div class="divider">
@@ -55,7 +55,7 @@
       </div>
 
       <div class="sign-up-section">
-        Don't have an account? <a href="#" class="sign-up-link" @click="$emit('go-to-page', 'signup')">Sign Up</a>
+        New here? <a href="#" class="sign-up-link" @click="$emit('go-to-page', 'signup')">Sign Up</a> to begin your journey!
       </div>
     </div>
   </div>
@@ -233,7 +233,7 @@ export default {
   background-color: #0c3437;
   color: white;
   border: none;
-  border-radius: 10px;
+  border-radius: 28px;
   padding: 14px;
   font-size: 15px;
   font-weight: 500;

@@ -2,8 +2,7 @@
   <div class="container">
     <div class="homepage-inner">
       <header class="header">
-        <div class="greeting">{{ greeting }} </div>
-        <div class="user-name">{{ userName }}!</div>
+        <div class="greeting">{{ greeting }} <span class="user-name">{{ userName }}!</span></div>
 
         <div class="search-row">
           <div class="search-bar">
@@ -20,7 +19,7 @@
       </header>
 
       <section class="hero-section">
-        <div class="hero-card" @click="$emit('view-destination', featuredDestination.id)">
+        <div class="hero-card">
           <img :src="featuredDestination.image" :alt="featuredDestination.name" class="hero-img">
           <div class="hero-tag">{{ featuredDestination.tag }}</div>
           <div class="hero-rating"><i class="fas fa-star"></i> {{ featuredDestination.rating }}</div>
@@ -49,7 +48,7 @@
             </div>
           </div>
       </section>
-
+        <!--
       <nav class="bottom-nav">
         <div class="nav-items-container">
           <button class="nav-item active" @click="handleNavClick('home')"><i class="fas fa-home"></i></button>
@@ -57,7 +56,7 @@
           <button class="nav-item" @click="handleNavClick('notifications')"><i class="fas fa-bell"></i></button>
           <button class="nav-item" @click="handleNavClick('profile')"><i class="fas fa-user"></i></button>
         </div>
-      </nav>
+      </nav>-->
     </div>
   </div>
 </template>
@@ -170,7 +169,7 @@ export default {
 }
 
 .greeting {
-  font-size: 15px;
+  font-size: 20px;
   color: var(--muted);
   font-weight: 500;
 }
@@ -179,6 +178,7 @@ export default {
   font-size: 26px;
   font-weight: 800;
   color: var(--dark);
+  margin-bottom: 10px;
 }
 
 .search-row {
@@ -186,6 +186,7 @@ export default {
     align-items: center;
     padding: 0 24px 16px;
     background: white;
+    margin-top:10px;
 }
 .search-bar {
     display: flex;
@@ -193,7 +194,7 @@ export default {
     gap: 15px;
     background: #fff;
     border-radius: 30px;
-    padding: 14px 16px;
+    padding: 10px 16px;
     border: 1.5px solid #e9ecef;
     flex: 1;
     box-shadow: 0 2px 12px rgba(0,0,0,0.04);
@@ -260,7 +261,7 @@ export default {
     width: 90%;
     margin:auto;
     height: 350px;
-    border-radius: 40px;
+    border-radius: 30px;
     overflow: hidden;
     position: relative;
     background: #e9ecef;
@@ -284,13 +285,13 @@ export default {
 .hero-tag {
     position: absolute;
     top: 16px;
-    left: 16px;
-    background: rgb(1, 41, 37);
+    left: 20px;
+    background: none;
     color: #fff;
-    padding: 10px 16px;
-    border-radius: 20px;
-    font-size: 13px;
-    font-weight: 700;
+    padding: 6px 10px;
+    border-radius: 12px;
+    font-size: 11px;
+    font-weight: 600;
 }
 .hero-rating {
   position: absolute;
@@ -340,9 +341,10 @@ export default {
 
 /* Popular destinations */
 .popular-destinations {
-  padding: 16px 24px 0px;
+  padding: 16px 24px 24px;
   background: white;
   flex: 1;
+  margin-bottom: 20px;
 }
 .section-header {
     display: flex;
@@ -359,9 +361,9 @@ export default {
     display: flex;
     gap: 20px;
     overflow-x: auto;
-    padding-top: 20px;
-    padding-bottom: 20px;
+    padding: 20px 0;
     scroll-behavior: smooth;
+    -webkit-overflow-scrolling: touch;
 }
 .scroll-wrapper::-webkit-scrollbar {
   display: none;
@@ -378,7 +380,7 @@ export default {
   cursor: pointer;
   transition: all 0.3s ease;
   -webkit-tap-highlight-color: transparent;
-  flex-shrink: 0; 
+  flex-shrink: 0;
 }
 .destination-card:hover {
   transform: translateY(-4px);
@@ -392,6 +394,7 @@ export default {
 .thumb img {
   width: 100%;
   height: 100%;
+  object-fit: cover;
   object-position: center;
 }
 .rating-pill {
@@ -469,7 +472,7 @@ export default {
     cursor: pointer;
     display: flex;
     align-items: center;
-    justify-content: center;
+  justify-content: center;
     transition: all 0.2s ease;
     -webkit-tap-highlight-color: transparent;
 }
@@ -481,113 +484,89 @@ export default {
   background: rgba(0,0,0,0.03);
 }
 
-/* RESPONSIVE BREAKPOINTS - OPTIMIZED FOR 1080x2040 */
-@media (max-width: 374px) {
+/* ================= RESPONSIVE BREAKPOINTS ================= */
+
+/* Extra Small Phones (under 320px) */
+@media (max-width: 320px) {
+  .header {
+    padding: 24px 16px 8px;
+  }
+
+  .search-row {
+    padding: 0 16px 12px;
+  }
+
+  .hero-section {
+    padding: 12px 16px 8px;
+  }
+
+  .hero-card {
+    width: 95%;
+    height: 280px;
+    border-radius: 20px;
+  }
+
+  .popular-destinations {
+    padding: 12px 16px 20px;
+  }
+
+  .destination-card {
+    min-width: 220px;
+    height: 280px;
+  }
+
+  .greeting {
+    font-size: 18px;
+  }
+
+  .user-name {
+    font-size: 22px;
+  }
+
+  .hero-text h3 {
+    font-size: 18px;
+  }
+
+  .hero-text p {
+    font-size: 12px;
+  }
+
+  .section-header h4 {
+    font-size: 16px;
+  }
+}
+
+/* Small Phones (321px - 374px) */
+@media (min-width: 321px) and (max-width: 374px) {
+  .header {
+    padding: 28px 18px 10px;
+  }
+
+  .search-row {
+    padding: 0 18px 14px;
+  }
+
+  .hero-section {
+    padding: 14px 18px 10px;
+  }
+
+  .hero-card {
+    width: 92%;
+    height: 300px;
+  }
+
+  .popular-destinations {
+    padding: 14px 18px 22px;
+  }
+
   .destination-card {
     min-width: 240px;
     height: 300px;
   }
-  
-  .details-overlay {
-    bottom: 12px;
-    left: 12px;
-    right: 12px;
-    padding: 12px;
-  }
-  
-  .destination-info h5 {
-    font-size: 15px;
-  }
-  
-  .destination-info p {
-    font-size: 12px;
-  }
 }
 
-/* Medium Phones (375px - 414px) */
+/* Medium Phones (375px - 414px) - Standard modern phones */
 @media (min-width: 375px) and (max-width: 414px) {
-  .destination-card {
-    min-width: 260px;
-    height: 320px;
-  }
-}
-
-/* Large Phones (415px - 767px) */
-@media (min-width: 415px) and (max-width: 767px) {
-  .destination-card {
-    min-width: 280px;
-    height: 350px;
-  }
-}
-
-/* TARGETING 1080x2040 SCREENS (typical phone dimensions) */
-@media (min-width: 400px) and (max-height: 900px) {
-  .destination-card {
-    min-width: 300px;
-    height: 380px;
-  }
-  
-  .scroll-wrapper {
-    gap: 20px;
-  }
-  
-  .details-overlay {
-    bottom: 20px;
-    left: 20px;
-    right: 20px;
-  }
-}
-
-/* Small Tablets (768px - 1023px) */
-@media (min-width: 768px) and (max-width: 1023px) {
-  .destination-card {
-    min-width: 320px;
-    height: 400px;
-  }
-  
-  .scroll-wrapper {
-    gap: 24px;
-  }
-}
-
-/* Large Tablets (1024px - 1366px) */
-@media (min-width: 1024px) and (max-width: 1366px) {
-  .destination-card {
-    min-width: 300px;
-    height: 380px;
-  }
-}
-
-/* Desktop (1367px and up) */
-@media (min-width: 1367px) {
-  .destination-card {
-    min-width: 320px;
-    height: 400px;
-  }
-}
-
-/* Landscape Mobile */
-@media (max-height: 600px) and (orientation: landscape) {
-  .destination-card {
-    min-width: 280px;
-    height: 320px;
-  }
-}
-
-/* Very short screens */
-@media (max-height: 500px) {
-  .destination-card {
-    min-width: 260px;
-    height: 300px;
-  }
-}
-
-/* Small Phones (320px - 374px) */
-@media (max-width: 374px) {
-  .homepage-inner {
-    border-radius: 20px 20px 0 0;
-  }
-
   .header {
     padding: 32px 20px 12px;
   }
@@ -601,166 +580,262 @@ export default {
   }
 
   .hero-card {
-    height: 420px;
+    width: 90%;
+    height: 320px;
   }
 
   .popular-destinations {
-    padding: 20px 20px 100px;
-  }
-
-  .thumb {
-    height: 200px;
+    padding: 16px 20px 24px;
   }
 
   .destination-card {
-    min-width: 160px;
-  }
-
-  .bottom-nav {
-    padding: 16px 20px;
-  }
-
-  .user-name {
-    font-size: 24px;
-  }
-
-  .hero-text h3 {
-    font-size: 20px;
+    min-width: 260px;
+    height: 320px;
   }
 }
 
-/* Medium Phones (375px - 414px) */
-@media (min-width: 375px) and (max-width: 414px) {
-  .homepage-inner {
-    border-radius: 24px 24px 0 0;
-  }
-}
-
-/* Large Phones (415px - 767px) */
+/* Large Phones (415px - 767px) - Large phones like iPhone Plus/Pro Max */
 @media (min-width: 415px) and (max-width: 767px) {
-  .homepage-inner {
-    border-radius: 24px 24px 0 0;
+  .header {
+    padding: 36px 24px 14px;
+  }
+
+  .search-row {
+    padding: 0 24px 18px;
+  }
+
+  .hero-section {
+    padding: 18px 24px 14px;
+  }
+
+  .hero-card {
+    width: 88%;
+    height: 350px;
+  }
+
+  .popular-destinations {
+    padding: 18px 24px 28px;
+  }
+
+  .destination-card {
+    min-width: 280px;
+    height: 350px;
   }
 }
 
 /* Small Tablets (768px - 1023px) */
 @media (min-width: 768px) and (max-width: 1023px) {
   .container {
+    background: #f8f9fa;
+    padding: 20px;
     max-width: 768px;
     margin: 0 auto;
-    background: #f8f9fa;
-    padding: 20px 0;
   }
 
   .homepage-inner {
-    max-width: 768px;
-    margin: -50px auto 0 auto;
     border-radius: 24px;
     box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
+    margin: 0 auto;
+    width: 100%;
+  }
+
+  .header {
+    padding: 40px 32px 16px;
+  }
+
+  .search-row {
+    padding: 0 32px 20px;
+  }
+
+  .hero-section {
+    padding: 20px 32px 16px;
   }
 
   .hero-card {
-    height: 480px;
+    width: 85%;
+    height: 400px;
+  }
+
+  .popular-destinations {
+    padding: 20px 32px 32px;
   }
 
   .destination-card {
-    min-width: 200px;
+    min-width: 300px;
+    height: 380px;
   }
 
-  .thumb {
-    height: 220px;
+  .greeting {
+    font-size: 22px;
+  }
+
+  .user-name {
+    font-size: 28px;
+  }
+
+  .hero-text h3 {
+    font-size: 24px;
+  }
+
+  .hero-text p {
+    font-size: 14px;
+  }
+
+  .section-header h4 {
+    font-size: 20px;
   }
 }
 
 /* Large Tablets (1024px - 1366px) */
 @media (min-width: 1024px) and (max-width: 1366px) {
   .container {
-    max-width: 1024px;
-    margin: 0 auto;
     background: #f8f9fa;
-    padding: 40px 0;
+    padding: 30px;
+    max-width: 500px;
+    margin: 0 auto;
   }
 
   .homepage-inner {
-    max-width: 500px;
-    margin: -60px auto 0 auto;
     border-radius: 24px;
     box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
+    margin: 0 auto;
+    width: 100%;
+  }
+
+  .header {
+    padding: 44px 36px 18px;
+  }
+
+  .search-row {
+    padding: 0 36px 22px;
+  }
+
+  .hero-section {
+    padding: 22px 36px 18px;
   }
 
   .hero-card {
-    height: 450px;
+    width: 85%;
+    height: 380px;
+  }
+
+  .popular-destinations {
+    padding: 22px 36px 36px;
   }
 
   .destination-card {
-    min-width: 180px;
+    min-width: 280px;
+    height: 360px;
   }
 }
 
 /* Desktop (1367px and up) */
 @media (min-width: 1367px) {
   .container {
-    max-width: 1200px;
-    margin: 0 auto;
     background: #f8f9fa;
-    padding: 40px 0;
+    padding: 40px;
+    max-width: 500px;
+    margin: 0 auto;
   }
 
   .homepage-inner {
-    max-width: 500px;
-    margin: 0 auto;
     border-radius: 24px;
     box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
+    margin: 0 auto;
+    width: 100%;
+  }
+
+  .header {
+    padding: 48px 40px 20px;
+  }
+
+  .hero-card {
+    height: 400px;
+  }
+
+  .destination-card {
+    min-width: 300px;
+    height: 380px;
   }
 }
 
 /* Landscape Mobile */
 @media (max-height: 600px) and (orientation: landscape) {
-  .hero-card {
-    height: 380px;
-  }
-
-  .thumb {
-    height: 180px;
-  }
-
   .header {
-    padding: 24px 20px 12px;
+    padding: 20px 16px 8px;
+  }
+
+  .search-row {
+    padding: 0 16px 12px;
+  }
+
+  .hero-section {
+    padding: 12px 16px 8px;
+  }
+
+  .hero-card {
+    height: 280px;
   }
 
   .popular-destinations {
-    padding: 16px 20px 80px;
-  }
-}
-
-/* Very short screens */
-@media (max-height: 500px) {
-  .hero-card {
-    height: 320px;
+    padding: 12px 16px 20px;
   }
 
-  .thumb {
-    height: 160px;
+  .destination-card {
+    min-width: 240px;
+    height: 280px;
   }
 
-  .header {
-    padding: 20px 16px 12px;
-  }
-
-  .popular-destinations {
-    padding: 12px 16px 60px;
+  .greeting {
+    font-size: 18px;
   }
 
   .user-name {
     font-size: 22px;
   }
+}
+
+/* Very short screens */
+@media (max-height: 500px) {
+  .header {
+    padding: 16px 12px 6px;
+  }
+
+  .hero-section {
+    padding: 8px 12px 6px;
+  }
+
+  .hero-card {
+    height: 240px;
+  }
+
+  .popular-destinations {
+    padding: 8px 12px 16px;
+  }
+
+  .destination-card {
+    min-width: 220px;
+    height: 240px;
+  }
+
+  .greeting {
+    font-size: 16px;
+  }
+
+  .user-name {
+    font-size: 20px;
+  }
 
   .hero-text h3 {
-    font-size: 18px;
+    font-size: 16px;
+  }
+
+  .hero-text p {
+    font-size: 11px;
   }
 }
 
-/* Prevent zoom on iOS */
+/* Fix for iOS zoom on input focus */
 @media screen and (max-width: 767px) {
   .search-input input {
     font-size: 16px;
@@ -775,8 +850,33 @@ export default {
     padding-bottom: max(0px, env(safe-area-inset-bottom));
   }
 
-  .bottom-nav {
-    padding-bottom: max(16px, env(safe-area-inset-bottom));
+  .homepage-inner {
+    border-radius: 24px 24px 0 0;
+  }
+
+  @media (min-width: 768px) {
+    .homepage-inner {
+      border-radius: 24px;
+    }
+  }
+}
+
+/* Ensure images don't overflow on very small screens */
+img {
+  max-width: 100%;
+  height: auto;
+}
+
+/* Improve scrolling experience on mobile */
+.scroll-wrapper {
+  -webkit-overflow-scrolling: touch;
+  scrollbar-width: none; /* Firefox */
+}
+
+/* Fix for Android Chrome */
+@media (-webkit-min-device-pixel-ratio: 0) and (min-resolution: 0.001dpcm) {
+  .search-input input {
+    font-size: 16px !important;
   }
 }
 </style>

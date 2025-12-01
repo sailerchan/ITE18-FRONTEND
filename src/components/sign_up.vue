@@ -84,7 +84,7 @@
         </div>
 
         <button type="submit" class="sign-in-btn" :disabled="!isSignupFormValid">
-          Create Account
+          Sign Up
         </button>
       </form>
 
@@ -105,7 +105,7 @@
 
       <div class="sign-up-section">
         Already have an account?
-        <a href="#" class="sign-up-link" @click="$emit('go-to-page', 'login')">Sign In</a>
+        <a href="#" class="sign-up-link" @click="$emit('go-to-page', 'login')">Log in.</a>
       </div>
     </div>
   </div>
@@ -312,7 +312,7 @@ export default {
   background-color: #0c3437;
   color: white;
   border: none;
-  border-radius: 10px;
+  border-radius: 28px;
   padding: 14px;
   font-size: 15px;
   font-weight: 500;
