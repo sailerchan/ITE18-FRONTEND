@@ -20,7 +20,7 @@
         <div
           class="tab"
           :class="{ active: activeTab === 'details' }"
-          @click="setActiveTab('details')">
+          @click="setActiveTab('details')"> 
           Details
         </div>
         <div
@@ -349,7 +349,11 @@ export default {
   position: absolute;
   top: 20px;
   left: 20px;
-  background: rgba(0, 0, 0, 0.5);
+  background: rgba(0, 0, 0, 0.11);
+  backdrop-filter: blur(10px);
+  -webkit-backdrop-filter: blur(10px);
+  border: 1px solid rgba(255, 255, 255, 0.4);
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
   border: none;
   border-radius: 50%;
   width: 40px;

@@ -175,7 +175,7 @@ export default {
   transform: translateY(-50%) scale(0.85);
   color: #0c3437;
   font-weight: 500;
-  background: none;
+  background: white;
 }
 
 .form-input:focus {
@@ -187,7 +187,7 @@ export default {
 
 /* Hide the actual placeholder since we're using the label */
 .form-input::placeholder {
-  color: transparent;
+  color: #b6b6b6;
 }
 
 /* Remove old form-label styles since we're using floating labels */

@@ -210,7 +210,7 @@ export default {
 
 /* Hide the actual placeholder since we're using the label */
 .form-input::placeholder {
-  color: transparent;
+  color: #b6b6b6;
 }
 
 /* Remove old form-label styles since we're using floating labels */

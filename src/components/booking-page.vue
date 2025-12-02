@@ -49,7 +49,7 @@
 
         <div class="booking-summary">
           <h2 class="property-title">{{ selectedProperty.title }}</h2>
-          <p class="booking-dates">{{ bookingDatesDisplay }}</p>
+          <p class="booking-dates"><i class="fa-solid fa-calendar"></i>  {{ bookingDatesDisplay }}</p>
 
           <div class="price-row">
             <span>Price</span>
@@ -343,7 +343,6 @@ export default {
     display: flex;
     align-items: center;
     padding: 16px;
-    border-bottom: 1px solid #e0e0e0;
     background: white;
 }
 
@@ -371,16 +370,19 @@ export default {
 .confirmation-title {
     font-size: 18px;
     font-weight: 600;
-    text-align: center;
+    text-align: left;
     flex: 1;
     margin: 0;
 }
 
 .confirmation-image {
-    width: 100%;
+    width: 90%;
     height: 220px;
     background-size: cover;
     background-position: center;
+    margin: 16px auto;
+    border-radius:16px;
+
 }
 
 .booking-summary {
@@ -392,6 +394,7 @@ export default {
 .booking-dates {
     color: #666;
     margin-bottom: 16px;
+    margin-top: 0px;
     font-size: 14px;
 }
 
@@ -458,8 +461,8 @@ export default {
 }
 
 .payment-option.selected .radio-indicator {
-    border-color: #1f4f5a;
-    background-color: #1f4f5a;
+    border-color: #0c3437;
+    background-color: #0c3437;
 }
 
 .radio-check {
@@ -506,11 +509,11 @@ export default {
 
 .next-button {
     width: 100%;
-    background-color: #1f4f5a;
+    background-color: #0c3437;
     color: white;
     border: none;
     padding: 14px;
-    border-radius: 8px;
+    border-radius: 28px;
     font-weight: 600;
     margin-top: 24px;
     cursor: pointer;

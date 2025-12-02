@@ -22,10 +22,9 @@
             <div class="property-info">
               <p>Paradiso Hotel Bunks</p>
               <div class="property-location">
-                <span class="property-location-icon"></span>General Luna, Philippines
+                <span class="property-location-icon"><i class="fas fa-map-marker-alt"></i> General Luna, Philippines </span>
               </div>
               <div class="property-rating">
-                <div class="property-rating-value">(86 reviews)</div>
               </div>
             </div>
             <div class="price-tag">
@@ -44,10 +43,10 @@
             <div class="property-info">
               <p>Copacabana Siargao</p>
               <div class="property-location">
-                <span class="property-location-icon"></span>General Luna, Philippines
+                <span class="property-location-icon"><i class="fas fa-map-marker-alt"></i> Generalal Luna, Philippines</span>
               </div>
               <div class="property-rating">
-                <div class="property-rating-value">(96 reviews)</div>
+
               </div>
             </div>
             <div class="price-tag">
@@ -66,10 +65,10 @@
             <div class="property-info">
               <p>Casavia Siargao</p>
               <div class="property-location">
-                <span class="property-location-icon"></span>General Luna, Philippines
+                <span class="property-location-icon"><i class="fas fa-map-marker-alt"></i> Generalal Luna, Philippines</span>
               </div>
               <div class="property-rating">
-                <div class="property-rating-value">(142 reviews)</div>
+
               </div>
             </div>
             <div class="price-tag">
