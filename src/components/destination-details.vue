@@ -20,7 +20,7 @@
         <div
           class="tab"
           :class="{ active: activeTab === 'details' }"
-          @click="setActiveTab('details')"> 
+          @click="setActiveTab('details')">
           Details
         </div>
         <div
@@ -295,7 +295,8 @@ export default {
           month: 'long',
           day: 'numeric'
         });
-      } catch (e) {
+      } catch {
+        // Removed the unused 'e' parameter
         return 'Invalid date';
       }
     },

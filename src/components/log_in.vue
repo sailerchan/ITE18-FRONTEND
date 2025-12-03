@@ -78,18 +78,17 @@ export default {
     'go-to-page'
   ],
   methods: {
-    handleFocus(event) {
+    handleFocus() {
       // This method ensures the label moves up when input is focused
       // The CSS will handle the visual effect
     },
-    handleBlur(event) {
+    handleBlur() {
       // This method ensures the label stays up if there's content
       // The CSS will handle the visual effect
     }
   }
 }
 </script>
-
 
 <style scoped>
 /* Mobile-first base styles */

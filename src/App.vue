@@ -193,12 +193,13 @@
       @payment-success="handlePaymentSuccess"
     />
 
+    <!-- Payment Success Component - UPDATED -->
     <!-- Payment Success Component -->
     <PaymentSuccess
       v-else-if="currentPage === 'payment-success'"
       :receipt-data="receiptData"
       @go-back="goToPreviousPage"
-      @go-home="goToPage('homepage')"
+      @go-itinerary="goToPage('itinerary')"
     />
 
     <!-- Itinerary Page Component -->
@@ -754,7 +755,8 @@ export default {
         'personal-information': 'profile',
         'change-password': 'profile',
         'forgot-password': 'login',
-        'destination-details': 'homepage'
+        'destination-details': 'homepage',
+        'itinerary': 'homepage'
       }
 
       if (pageMap[currentPage.value]) {
@@ -989,6 +991,9 @@ export default {
         }
       }
 
+      // Save booking data before navigating
+      saveBookingData()
+
       setTimeout(() => {
         goToPage('payment-success')
       }, 1000)
@@ -996,6 +1001,23 @@ export default {
 
     const generateReceiptNumber = () => {
       return Math.floor(100000000000000 + Math.random() * 900000000000000).toString()
+    }
+
+    const saveBookingData = () => {
+      // Save booking information for the itinerary page
+      const bookingData = {
+        destination: selectedDestinationName.value,
+        property: selectedProperty.value,
+        dates: booking.value.dates,
+        nights: booking.value.nights,
+        totalPrice: totalPrice.value,
+        paymentMethod: selectedPayment.value?.name,
+        receiptNumber: receiptData.value.receiptNumber,
+        bookingDate: new Date().toISOString()
+      }
+
+      localStorage.setItem('lastBooking', JSON.stringify(bookingData))
+      console.log('Booking data saved:', bookingData)
     }
 
     const handleTripSaved = (tripData) => {
@@ -1065,6 +1087,7 @@ export default {
       handleNext,
       handleGcashPaymentSuccess,
       handlePaymentSuccess,
+      saveBookingData,
       handleTripSaved
     }
   }

@@ -135,12 +135,12 @@ export default {
     },
 
     goToPage(page) {
-      this.activeNav = page === 'homepage' ? 'home' : 
-                      page === 'trips' ? 'trips' : 
+      this.activeNav = page === 'homepage' ? 'home' :
+                      page === 'trips' ? 'trips' :
                       page === 'notifications' ? 'notifications' : 'profile';
       this.$emit('go-to-page', page)
     },
-    
+
     togglePasswordVisibility(field) {
       if (field === 'old') {
         this.showOldPassword = !this.showOldPassword;
@@ -150,22 +150,22 @@ export default {
         this.showConfirmPassword = !this.showConfirmPassword;
       }
     },
-    
+
     savePassword() {
       // Handle password change logic here
       console.log('Password change attempted:', this.form);
-      
+
       // Basic validation
       if (!this.form.oldPassword || !this.form.newPassword || !this.form.confirmPassword) {
         alert('Please fill in all fields');
         return;
       }
-      
+
       if (this.form.newPassword !== this.form.confirmPassword) {
         alert('New password and confirm password do not match');
         return;
       }
-      
+
       alert('Password changed successfully!')
       this.goBack()
     }

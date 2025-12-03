@@ -58,9 +58,9 @@
         Download
       </button>
 
-      <!-- Action Button -->
-      <button class="okay-button" @click="goHome">
-        Okay
+      <!-- Action Button - Changed to "Go to Itinerary" -->
+      <button class="okay-button" @click="goToItinerary">
+        Go to Itinerary
       </button>
     </main>
   </div>
@@ -84,8 +84,8 @@ export default {
     goBack() {
       this.$emit('go-back')
     },
-    goHome() {
-      this.$emit('go-home')
+    goToItinerary() {
+      this.$emit('go-itinerary') // Changed from go-home to go-itinerary
     },
     downloadReceipt() {
       console.log('Downloading receipt...')
@@ -95,7 +95,7 @@ export default {
   },
   emits: [
     'go-back',
-    'go-home'
+    'go-itinerary' // Changed from go-home to go-itinerary
   ]
 }
 </script>
@@ -369,40 +369,40 @@ export default {
   .success-content {
     padding: 32px 20px;
   }
-  
+
   .success-circle {
     width: 100px;
     height: 100px;
     border-width: 6px;
   }
-  
+
   .success-circle i {
     font-size: 40px;
   }
-  
+
   .success-message {
     font-size: 20px;
     margin-bottom: 32px;
   }
-  
+
   .receipt-container {
     padding: 20px;
     max-width: 280px;
   }
-  
+
   .receipt-title {
     font-size: 13px;
   }
-  
+
   .label,
   .value {
     font-size: 13px;
   }
-  
+
   .value.amount {
     font-size: 16px;
   }
-  
+
   .value.datetime {
     font-size: 11px;
   }
@@ -413,7 +413,7 @@ export default {
   .success-content {
     padding: 36px 24px;
   }
-  
+
   .success-circle {
     width: 110px;
     height: 110px;
@@ -425,7 +425,7 @@ export default {
   .success-content {
     padding: 36px 28px;
   }
-  
+
   .success-circle {
     width: 120px;
     height: 120px;

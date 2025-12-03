@@ -4,8 +4,8 @@
       <!-- Header -->
       <div class="date-header">
         <div class="back-arrow" @click="$emit('go-to-page', 'destination-details')">←</div>
-        </div>
         <h1 class="header-title">Pick date for your trip to {{ selectedDestinationName }}</h1>
+      </div>
 
       <!-- Manual Date Inputs -->
       <div class="manual-inputs">
@@ -38,7 +38,6 @@
         </div>
       </div>
 
-
       <!-- Calendar -->
       <div class="calendar-container">
         <div class="month-nav">
@@ -68,7 +67,8 @@
           </div>
         </div>
       </div>
-         <!-- Date Range Display -->
+
+      <!-- Date Range Display -->
       <div class="date-inputs">
         <div class="date-label">Selected Dates</div>
         <div class="date-range-display">
@@ -336,41 +336,43 @@ export default {
 </script>
 
 <style scoped>
-/* Exact same container as login page */
+/* Reset and Base Styles */
+* {
+  box-sizing: border-box;
+}
+
 .container {
+  width: 100%;
   min-height: 100vh;
   min-height: 100dvh;
   background: #ffffff;
   display: flex;
   flex-direction: column;
-  padding: 0;
   margin: 0;
-  width: 100vw;
-  overflow-x: hidden;
+  padding: 0;
 }
 
-/* Same card styling as login page */
+/* Main Container */
 .date-picker-inner {
   background: #ffffff;
-  padding: 36px 24px;
-  margin-top: 0;
-  position: relative;
-  box-shadow: 0 -8px 32px rgba(0, 0, 0, 0.1);
   flex: 1;
   width: 100%;
-  box-sizing: border-box;
-  min-height: auto;
   display: flex;
   flex-direction: column;
+  padding: 24px;
+  position: relative;
+  box-shadow: 0 -8px 32px rgba(0, 0, 0, 0.1);
+  margin-top: 0;
 }
 
-/* Header - same styling */
+/* Header */
 .date-header {
   background: #ffffff;
   padding: 0 0 20px 0;
   border-bottom: 1px solid #e8ecef;
   position: relative;
   margin-bottom: 20px;
+  width: 100%;
 }
 
 .back-arrow {
@@ -395,8 +397,9 @@ export default {
   color: #333;
   text-align: left;
   margin: 0;
-  padding: 0 0px;
-  margin-left:10px;
+  padding-left: 40px;
+  width: 100%;
+  line-height: 1.3;
 }
 
 /* Manual Inputs */
@@ -404,10 +407,12 @@ export default {
   display: flex;
   gap: 15px;
   margin-bottom: 20px;
+  width: 100%;
 }
 
 .input-group {
   flex: 1;
+  min-width: 0;
 }
 
 .input-label {
@@ -416,6 +421,7 @@ export default {
   color: #666;
   margin-bottom: 8px;
   font-weight: 500;
+  width: 100%;
 }
 
 .input-wrapper {
@@ -452,9 +458,9 @@ export default {
 }
 
 /* Date Range Display */
-
 .date-inputs {
   margin-bottom: 25px;
+  width: 100%;
 }
 
 .date-label {
@@ -462,6 +468,7 @@ export default {
   color: #666;
   margin-bottom: 10px;
   font-weight: 500;
+  width: 100%;
 }
 
 .date-range-display {
@@ -472,10 +479,12 @@ export default {
   border: 1.5px solid #e1e5e9;
   border-radius: 12px;
   padding: 15px;
+  width: 100%;
 }
 
 .date-display-item {
   flex: 1;
+  min-width: 0;
 }
 
 .date-display-label {
@@ -493,6 +502,7 @@ export default {
 .date-display-separator {
   color: #0c3437;
   font-size: 14px;
+  flex-shrink: 0;
 }
 
 /* Calendar Container */
@@ -503,15 +513,17 @@ export default {
   margin-bottom: 25px;
   box-shadow: 0 2px 12px rgba(0, 0, 0, 0.04);
   border: 1px solid #e8ecef;
+  width: 100%;
 }
 
-/* Month Navigation - using #0C3437 */
+/* Month Navigation */
 .month-nav {
   display: flex;
   justify-content: space-between;
   align-items: center;
   margin-bottom: 20px;
   padding: 0 10px;
+  width: 100%;
 }
 
 .nav-arrow {
@@ -522,6 +534,7 @@ export default {
   border-radius: 8px;
   transition: background-color 0.3s;
   -webkit-tap-highlight-color: transparent;
+  flex-shrink: 0;
 }
 
 .nav-arrow:hover:not(.disabled) {
@@ -538,6 +551,9 @@ export default {
   font-size: 18px;
   font-weight: 600;
   color: #0c3437;
+  text-align: center;
+  flex: 1;
+  padding: 0 10px;
 }
 
 /* Day Headers */
@@ -547,6 +563,7 @@ export default {
   gap: 8px;
   margin-bottom: 12px;
   padding: 0 4px;
+  width: 100%;
 }
 
 .day-header {
@@ -555,15 +572,15 @@ export default {
   font-weight: 600;
   color: #0c3437;
   padding: 8px 0;
-  gap: 5px;
 }
 
-/* Date Grid - using #0C3437 for selected dates */
+/* Date Grid */
 .date-grid {
   display: grid;
   grid-template-columns: repeat(7, 1fr);
   gap: 5px;
   padding: 0 4px;
+  width: 100%;
 }
 
 .date-cell {
@@ -635,6 +652,7 @@ export default {
   padding: 20px;
   margin-bottom: 25px;
   border: 1.5px solid #e1e5e9;
+  width: 100%;
 }
 
 .summary-header {
@@ -655,6 +673,7 @@ export default {
   display: grid;
   grid-template-columns: repeat(3, 1fr);
   gap: 15px;
+  width: 100%;
 }
 
 .summary-item {
@@ -675,12 +694,13 @@ export default {
   color: #0c3437;
 }
 
-/* Action Buttons - using #0C3437 */
+/* Action Buttons */
 .action-buttons {
   display: flex;
   gap: 12px;
   margin-top: auto;
-  padding: px 0 0 0;
+  padding: 10px 0 0 0;
+  width: 100%;
 }
 
 .btn {
@@ -693,6 +713,7 @@ export default {
   cursor: pointer;
   transition: all 0.3s ease;
   -webkit-tap-highlight-color: transparent;
+  min-width: 0;
 }
 
 .btn-cancel {
@@ -700,7 +721,6 @@ export default {
   color: #666;
   border: 1.5px solid #e1e5e9;
   border-radius: 28px;
-  padding:14;
 }
 
 .btn-cancel:hover {
@@ -722,23 +742,23 @@ export default {
   opacity: 0.7;
 }
 
-/* Exact same responsive breakpoints as login page */
+/* ========== RESPONSIVE BREAKPOINTS ========== */
 
-/* Small Phones (320px - 374px) */
-@media (max-width: 374px) {
+/* Small Mobile (up to 359px) */
+@media (max-width: 359px) {
   .date-picker-inner {
-    padding: 32px 20px;
+    padding: 20px 16px;
   }
 
   .header-title {
     font-size: 16px;
-    padding: 0 36px;
+    padding-left: 35px;
   }
 
   .back-arrow {
     font-size: 20px;
-    width: 28px;
-    height: 28px;
+    width: 25px;
+    height: 25px;
   }
 
   .manual-inputs {
@@ -748,156 +768,300 @@ export default {
 
   .date-range-display {
     flex-direction: column;
-    gap: 10px;
-    text-align: center;
+    align-items: flex-start;
+    gap: 12px;
   }
 
   .date-display-separator {
-    transform: rotate(90deg);
+    display: none;
   }
 
   .summary-details {
     grid-template-columns: 1fr;
-    gap: 10px;
+    gap: 12px;
   }
 
   .calendar-container {
     padding: 16px;
-    margin-bottom: 25px;
-  }
-
-  .month-nav {
-    margin-bottom: 16px;
-  }
-
-  .month-year {
-    font-size: 16px;
-  }
-
-  .nav-arrow {
-    font-size: 20px;
-    padding: 6px 10px;
   }
 
   .action-buttons {
-    gap: 8px;
-  }
-
-  .btn {
-    padding: 14px 20px;
-    font-size: 15px;
+    flex-direction: column;
+    gap: 10px;
   }
 }
 
-/* Medium Phones (375px - 414px) */
-@media (min-width: 375px) and (max-width: 414px) {
+/* Mobile (360px - 767px) */
+@media (min-width: 360px) and (max-width: 767px) {
   .date-picker-inner {
-    padding: 36px 24px;
+    padding: 24px 20px;
+    max-width: 100%;
+  }
+
+  /* Stack manual inputs on very narrow mobile */
+  @media (max-width: 400px) {
+    .manual-inputs {
+      flex-direction: column;
+      gap: 12px;
+    }
+  }
+
+  /* Adjust calendar for smaller mobile */
+  @media (max-width: 420px) {
+    .calendar-container {
+      padding: 16px 12px;
+    }
+
+    .day-headers,
+    .date-grid {
+      gap: 4px;
+    }
+
+    .day-header {
+      font-size: 13px;
+      padding: 6px 0;
+    }
+
+    .date-pill {
+      font-size: 13px;
+    }
   }
 }
 
-/* Large Phones (415px - 767px) */
-@media (min-width: 415px) and (max-width: 767px) {
-  .date-picker-inner {
-    padding: 36px 28px;
-  }
-}
-
-/* Small Tablets (768px - 1023px) */
+/* Tablet (768px - 1023px) */
 @media (min-width: 768px) and (max-width: 1023px) {
   .container {
-    max-width: 768px;
-    margin: 0 auto;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 40px;
     background: #f8f9fa;
   }
 
   .date-picker-inner {
-    max-width: 768px;
-    margin: -50px auto 0 auto;
+    max-width: 700px;
+    width: 100%;
     border-radius: 24px;
     padding: 40px 32px;
+    margin: 0;
     box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
   }
 
-  .manual-inputs {
-    gap: 20px;
+  .header-title {
+    font-size: 20px;
+  }
+
+  .month-year {
+    font-size: 20px;
+  }
+
+  .date-pill {
+    font-size: 15px;
+  }
+
+  .action-buttons {
+    max-width: 600px;
+    margin-left: auto;
+    margin-right: auto;
   }
 }
 
-/* Large Tablets (1024px - 1366px) */
-@media (min-width: 1024px) and (max-width: 1366px) {
+/* Desktop (1024px - 1439px) */
+@media (min-width: 1024px) and (max-width: 1439px) {
   .container {
-    max-width: 1024px;
-    margin: 0 auto;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 60px;
     background: #f8f9fa;
   }
 
   .date-picker-inner {
+    max-width: 800px;
+    width: 100%;
+    border-radius: 24px;
+    padding: 44px 40px;
+    margin: 0;
+    box-shadow: 0 12px 48px rgba(0, 0, 0, 0.1);
+  }
+
+  .header-title {
+    font-size: 22px;
+  }
+
+  .month-year {
+    font-size: 22px;
+  }
+
+  .date-pill {
+    font-size: 16px;
+  }
+
+  .manual-inputs {
+    max-width: 600px;
+    margin-left: auto;
+    margin-right: auto;
+  }
+
+  .calendar-container {
+    max-width: 700px;
+    margin-left: auto;
+    margin-right: auto;
+  }
+
+  .summary-details {
+    max-width: 600px;
+    margin-left: auto;
+    margin-right: auto;
+  }
+
+  .action-buttons {
     max-width: 500px;
-    margin: -60px auto 0 auto;
-    padding: 44px 36px;
+    margin-left: auto;
+    margin-right: auto;
+  }
+}
+
+/* Large Desktop (1440px and above) */
+@media (min-width: 1440px) {
+  .container {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 80px;
+    background: #f8f9fa;
+  }
+
+  .date-picker-inner {
+    max-width: 900px;
+    width: 100%;
+    border-radius: 28px;
+    padding: 48px 44px;
+    margin: 0;
+    box-shadow: 0 16px 64px rgba(0, 0, 0, 0.1);
+  }
+
+  .header-title {
+    font-size: 24px;
+  }
+
+  .month-year {
+    font-size: 24px;
+  }
+
+  .date-pill {
+    font-size: 17px;
+  }
+
+  .manual-inputs {
+    max-width: 700px;
+    margin-left: auto;
+    margin-right: auto;
+    gap: 30px;
+  }
+
+  .calendar-container {
+    max-width: 800px;
+    margin-left: auto;
+    margin-right: auto;
+    padding: 24px;
+  }
+
+  .date-grid {
+    gap: 8px;
+  }
+
+  .summary-details {
+    max-width: 700px;
+    margin-left: auto;
+    margin-right: auto;
+  }
+
+  .action-buttons {
+    max-width: 600px;
+    margin-left: auto;
+    margin-right: auto;
+  }
+}
+
+/* Extra Large Screens (1920px and above) */
+@media (min-width: 1920px) {
+  .date-picker-inner {
+    max-width: 1000px;
+    padding: 56px 48px;
+  }
+
+  .header-title {
+    font-size: 26px;
+  }
+
+  .month-year {
+    font-size: 26px;
+  }
+
+  .manual-inputs {
+    max-width: 800px;
+  }
+
+  .calendar-container {
+    max-width: 900px;
+  }
+
+  .summary-details {
+    max-width: 800px;
   }
 }
 
 /* Landscape Mobile */
 @media (max-height: 600px) and (orientation: landscape) {
   .date-picker-inner {
-    padding: 24px 20px;
-  }
-
-  .date-header {
-    padding: 0 0 16px 0;
-    margin-bottom: 16px;
-  }
-
-  .date-inputs {
-    margin-bottom: 15px;
+    padding: 20px 16px;
   }
 
   .calendar-container {
-    margin-bottom: 15px;
     padding: 16px;
+    margin-bottom: 20px;
+  }
+
+  .date-inputs,
+  .date-summary {
+    margin-bottom: 20px;
   }
 
   .action-buttons {
-    padding: 16px 0 0 0;
+    padding-top: 15px;
   }
 }
 
 /* Very short screens */
 @media (max-height: 500px) {
   .date-picker-inner {
-    padding: 20px 16px;
+    padding: 16px 12px;
   }
 
   .date-header {
-    padding: 0 0 12px 0;
-    margin-bottom: 12px;
-  }
-
-  .date-inputs {
-    margin-bottom: 12px;
+    margin-bottom: 15px;
+    padding-bottom: 15px;
   }
 
   .calendar-container {
-    margin-bottom: 12px;
     padding: 12px;
+    margin-bottom: 15px;
+  }
+
+  .date-inputs,
+  .date-summary {
+    margin-bottom: 15px;
   }
 
   .action-buttons {
-    padding: 12px 0 0 0;
-  }
-
-  .btn {
-    padding: 12px 16px;
-    font-size: 14px;
+    padding-top: 10px;
   }
 }
 
-/* Prevent zoom on iOS */
+/* Prevent zoom on iOS inputs */
 @media screen and (max-width: 767px) {
   .date-input-field,
-  .date-display-value,
   .btn {
     font-size: 16px;
   }
@@ -908,6 +1072,7 @@ export default {
   .container {
     padding-left: max(0px, env(safe-area-inset-left));
     padding-right: max(0px, env(safe-area-inset-right));
+    padding-top: max(0px, env(safe-area-inset-top));
     padding-bottom: max(0px, env(safe-area-inset-bottom));
   }
 }
