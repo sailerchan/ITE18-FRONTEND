@@ -3,7 +3,7 @@
     <div class="accommodation-inner">
       <!-- Header -->
       <div class="accommodation-header">
-        <div class="accommodation-back-arrow" @click="$emit('go-to-page', 'datepicker')">←</div>
+        <div class="accommodation-back-arrow" @click="$emit('go-to-page', 'datepicker')"><i class="fas fa-arrow-left"></i></div>
         <h1>Select accommodation</h1>
       </div>
 
@@ -115,7 +115,6 @@ export default {
 /* Same card styling as login page */
 .accommodation-inner {
   background: #ffffff;
-  border-radius: 24px 24px 0 0;
   padding: 36px 24px;
   margin-top: 0;
   position: relative;

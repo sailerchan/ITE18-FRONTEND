@@ -256,7 +256,7 @@ export default {
   font-weight: 400;
   pointer-events: none;
   transition: all 0.3s ease;
-  background: #fafbfc;
+  background: #ffffff;
   padding: 0 4px;
 }
 
@@ -277,7 +277,7 @@ export default {
 }
 
 .form-input::placeholder {
-  color: #b6b6b6;
+  color: #ffffff;
 ;
 }
 

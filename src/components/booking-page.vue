@@ -1,7 +1,8 @@
 <template>
   <div class="container">
     <div class="booking-inner">
-      <!-- Listing View -->
+
+      <!-- List of Accommodation View -->
       <div v-if="currentBookingView === 'listing'">
         <!-- Dynamic Image Header -->
         <div class="image-header" :style="{ backgroundImage: 'linear-gradient(rgba(0,0,0,0.2), rgba(0,0,0,0.2)), url(' + currentPropertyImage + ')' }">
@@ -9,7 +10,6 @@
             <i class="fas fa-times"></i>
           </button>
         </div>
-
         <div class="details-card-wrapper">
           <div class="details-content">
             <h2 class="property-title">{{ selectedProperty.title }}</h2>
@@ -44,7 +44,6 @@
           <div class="confirmation-title">Confirm Booking</div>
         </div>
 
-        <!-- Dynamic Confirmation Image -->
         <div class="confirmation-image" :style="{ backgroundImage: 'url(' + currentConfirmationImage + ')' }"></div>
 
         <div class="booking-summary">
@@ -52,7 +51,7 @@
           <p class="booking-dates"><i class="fa-solid fa-calendar"></i>  {{ bookingDatesDisplay }}</p>
 
           <div class="price-row">
-            <span>Price</span>
+            <span>Price</span> 
             <span>₱{{ selectedProperty.price }}</span>
           </div>
           <div class="price-row">
@@ -244,6 +243,7 @@ export default {
 .property-title {
     font-size: 24px;
     font-weight: 700;
+    margin-left: 8px;
     margin-bottom: 8px;
     color: #1a1a1a;
     line-height: 1.2;
@@ -253,15 +253,17 @@ export default {
     font-size: 16px;
     color: #666;
     margin-bottom: 16px;
+    margin-left: 10px;
     line-height: 1.2;
 }
 
 .location-info {
     display: flex;
     align-items: center;
-    margin-bottom: 24px;
+    margin-bottom: 20px;
     font-size: 15px;
     color: #0c3437;
+    margin-left: 10px;
 
 }
 
@@ -546,7 +548,7 @@ export default {
     }
 
     .image-header {
-        height: 35vh;
+        height: 45vh;
     }
 
     .details-content {
