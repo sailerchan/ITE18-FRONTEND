@@ -48,7 +48,6 @@
             </div>
           </div>
       </section>
-        <!--
       <nav class="bottom-nav">
         <div class="nav-items-container">
           <button class="nav-item active" @click="handleNavClick('home')"><i class="fas fa-home"></i></button>
@@ -56,7 +55,7 @@
           <button class="nav-item" @click="handleNavClick('notifications')"><i class="fas fa-bell"></i></button>
           <button class="nav-item" @click="handleNavClick('profile')"><i class="fas fa-user"></i></button>
         </div>
-      </nav>-->
+      </nav>
     </div>
   </div>
 </template>
@@ -160,6 +159,7 @@ export default {
   display: flex;
   flex-direction: column;
   overflow-y: auto;
+  padding-bottom: 90px; /* Added padding for fixed nav */
 }
 
 /* Homepage Styles */
@@ -444,16 +444,18 @@ export default {
     margin: 0 14px 5px;
 }
 
-/* Bottom nav */
+/* Bottom nav - FIXED POSITION */
 .bottom-nav {
-    position: sticky;
+    position: fixed; /* Changed from sticky to fixed */
     bottom: 0;
+    left: 0;
+    right: 0;
     background: white;
     border-top: 1px solid #e9ecef;
     padding: 16px 24px;
     display: flex;
     justify-content: center;
-    margin-top: auto;
+    z-index: 1000; /* Ensure nav stays on top */
 }
 .nav-items-container {
     display: flex;
@@ -534,6 +536,14 @@ export default {
   .section-header h4 {
     font-size: 16px;
   }
+
+  .homepage-inner {
+    padding-bottom: 80px; /* Adjusted for smaller screens */
+  }
+
+  .bottom-nav {
+    padding: 12px 16px;
+  }
 }
 
 /* Small Phones (321px - 374px) */
@@ -562,6 +572,10 @@ export default {
   .destination-card {
     min-width: 240px;
     height: 300px;
+  }
+
+  .homepage-inner {
+    padding-bottom: 85px;
   }
 }
 
@@ -592,6 +606,10 @@ export default {
     min-width: 260px;
     height: 320px;
   }
+
+  .homepage-inner {
+    padding-bottom: 90px;
+  }
 }
 
 /* Large Phones (415px - 767px) - Large phones like iPhone Plus/Pro Max */
@@ -621,6 +639,10 @@ export default {
     min-width: 280px;
     height: 350px;
   }
+
+  .homepage-inner {
+    padding-bottom: 95px;
+  }
 }
 
 /* Small Tablets (768px - 1023px) */
@@ -637,6 +659,7 @@ export default {
     box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
     margin: 0 auto;
     width: 100%;
+    padding-bottom: 100px; /* Adjusted for tablet */
   }
 
   .header {
@@ -684,6 +707,13 @@ export default {
   .section-header h4 {
     font-size: 20px;
   }
+
+  .bottom-nav {
+    max-width: 768px;
+    left: 50%;
+    transform: translateX(-50%);
+    border-radius: 24px 24px 0 0;
+  }
 }
 
 /* Large Tablets (1024px - 1366px) */
@@ -700,6 +730,7 @@ export default {
     box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
     margin: 0 auto;
     width: 100%;
+    padding-bottom: 105px; /* Adjusted for larger tablet */
   }
 
   .header {
@@ -727,6 +758,13 @@ export default {
     min-width: 280px;
     height: 360px;
   }
+
+  .bottom-nav {
+    max-width: 500px;
+    left: 50%;
+    transform: translateX(-50%);
+    border-radius: 24px 24px 0 0;
+  }
 }
 
 /* Desktop (1367px and up) */
@@ -743,6 +781,7 @@ export default {
     box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
     margin: 0 auto;
     width: 100%;
+    padding-bottom: 110px; /* Adjusted for desktop */
   }
 
   .header {
@@ -756,6 +795,13 @@ export default {
   .destination-card {
     min-width: 300px;
     height: 380px;
+  }
+
+  .bottom-nav {
+    max-width: 500px;
+    left: 50%;
+    transform: translateX(-50%);
+    border-radius: 24px 24px 0 0;
   }
 }
 
@@ -792,6 +838,14 @@ export default {
 
   .user-name {
     font-size: 22px;
+  }
+
+  .homepage-inner {
+    padding-bottom: 70px; /* Adjusted for landscape */
+  }
+
+  .bottom-nav {
+    padding: 10px 16px;
   }
 }
 
@@ -833,6 +887,14 @@ export default {
   .hero-text p {
     font-size: 11px;
   }
+
+  .homepage-inner {
+    padding-bottom: 60px; /* Adjusted for very short screens */
+  }
+
+  .bottom-nav {
+    padding: 8px 12px;
+  }
 }
 
 /* Fix for iOS zoom on input focus */
@@ -852,6 +914,10 @@ export default {
 
   .homepage-inner {
     border-radius: 24px 24px 0 0;
+  }
+
+  .bottom-nav {
+    padding-bottom: max(16px, env(safe-area-inset-bottom));
   }
 
   @media (min-width: 768px) {

@@ -1,6 +1,6 @@
 <template>
   <div class="container">
-    <div class="card change-password-card">
+    <div class="change-password-inner">
       <!-- I. Header Section -->
       <div class="header-section">
         <div class="nav-bar">
@@ -91,7 +91,7 @@
         </div>
       </div>
 
-      <!-- III. Navigation Bar -->
+      <!-- III. Navigation Bar - SAME AS HOMEPAGE -->
       <nav class="bottom-nav">
         <div class="nav-items-container">
           <button class="nav-item" :class="{ active: activeNav === 'home' }" @click="goToPage('homepage')">
@@ -103,7 +103,7 @@
           <button class="nav-item" :class="{ active: activeNav === 'notifications' }" @click="goToPage('notifications')">
             <i class="fas fa-bell"></i>
           </button>
-          <button class="nav-item" :class="{ active: activeNav === 'profile' }" @click="goToPage('profile')">
+          <button class="nav-item active">
             <i class="fas fa-user"></i>
           </button>
         </div>
@@ -174,7 +174,17 @@ export default {
 </script>
 
 <style scoped>
-/* Exact same container structure as profile and personal info pages */
+/* CSS Variables - SAME AS HOMEPAGE */
+:root {
+  --muted: #6c757d;
+  --dark: #1a1a1a;
+  --teal-1: #1f4f5a;
+  --teal-2: #1f7a8c;
+  --card-shadow: 0 4px 16px rgba(0, 0, 0, 0.08);
+  --hover-shadow: 0 8px 24px rgba(0, 0, 0, 0.12);
+}
+
+/* Exact same container as homepage */
 .container {
   min-height: 100vh;
   min-height: 100dvh;
@@ -187,7 +197,8 @@ export default {
   overflow-x: hidden;
 }
 
-.change-password-card {
+/* Same card styling as homepage */
+.change-password-inner {
   background: #ffffff;
   border-radius: 24px 24px 0 0;
   padding: 0;
@@ -200,6 +211,8 @@ export default {
   min-height: auto;
   display: flex;
   flex-direction: column;
+  overflow-y: auto;
+  padding-bottom: 90px; /* Added padding for fixed nav - SAME AS HOMEPAGE */
 }
 
 /* I. Header Section */
@@ -229,6 +242,15 @@ export default {
   display: flex;
   align-items: center;
   justify-content: center;
+  -webkit-tap-highlight-color: transparent;
+  width: 48px;
+  height: 48px;
+  border-radius: 12px;
+  transition: all 0.2s ease;
+}
+
+.back-button:hover {
+  background: rgba(255, 255, 255, 0.1);
 }
 
 .screen-title {
@@ -271,24 +293,25 @@ export default {
   display: block;
   font-size: 14px;
   font-weight: 600;
-  color: #6B7280;
+  color: var(--muted);
   margin-bottom: 8px;
   padding-left: 5px;
 }
 
 .input-field {
-  border: 1px solid #e0e0e0;
+  border: 1.5px solid #e1e5e9;
   border-radius: 12px;
   padding: 0 16px;
   background: white;
-  transition: border-color 0.2s;
+  transition: all 0.2s ease;
   display: flex;
   align-items: center;
   position: relative;
 }
 
 .input-field:focus-within {
-  border-color: #0C3437;
+  border-color: var(--teal-1);
+  box-shadow: 0 0 0 3px rgba(31, 79, 90, 0.1);
 }
 
 .input-text {
@@ -297,17 +320,17 @@ export default {
   outline: none;
   padding: 14px 0;
   font-size: 15px;
-  color: #333;
+  color: var(--dark);
   background: transparent;
   flex: 1;
 }
 
 .input-text::placeholder {
-  color: #999;
+  color: #adb5bd;
 }
 
 .input-text:focus {
-  color: #333;
+  color: var(--dark);
 }
 
 .password-toggle {
@@ -319,19 +342,15 @@ export default {
   align-items: center;
   justify-content: center;
   margin-left: 8px;
-  color: #666;
-  transition: color 0.2s;
+  color: var(--muted);
+  transition: all 0.2s ease;
   -webkit-tap-highlight-color: transparent;
+  border-radius: 4px;
 }
 
 .password-toggle:hover {
-  color: #333;
-}
-
-.password-toggle:focus {
-  outline: 2px solid #0C3437;
-  outline-offset: 2px;
-  border-radius: 4px;
+  color: var(--dark);
+  background: rgba(0, 0, 0, 0.05);
 }
 
 /* Save Button Container */
@@ -351,60 +370,66 @@ export default {
   font-size: 16px;
   font-weight: 600;
   cursor: pointer;
-  transition: background-color 0.2s;
+  transition: all 0.2s ease;
+  -webkit-tap-highlight-color: transparent;
 }
 
 .save-button:hover {
   background: #0A2A2D;
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(12, 52, 55, 0.2);
 }
 
 .save-button:active {
-  transform: translateY(1px);
+  transform: translateY(0);
 }
 
-/* III. Navigation Bar */
+/* Bottom nav - EXACT SAME AS HOMEPAGE */
 .bottom-nav {
-  background-color: #ffffff;
-  border-top: 1px solid #e1e5e9;
-  padding: 16px 0 8px;
-  margin-top: auto;
+    position: fixed;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    background: white;
+    border-top: 1px solid #e9ecef;
+    padding: 16px 24px;
+    display: flex;
+    justify-content: center;
+    z-index: 1000;
 }
-
 .nav-items-container {
-  display: flex;
-  justify-content: space-around;
-  align-items: center;
+    display: flex;
+    justify-content: space-around;
+    width: 100%;
+    max-width: 420px;
 }
-
 .nav-item {
-  background: none;
-  border: none;
-  padding: 8px 16px;
-  cursor: pointer;
-  display: flex;
-  align-items: center;
+    border: 0;
+    background: transparent;
+    font-size: 20px;
+    color: #adb5bd;
+    width: 48px;
+    height: 48px;
+    border-radius: 12px;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
   justify-content: center;
-  color: #666;
-  transition: color 0.2s;
-  -webkit-tap-highlight-color: transparent;
+    transition: all 0.2s ease;
+    -webkit-tap-highlight-color: transparent;
 }
-
-.nav-item i {
-  font-size: 22px;
-}
-
 .nav-item.active {
-  color: #1f4f5a;
+  color: var(--teal-1);
+  background: rgba(56,97,102,0.1);
 }
-
 .nav-item:hover {
-  color: #333;
+  background: rgba(0,0,0,0.03);
 }
 
-/* Exact same responsive breakpoints as other pages */
+/* ================= RESPONSIVE BREAKPOINTS - SAME AS HOMEPAGE ================= */
 
-/* Small Phones (320px - 374px) */
-@media (max-width: 374px) {
+/* Extra Small Phones (under 320px) */
+@media (max-width: 320px) {
   .header-section {
     padding: 40px 16px 20px;
     border-radius: 0 0 20px 20px;
@@ -433,16 +458,27 @@ export default {
     padding: 12px;
   }
 
-  .nav-item {
-    padding: 8px 12px;
+  .change-password-inner {
+    padding-bottom: 80px;
   }
 
-  .nav-item i {
-    font-size: 20px;
+  .bottom-nav {
+    padding: 12px 16px;
   }
 
   .password-toggle {
     padding: 2px;
+  }
+}
+
+/* Small Phones (321px - 374px) */
+@media (min-width: 321px) and (max-width: 374px) {
+  .header-section {
+    padding: 45px 20px 25px;
+  }
+
+  .change-password-inner {
+    padding-bottom: 85px;
   }
 }
 
@@ -451,6 +487,10 @@ export default {
   .header-section {
     padding: 45px 20px 25px;
   }
+
+  .change-password-inner {
+    padding-bottom: 90px;
+  }
 }
 
 /* Large Phones (415px - 767px) */
@@ -458,22 +498,27 @@ export default {
   .header-section {
     padding: 45px 24px 25px;
   }
+
+  .change-password-inner {
+    padding-bottom: 95px;
+  }
 }
 
 /* Small Tablets (768px - 1023px) */
 @media (min-width: 768px) and (max-width: 1023px) {
   .container {
+    background: #f8f9fa;
+    padding: 20px;
     max-width: 768px;
     margin: 0 auto;
   }
 
-  .change-password-card {
-    max-width: 768px;
-    margin: 0 auto;
+  .change-password-inner {
     border-radius: 24px;
-    margin-top: 20px;
-    margin-bottom: 20px;
     box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
+    margin: 0 auto;
+    width: 100%;
+    padding-bottom: 100px;
   }
 
   .header-section {
@@ -490,20 +535,30 @@ export default {
     padding: 0 24px;
     margin-bottom: 20px;
   }
+
+  .bottom-nav {
+    max-width: 768px;
+    left: 50%;
+    transform: translateX(-50%);
+    border-radius: 24px 24px 0 0;
+  }
 }
 
 /* Large Tablets (1024px - 1366px) */
 @media (min-width: 1024px) and (max-width: 1366px) {
   .container {
-    max-width: 1024px;
+    background: #f8f9fa;
+    padding: 30px;
+    max-width: 500px;
     margin: 0 auto;
   }
 
-  .change-password-card {
-    max-width: 500px;
-    margin: 40px auto;
+  .change-password-inner {
     border-radius: 24px;
     box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
+    margin: 0 auto;
+    width: 100%;
+    padding-bottom: 105px;
   }
 
   .header-section {
@@ -519,6 +574,53 @@ export default {
   .save-button-container {
     padding: 0 28px;
     margin-bottom: 20px;
+  }
+
+  .bottom-nav {
+    max-width: 500px;
+    left: 50%;
+    transform: translateX(-50%);
+    border-radius: 24px 24px 0 0;
+  }
+}
+
+/* Desktop (1367px and up) */
+@media (min-width: 1367px) {
+  .container {
+    background: #f8f9fa;
+    padding: 40px;
+    max-width: 500px;
+    margin: 0 auto;
+  }
+
+  .change-password-inner {
+    border-radius: 24px;
+    box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
+    margin: 0 auto;
+    width: 100%;
+    padding-bottom: 110px;
+  }
+
+  .header-section {
+    border-radius: 24px 24px 0 0;
+    padding: 50px 40px 30px;
+  }
+
+  .main-content {
+    border-radius: 0 0 24px 24px;
+    padding: 30px 32px 20px;
+  }
+
+  .save-button-container {
+    padding: 0 32px;
+    margin-bottom: 20px;
+  }
+
+  .bottom-nav {
+    max-width: 500px;
+    left: 50%;
+    transform: translateX(-50%);
+    border-radius: 24px 24px 0 0;
   }
 }
 
@@ -541,8 +643,12 @@ export default {
     margin-bottom: 10px;
   }
 
+  .change-password-inner {
+    padding-bottom: 70px;
+  }
+
   .bottom-nav {
-    padding: 12px 0 6px;
+    padding: 10px 16px;
   }
 }
 
@@ -569,16 +675,23 @@ export default {
     padding: 10px;
   }
 
-  .bottom-nav {
-    padding: 10px 0 4px;
+  .change-password-inner {
+    padding-bottom: 60px;
   }
 
-  .nav-item {
-    padding: 6px 10px;
+  .bottom-nav {
+    padding: 8px 12px;
   }
 
   .nav-item i {
     font-size: 18px;
+  }
+}
+
+/* Fix for iOS zoom on input focus */
+@media screen and (max-width: 767px) {
+  .input-text {
+    font-size: 16px;
   }
 }
 
@@ -589,26 +702,26 @@ export default {
     padding-right: max(0px, env(safe-area-inset-right));
     padding-bottom: max(0px, env(safe-area-inset-bottom));
   }
+
+  .change-password-inner {
+    border-radius: 24px 24px 0 0;
+  }
+
+  .bottom-nav {
+    padding-bottom: max(16px, env(safe-area-inset-bottom));
+  }
+
+  @media (min-width: 768px) {
+    .change-password-inner {
+      border-radius: 24px;
+    }
+  }
 }
 
-/* Smooth transitions */
-.header-section,
-.input-field,
-.save-button,
-.nav-item,
-.password-toggle {
-  transition: all 0.3s ease;
-}
-
-/* Focus states for accessibility */
-.back-button:focus,
-.save-button:focus,
-.nav-item:focus {
-  outline: 2px solid #0C3437;
-  outline-offset: 2px;
-}
-
-.input-text:focus {
-  outline: none;
+/* Fix for Android Chrome */
+@media (-webkit-min-device-pixel-ratio: 0) and (min-resolution: 0.001dpcm) {
+  .input-text {
+    font-size: 16px !important;
+  }
 }
 </style>

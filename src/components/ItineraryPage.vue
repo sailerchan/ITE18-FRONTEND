@@ -14,29 +14,31 @@
       <div class="trip-details">
         <div class="detail-row">
           <span class="detail-icon">📅</span>
-          <span>{{ tripDates }}</span>
+          <span class="detail-text">{{ tripDates }}</span>
         </div>
         <div class="detail-row">
           <span class="detail-icon">🏨</span>
-          <span>{{ accommodationName }}</span>
+          <span class="detail-text">{{ accommodationName }}</span>
         </div>
         <div class="detail-row">
           <span class="detail-icon">💰</span>
-          <span>Total: PHP {{ totalPrice }}</span>
+          <span class="detail-text">Total: PHP {{ totalPrice }}</span>
         </div>
       </div>
     </div>
 
     <!-- Day Navigation -->
-    <div class="day-tabs">
-      <div
-        v-for="day in days"
-        :key="day.id"
-        class="day-tab"
-        :class="{ active: activeDay === day.id }"
-        @click="setActiveDay(day.id)"
-      >
-        {{ day.name }}
+    <div class="day-tabs-container">
+      <div class="day-tabs">
+        <div
+          v-for="day in days"
+          :key="day.id"
+          class="day-tab"
+          :class="{ active: activeDay === day.id }"
+          @click="setActiveDay(day.id)"
+        >
+          {{ day.name }}
+        </div>
       </div>
     </div>
 
@@ -82,80 +84,86 @@
     </div>
 
     <!-- Add Button -->
-    <button class="add-button" @click="addActivity">Add Activity</button>
+    <div class="button-container">
+      <button class="add-button" @click="addActivity">Add Activity</button>
+    </div>
 
     <!-- Packlist Section -->
-    <div class="packlist">
-      <div class="packlist-header">
-        <div class="packlist-title">Packlist</div>
-        <div
-          class="packlist-arrow"
-          @click="togglePacklist"
-        >
-          {{ packlistExpanded ? '⌄' : '›' }}
-        </div>
-      </div>
-
-      <div class="packlist-card" v-show="packlistExpanded">
-        <div class="packlist-categories">
+    <div class="packlist-container">
+      <div class="packlist">
+        <div class="packlist-header">
+          <div class="packlist-title">Packlist</div>
           <div
-            v-for="category in categories"
-            :key="category.id"
-            class="packlist-category"
+            class="packlist-arrow"
+            @click="togglePacklist"
           >
-            <div class="category-header">
-              <input
-                type="text"
-                class="category-title"
-                placeholder="Category name (e.g., Essentials, Clothing, Electronics)"
-                v-model="category.title"
-                @input="updateCategory(category)"
-              >
-              <span
-                class="delete-category"
-                @click="deleteCategory(category.id)"
-              >✕</span>
-            </div>
-            <div class="packlist-items">
-              <div
-                v-for="item in category.items"
-                :key="item.id"
-                class="packlist-item"
-              >
-                <div
-                  class="packlist-checkbox"
-                  :class="{ checked: item.checked }"
-                  @click="toggleItemCheck(category.id, item.id)"
-                >
-                  {{ item.checked ? '✓' : '' }}
-                </div>
-                <div
-                  class="packlist-text"
-                  :class="{ checked: item.checked }"
-                >
-                  {{ item.text }}
-                </div>
-                <span
-                  class="delete-item"
-                  @click="deleteItem(category.id, item.id)"
-                >✕</span>
-              </div>
-            </div>
-            <input
-              type="text"
-              class="packlist-input"
-              placeholder="Add new item..."
-              @keypress.enter="addItemToCategory(category.id, $event)"
-            >
+            {{ packlistExpanded ? '⌄' : '›' }}
           </div>
         </div>
 
-        <button class="add-category-btn" @click="addCategory">+ Add New Category</button>
+        <div class="packlist-card" v-show="packlistExpanded">
+          <div class="packlist-categories">
+            <div
+              v-for="category in categories"
+              :key="category.id"
+              class="packlist-category"
+            >
+              <div class="category-header">
+                <input
+                  type="text"
+                  class="category-title"
+                  placeholder="Category name (e.g., Essentials, Clothing, Electronics)"
+                  v-model="category.title"
+                  @input="updateCategory(category)"
+                >
+                <span
+                  class="delete-category"
+                  @click="deleteCategory(category.id)"
+                >✕</span>
+              </div>
+              <div class="packlist-items">
+                <div
+                  v-for="item in category.items"
+                  :key="item.id"
+                  class="packlist-item"
+                >
+                  <div
+                    class="packlist-checkbox"
+                    :class="{ checked: item.checked }"
+                    @click="toggleItemCheck(category.id, item.id)"
+                  >
+                    {{ item.checked ? '✓' : '' }}
+                  </div>
+                  <div
+                    class="packlist-text"
+                    :class="{ checked: item.checked }"
+                  >
+                    {{ item.text }}
+                  </div>
+                  <span
+                    class="delete-item"
+                    @click="deleteItem(category.id, item.id)"
+                  >✕</span>
+                </div>
+              </div>
+              <input
+                type="text"
+                class="packlist-input"
+                placeholder="Add new item..."
+                @keypress.enter="addItemToCategory(category.id, $event)"
+              >
+            </div>
+          </div>
+
+          <button class="add-category-btn" @click="addCategory">+ Add New Category</button>
+        </div>
       </div>
     </div>
 
     <!-- Save Button -->
-    <button class="save-button" @click="saveTrip">Save Trip</button>
+    <div class="button-container">
+      <button class="save-button" @click="saveTrip">Save Trip</button>
+    </div>
   </div>
 </template>
 
@@ -405,9 +413,12 @@ export default {
   background-color: #f8f9fa;
   color: #333333;
   line-height: 1.5;
-  width: 100%;
+  width: 100vw;
   min-height: 100vh;
   overflow-x: hidden;
+  display: flex;
+  flex-direction: column;
+  padding-bottom: 20px;
 }
 
 /* Dark Header Card */
@@ -415,8 +426,11 @@ export default {
   background-color: #1f4f5a;
   border-radius: 0 0 24px 24px;
   padding: 20px;
-  margin: 0 0 24px 0;
+  margin: 0;
   box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+  width: 100vw;
+  max-width: 100%;
+  box-sizing: border-box;
 }
 
 /* Navigation */
@@ -459,6 +473,8 @@ export default {
   font-weight: 700;
   color: white;
   margin-bottom: 16px;
+  word-break: break-word;
+  overflow-wrap: break-word;
 }
 
 .trip-details {
@@ -469,25 +485,48 @@ export default {
 
 .detail-row {
   display: flex;
-  align-items: center;
+  align-items: flex-start;
   color: rgba(255, 255, 255, 0.9);
   font-size: 14px;
+  width: 100%;
 }
 
 .detail-icon {
   margin-right: 12px;
   font-size: 16px;
   min-width: 24px;
+  flex-shrink: 0;
+}
+
+.detail-text {
+  flex: 1;
+  word-break: break-word;
+  overflow-wrap: break-word;
 }
 
 /* Day Navigation */
-.day-tabs {
-  display: flex;
-  margin-bottom: 24px;
-  border-bottom: 1px solid #e0e0e0;
-  padding: 0 20px;
+.day-tabs-container {
+  width: 100vw;
+  max-width: 100%;
   overflow-x: auto;
   -webkit-overflow-scrolling: touch;
+  scrollbar-width: none;
+  -ms-overflow-style: none;
+  padding: 0 0 16px 0;
+  margin: 0 0 24px 0;
+  position: relative;
+}
+
+.day-tabs-container::-webkit-scrollbar {
+  display: none;
+}
+
+.day-tabs {
+  display: flex;
+  border-bottom: 1px solid #e0e0e0;
+  padding: 0 20px;
+  min-width: min-content;
+  width: max-content;
 }
 
 .day-tab {
@@ -499,6 +538,8 @@ export default {
   position: relative;
   white-space: nowrap;
   flex-shrink: 0;
+  min-width: 80px;
+  text-align: center;
 }
 
 .day-tab.active {
@@ -520,6 +561,10 @@ export default {
 /* Activity Cards */
 .activities-container {
   padding: 0 20px;
+  width: 100vw;
+  max-width: 100%;
+  box-sizing: border-box;
+  flex: 1;
 }
 
 .activity-slot {
@@ -529,6 +574,8 @@ export default {
   margin-bottom: 16px;
   box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
   border: 1px solid #f0f0f0;
+  width: 100%;
+  box-sizing: border-box;
 }
 
 .activity-header {
@@ -536,14 +583,15 @@ export default {
   align-items: flex-start;
   margin-bottom: 12px;
   flex-direction: column;
+  width: 100%;
 }
 
 .time-label {
   font-size: 14px;
   font-weight: 600;
   color: #1f4f5a;
-  min-width: 80px;
   margin-bottom: 12px;
+  width: 100%;
 }
 
 .time-select {
@@ -557,19 +605,19 @@ export default {
   cursor: pointer;
   outline: none;
   width: 100%;
-  max-width: 150px;
+  max-width: 200px;
+  box-sizing: border-box;
 }
 
 .activity-content {
   display: flex;
   border-left: 1px solid #e8e8e8;
   padding-left: 16px;
-  flex: 1;
   width: 100%;
+  box-sizing: border-box;
 }
 
 .activity-details {
-  flex: 1;
   width: 100%;
 }
 
@@ -579,6 +627,8 @@ export default {
   width: 100%;
   background: transparent;
   padding: 4px 0;
+  font-size: 16px;
+  box-sizing: border-box;
 }
 
 .title-input {
@@ -592,10 +642,18 @@ export default {
   color: #666;
 }
 
+/* Button Container */
+.button-container {
+  padding: 0 20px;
+  width: 100vw;
+  max-width: 100%;
+  box-sizing: border-box;
+  margin-bottom: 24px;
+}
+
 /* Add Button */
 .add-button {
-  width: calc(100% - 40px);
-  margin: 0 20px 24px 20px;
+  width: 100%;
   background-color: #1f4f5a;
   color: white;
   border: none;
@@ -606,7 +664,8 @@ export default {
   cursor: pointer;
   transition: background-color 0.2s;
   box-shadow: 0 4px 8px rgba(31, 79, 90, 0.2);
-  max-width: 500px;
+  display: block;
+  box-sizing: border-box;
 }
 
 .add-button:hover {
@@ -614,9 +673,17 @@ export default {
 }
 
 /* Packlist Section */
-.packlist {
+.packlist-container {
+  width: 100vw;
+  max-width: 100%;
+  box-sizing: border-box;
   margin-bottom: 24px;
+}
+
+.packlist {
   padding: 0 20px;
+  width: 100%;
+  box-sizing: border-box;
 }
 
 .packlist-header {
@@ -626,6 +693,7 @@ export default {
   margin-bottom: 16px;
   padding-bottom: 8px;
   border-bottom: 1px solid #e8e8e8;
+  width: 100%;
 }
 
 .packlist-title {
@@ -638,6 +706,7 @@ export default {
   font-size: 20px;
   color: #666;
   cursor: pointer;
+  user-select: none;
 }
 
 .packlist-card {
@@ -646,14 +715,15 @@ export default {
   border-radius: 12px;
   padding: 16px;
   box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
-  max-width: 500px;
-  margin: 0 auto;
+  width: 100%;
+  box-sizing: border-box;
 }
 
 .packlist-category {
   margin-bottom: 24px;
   padding-bottom: 16px;
   border-bottom: 1px solid #f0f0f0;
+  width: 100%;
 }
 
 .packlist-category:last-child {
@@ -666,6 +736,8 @@ export default {
   align-items: center;
   justify-content: space-between;
   margin-bottom: 12px;
+  width: 100%;
+  gap: 8px;
 }
 
 .category-title {
@@ -675,8 +747,11 @@ export default {
   border: none;
   outline: none;
   background: transparent;
-  width: 100%;
+  flex: 1;
   padding: 4px 0;
+  font-size: 16px;
+  min-width: 0;
+  box-sizing: border-box;
 }
 
 .category-title::placeholder {
@@ -688,8 +763,8 @@ export default {
   color: #ff6b6b;
   cursor: pointer;
   font-size: 14px;
-  margin-left: 8px;
   flex-shrink: 0;
+  user-select: none;
 }
 
 .packlist-input {
@@ -700,6 +775,7 @@ export default {
   margin-top: 8px;
   padding: 8px 0;
   border-bottom: 1px solid #f0f0f0;
+  box-sizing: border-box;
 }
 
 .packlist-input::placeholder {
@@ -710,6 +786,8 @@ export default {
   display: flex;
   align-items: center;
   margin-bottom: 12px;
+  width: 100%;
+  gap: 8px;
 }
 
 .packlist-checkbox {
@@ -717,13 +795,13 @@ export default {
   height: 20px;
   border: 2px solid #e0e0e0;
   border-radius: 4px;
-  margin-right: 12px;
   display: flex;
   align-items: center;
   justify-content: center;
   cursor: pointer;
   transition: all 0.2s;
   flex-shrink: 0;
+  user-select: none;
 }
 
 .packlist-checkbox.checked {
@@ -737,6 +815,9 @@ export default {
   flex: 1;
   transition: all 0.2s;
   word-break: break-word;
+  overflow-wrap: break-word;
+  font-size: 14px;
+  min-width: 0;
 }
 
 .packlist-text.checked {
@@ -748,8 +829,8 @@ export default {
   color: #ff6b6b;
   cursor: pointer;
   font-size: 14px;
-  margin-left: 8px;
   flex-shrink: 0;
+  user-select: none;
 }
 
 .add-category-btn {
@@ -764,6 +845,8 @@ export default {
   cursor: pointer;
   transition: all 0.2s;
   margin-top: 16px;
+  font-size: 16px;
+  box-sizing: border-box;
 }
 
 .add-category-btn:hover {
@@ -772,8 +855,7 @@ export default {
 
 /* Save Button */
 .save-button {
-  width: calc(100% - 40px);
-  margin: 0 20px;
+  width: 100%;
   background-color: #1f4f5a;
   color: white;
   border: none;
@@ -784,159 +866,12 @@ export default {
   cursor: pointer;
   transition: background-color 0.2s;
   box-shadow: 0 4px 8px rgba(31, 79, 90, 0.2);
-  max-width: 500px;
+  display: block;
+  box-sizing: border-box;
 }
 
 .save-button:hover {
   background-color: #164148;
-}
-
-/* Responsive Design */
-@media (min-width: 480px) {
-  .activity-header {
-    flex-direction: row;
-    align-items: center;
-  }
-
-  .time-label {
-    margin-bottom: 0;
-  }
-
-  .time-select {
-    width: auto;
-  }
-}
-
-@media (min-width: 768px) {
-  .trip-header {
-    padding: 24px 40px;
-    margin: 0 auto 24px;
-    max-width: 800px;
-  }
-
-  .day-tabs {
-    padding: 0 40px;
-    max-width: 800px;
-    margin: 0 auto 24px;
-  }
-
-  .activities-container {
-    padding: 0 40px;
-    max-width: 800px;
-    margin: 0 auto;
-  }
-
-  .add-button {
-    margin-left: auto;
-    margin-right: auto;
-    display: block;
-    max-width: 800px;
-    width: calc(100% - 80px);
-  }
-
-  .packlist {
-    padding: 0 40px;
-    max-width: 800px;
-    margin: 0 auto 24px;
-  }
-
-  .save-button {
-    margin-left: auto;
-    margin-right: auto;
-    display: block;
-    max-width: 800px;
-    width: calc(100% - 80px);
-  }
-}
-
-@media (min-width: 1024px) {
-  .trip-header {
-    max-width: 900px;
-    padding: 32px 48px;
-  }
-
-  .day-tabs {
-    max-width: 900px;
-    padding: 0 48px;
-  }
-
-  .activities-container {
-    max-width: 900px;
-    padding: 0 48px;
-  }
-
-  .add-button {
-    max-width: 900px;
-    width: calc(100% - 96px);
-  }
-
-  .packlist {
-    max-width: 900px;
-    padding: 0 48px;
-  }
-
-  .save-button {
-    max-width: 900px;
-    width: calc(100% - 96px);
-  }
-
-  .activity-slot {
-    padding: 20px;
-  }
-
-  .packlist-card {
-    padding: 24px;
-  }
-}
-
-@media (min-width: 1200px) {
-  .trip-header {
-    max-width: 1000px;
-  }
-
-  .day-tabs {
-    max-width: 1000px;
-  }
-
-  .activities-container {
-    max-width: 1000px;
-  }
-
-  .add-button {
-    max-width: 1000px;
-  }
-
-  .packlist {
-    max-width: 1000px;
-  }
-
-  .save-button {
-    max-width: 1000px;
-  }
-}
-
-/* Center content on very large screens */
-@media (min-width: 1400px) {
-  .itinerary-page {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-  }
-
-  .trip-header,
-  .day-tabs,
-  .activities-container,
-  .add-button,
-  .packlist,
-  .save-button {
-    width: 100%;
-    max-width: 1200px;
-  }
-
-  .add-button,
-  .save-button {
-    width: calc(100% - 96px);
-  }
 }
 
 /* Mobile-specific optimizations */
@@ -979,9 +914,12 @@ export default {
   .day-tab {
     padding: 10px 12px;
     font-size: 14px;
+    min-width: 70px;
   }
 
-  .activities-container {
+  .activities-container,
+  .button-container,
+  .packlist {
     padding: 0 16px;
   }
 
@@ -991,12 +929,12 @@ export default {
 
   .time-label {
     font-size: 13px;
-    min-width: 70px;
   }
 
   .time-select {
     padding: 6px 10px;
     font-size: 13px;
+    max-width: 150px;
   }
 
   .activity-content {
@@ -1013,15 +951,8 @@ export default {
 
   .add-button,
   .save-button {
-    width: calc(100% - 32px);
-    margin-left: 16px;
-    margin-right: 16px;
     padding: 14px;
     font-size: 15px;
-  }
-
-  .packlist {
-    padding: 0 16px;
   }
 
   .packlist-header {
@@ -1044,4 +975,276 @@ export default {
     font-size: 15px;
   }
 }
-</style>object
+
+/* Tablet and larger mobile */
+@media (min-width: 480px) {
+  .activity-header {
+    flex-direction: row;
+    align-items: center;
+    gap: 16px;
+  }
+
+  .time-label {
+    margin-bottom: 0;
+    width: auto;
+    min-width: 100px;
+  }
+
+  .time-select {
+    width: auto;
+  }
+
+  .activity-content {
+    flex: 1;
+  }
+}
+
+/* Tablet */
+@media (min-width: 768px) {
+  .itinerary-page {
+    max-width: 800px;
+    margin: 0 auto;
+    width: 100%;
+  }
+
+  .trip-header {
+    border-radius: 0 0 24px 24px;
+    padding: 24px 40px;
+    width: 100%;
+  }
+
+  .day-tabs-container {
+    width: 100%;
+    max-width: 800px;
+    margin: 0 auto 24px;
+  }
+
+  .day-tabs {
+    width: 100%;
+    justify-content: center;
+  }
+
+  .activities-container,
+  .button-container,
+  .packlist-container {
+    width: 100%;
+    max-width: 800px;
+    margin-left: auto;
+    margin-right: auto;
+    padding: 0 40px;
+  }
+
+  .packlist {
+    padding: 0;
+  }
+
+  .add-button,
+  .save-button {
+    max-width: none;
+  }
+}
+
+/* Desktop */
+@media (min-width: 1024px) {
+  .itinerary-page {
+    max-width: 900px;
+  }
+
+  .trip-header {
+    padding: 32px 48px;
+    border-radius: 0 0 24px 24px;
+  }
+
+  .day-tabs-container {
+    max-width: 900px;
+  }
+
+  .activities-container,
+  .button-container,
+  .packlist-container {
+    max-width: 900px;
+    padding: 0 48px;
+  }
+
+  .activity-slot {
+    padding: 20px;
+  }
+
+  .packlist-card {
+    padding: 24px;
+  }
+}
+
+/* Large desktop */
+@media (min-width: 1200px) {
+  .itinerary-page {
+    max-width: 1000px;
+  }
+
+  .day-tabs-container {
+    max-width: 1000px;
+  }
+
+  .activities-container,
+  .button-container,
+  .packlist-container {
+    max-width: 1000px;
+  }
+}
+
+/* Extra large screens */
+@media (min-width: 1400px) {
+  .itinerary-page {
+    max-width: 1200px;
+  }
+
+  .day-tabs-container {
+    max-width: 1200px;
+  }
+
+  .activities-container,
+  .button-container,
+  .packlist-container {
+    max-width: 1200px;
+  }
+}
+
+/* Touch device optimizations */
+@media (hover: none) and (pointer: coarse) {
+  .back-arrow,
+  .day-tab,
+  .add-button,
+  .save-button,
+  .delete-category,
+  .delete-item,
+  .add-category-btn,
+  .packlist-checkbox,
+  .packlist-arrow {
+    min-height: 44px;
+    min-width: 44px;
+  }
+
+  .back-arrow,
+  .packlist-checkbox,
+  .delete-category,
+  .delete-item,
+  .packlist-arrow {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+
+  .time-select {
+    padding: 12px;
+    font-size: 16px;
+  }
+
+  .activity-input {
+    font-size: 16px;
+    padding: 8px 0;
+  }
+
+  .day-tab {
+    padding: 14px 16px;
+  }
+}
+
+/* Landscape mobile */
+@media (max-width: 767px) and (orientation: landscape) {
+  .itinerary-page {
+    padding-bottom: 16px;
+  }
+
+  .trip-header {
+    padding: 12px 16px;
+    border-radius: 0 0 16px 16px;
+  }
+
+  .nav {
+    margin-bottom: 12px;
+  }
+
+  .trip-title {
+    font-size: 18px;
+    margin-bottom: 12px;
+  }
+
+  .detail-row {
+    font-size: 12px;
+  }
+
+  .day-tabs-container {
+    margin-bottom: 16px;
+  }
+
+  .day-tabs {
+    padding: 0 12px;
+  }
+
+  .day-tab {
+    padding: 8px 12px;
+    min-width: 60px;
+    font-size: 13px;
+  }
+
+  .activities-container,
+  .button-container,
+  .packlist {
+    padding: 0 12px;
+  }
+
+  .activity-slot {
+    padding: 12px;
+    margin-bottom: 12px;
+  }
+
+  .packlist-card {
+    padding: 12px;
+  }
+
+  .add-button,
+  .save-button {
+    padding: 12px;
+    font-size: 14px;
+    margin-bottom: 16px;
+  }
+}
+
+/* Safe area for notch phones */
+@supports (padding: max(0px)) {
+  .itinerary-page {
+    padding-left: max(0px, env(safe-area-inset-left));
+    padding-right: max(0px, env(safe-area-inset-right));
+    padding-bottom: max(20px, env(safe-area-inset-bottom));
+  }
+
+  .trip-header {
+    padding-top: max(20px, env(safe-area-inset-top));
+    padding-left: max(20px, env(safe-area-inset-left));
+    padding-right: max(20px, env(safe-area-inset-right));
+  }
+
+  @media (max-width: 479px) {
+    .trip-header {
+      padding-top: max(16px, env(safe-area-inset-top));
+      padding-left: max(16px, env(safe-area-inset-left));
+      padding-right: max(16px, env(safe-area-inset-right));
+    }
+  }
+
+  @media (max-width: 767px) and (orientation: landscape) {
+    .trip-header {
+      padding-top: max(12px, env(safe-area-inset-top));
+      padding-left: max(12px, env(safe-area-inset-left));
+      padding-right: max(12px, env(safe-area-inset-right));
+    }
+  }
+}
+
+/* Prevent horizontal scroll */
+html, body {
+  overflow-x: hidden;
+  width: 100%;
+  position: relative;
+}
+</style>

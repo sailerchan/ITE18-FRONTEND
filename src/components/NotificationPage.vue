@@ -1,6 +1,6 @@
 <template>
   <div class="container">
-    <div class="card notification-card">
+    <div class="notification-inner">
       <!-- Header with Back Button -->
       <header class="page-header">
         <button class="back-button" @click="$emit('go-back')">
@@ -8,7 +8,7 @@
         </button>
         <h1 class="page-title">Notification</h1>
       </header>
-      
+
       <!-- Main Content -->
       <main class="main-content">
         <div class="notification-graphic">
@@ -17,14 +17,14 @@
             <div class="image-overlay"></div>
           </div>
         </div>
-        
+
         <div class="notification-message">
           <h2>You have no notifications</h2>
           <p>You don't have any trip updates or notifications right now. Start planning your next adventure to receive trip alerts and updates here!</p>
         </div>
       </main>
 
-      <!-- Bottom Navigation Bar -->
+      <!-- Bottom Navigation Bar - SAME AS HOMEPAGE -->
       <nav class="bottom-nav">
         <div class="nav-items-container">
           <button class="nav-item" @click="$emit('go-to-page', 'homepage')">
@@ -56,7 +56,17 @@ export default {
 </script>
 
 <style scoped>
-/* Exact same container structure as login page */
+/* CSS Variables - SAME AS HOMEPAGE */
+:root {
+  --muted: #6c757d;
+  --dark: #1a1a1a;
+  --teal-1: #1f4f5a;
+  --teal-2: #1f7a8c;
+  --card-shadow: 0 4px 16px rgba(0, 0, 0, 0.08);
+  --hover-shadow: 0 8px 24px rgba(0, 0, 0, 0.12);
+}
+
+/* Exact same container as homepage */
 .container {
   min-height: 100vh;
   min-height: 100dvh;
@@ -69,10 +79,11 @@ export default {
   overflow-x: hidden;
 }
 
-.notification-card {
+/* Same card styling as homepage */
+.notification-inner {
   background: #ffffff;
   border-radius: 24px 24px 0 0;
-  padding: 36px 24px;
+  padding: 0;
   margin-top: 0;
   position: relative;
   box-shadow: 0 -8px 32px rgba(0, 0, 0, 0.1);
@@ -82,32 +93,43 @@ export default {
   min-height: auto;
   display: flex;
   flex-direction: column;
+  overflow-y: auto;
+  padding-bottom: 90px; /* Added padding for fixed nav - SAME AS HOMEPAGE */
 }
 
 /* Header Styles */
 .page-header {
   display: flex;
   align-items: center;
-  margin-bottom: 40px;
+  padding: 36px 24px 20px;
+  background: white;
 }
 
 .back-button {
   background: none;
   border: none;
   font-size: 20px;
-  color: #333;
+  color: var(--dark);
   padding: 8px;
   cursor: pointer;
   display: flex;
   align-items: center;
   justify-content: center;
   -webkit-tap-highlight-color: transparent;
+  width: 48px;
+  height: 48px;
+  border-radius: 12px;
+  transition: all 0.2s ease;
+}
+
+.back-button:hover {
+  background: rgba(0,0,0,0.03);
 }
 
 .page-title {
   font-size: 20px;
   font-weight: 600;
-  color: #333;
+  color: var(--dark);
   margin: 0;
   margin-left: 15px;
   flex: 1;
@@ -120,7 +142,7 @@ export default {
   flex-direction: column;
   align-items: center;
   justify-content: center;
-  padding: 20px 0;
+  padding: 20px 24px;
 }
 
 /* Notification Graphic Styles */
@@ -180,7 +202,7 @@ export default {
   font-size: 20px;
   font-weight: 600;
   margin: 0 0 16px;
-  color: #333;
+  color: var(--dark);
   line-height: 1.3;
 }
 
@@ -188,64 +210,61 @@ export default {
   font-size: 15px;
   margin: 0;
   line-height: 1.5;
-  color: #666;
+  color: var(--muted);
 }
 
-/* Bottom Navigation Styles */
+/* Bottom nav - EXACT SAME AS HOMEPAGE */
 .bottom-nav {
-  background-color: #ffffff;
-  border-top: 1px solid #e1e5e9;
-  padding: 16px 0 8px;
-  margin-top: auto;
+    position: fixed;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    background: white;
+    border-top: 1px solid #e9ecef;
+    padding: 16px 24px;
+    display: flex;
+    justify-content: center;
+    z-index: 1000;
 }
-
 .nav-items-container {
-  display: flex;
-  justify-content: space-around;
-  align-items: center;
+    display: flex;
+    justify-content: space-around;
+    width: 100%;
+    max-width: 420px;
 }
-
 .nav-item {
-  background: none;
-  border: none;
-  padding: 8px 16px;
-  cursor: pointer;
-  display: flex;
-  align-items: center;
+    border: 0;
+    background: transparent;
+    font-size: 20px;
+    color: #adb5bd;
+    width: 48px;
+    height: 48px;
+    border-radius: 12px;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
   justify-content: center;
-  color: #666;
-  transition: color 0.2s;
-  -webkit-tap-highlight-color: transparent;
+    transition: all 0.2s ease;
+    -webkit-tap-highlight-color: transparent;
 }
-
-.nav-item i {
-  font-size: 22px;
-}
-
 .nav-item.active {
-  color: #1f4f5a;
+  color: var(--teal-1);
+  background: rgba(56,97,102,0.1);
 }
-
 .nav-item:hover {
-  color: #333;
+  background: rgba(0,0,0,0.03);
 }
 
-/* Exact same responsive breakpoints as login page */
+/* ================= RESPONSIVE BREAKPOINTS - SAME AS HOMEPAGE ================= */
 
-/* Small Phones (320px - 374px) */
-@media (max-width: 374px) {
-  .notification-card {
-    padding: 32px 20px;
-    margin-top: 0;
-    border-radius: 24px 24px 0 0;
-  }
-
+/* Extra Small Phones (under 320px) */
+@media (max-width: 320px) {
   .page-header {
-    margin-bottom: 32px;
+    padding: 24px 16px 16px;
   }
 
-  .page-title {
-    font-size: 18px;
+  .main-content {
+    padding: 20px 16px;
   }
 
   .notification-image {
@@ -268,54 +287,98 @@ export default {
     font-size: 14px;
   }
 
-  .nav-item {
-    padding: 8px 12px;
+  .notification-inner {
+    padding-bottom: 80px;
   }
 
-  .nav-item i {
-    font-size: 20px;
+  .bottom-nav {
+    padding: 12px 16px;
   }
 }
 
-/* Medium Phones (375px - 414px) */
+/* Small Phones (321px - 374px) */
+@media (min-width: 321px) and (max-width: 374px) {
+  .page-header {
+    padding: 28px 18px 18px;
+  }
+
+  .main-content {
+    padding: 20px 18px;
+  }
+
+  .notification-image {
+    width: 170px;
+    height: 170px;
+  }
+
+  .notification-inner {
+    padding-bottom: 85px;
+  }
+}
+
+/* Medium Phones (375px - 414px) - Standard modern phones */
 @media (min-width: 375px) and (max-width: 414px) {
-  .notification-card {
-    padding: 36px 24px;
+  .page-header {
+    padding: 32px 20px 20px;
+  }
+
+  .main-content {
+    padding: 20px 20px;
   }
 
   .notification-image {
     width: 180px;
     height: 180px;
   }
+
+  .notification-inner {
+    padding-bottom: 90px;
+  }
 }
 
-/* Large Phones (415px - 767px) */
+/* Large Phones (415px - 767px) - Large phones like iPhone Plus/Pro Max */
 @media (min-width: 415px) and (max-width: 767px) {
-  .notification-card {
-    padding: 36px 28px;
+  .page-header {
+    padding: 36px 24px 24px;
+  }
+
+  .main-content {
+    padding: 20px 24px;
   }
 
   .notification-image {
     width: 200px;
     height: 200px;
   }
+
+  .notification-inner {
+    padding-bottom: 95px;
+  }
 }
 
 /* Small Tablets (768px - 1023px) */
 @media (min-width: 768px) and (max-width: 1023px) {
   .container {
+    background: #f8f9fa;
+    padding: 20px;
     max-width: 768px;
     margin: 0 auto;
   }
 
-  .notification-card {
-    max-width: 768px;
-    margin: 0 auto;
+  .notification-inner {
     border-radius: 24px;
-    padding: 40px 32px;
-    margin-top: 20px;
-    margin-bottom: 20px;
     box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
+    margin: 0 auto;
+    width: 100%;
+    padding-bottom: 100px;
+  }
+
+  .page-header {
+    padding: 40px 32px 28px;
+  }
+
+  .main-content {
+    padding: 20px 32px;
   }
 
   .notification-image {
@@ -324,42 +387,111 @@ export default {
     filter: blur(1.5px) brightness(0.97);
     opacity: 0.9;
   }
+
+  .notification-message {
+    max-width: 360px;
+  }
+
+  .notification-message h2 {
+    font-size: 22px;
+  }
+
+  .notification-message p {
+    font-size: 16px;
+  }
+
+  .bottom-nav {
+    max-width: 768px;
+    left: 50%;
+    transform: translateX(-50%);
+    border-radius: 24px 24px 0 0;
+  }
 }
 
 /* Large Tablets (1024px - 1366px) */
 @media (min-width: 1024px) and (max-width: 1366px) {
   .container {
-    max-width: 1024px;
+    background: #f8f9fa;
+    padding: 30px;
+    max-width: 500px;
     margin: 0 auto;
   }
 
-  .notification-card {
-    max-width: 500px;
-    margin: 40px auto;
-    padding: 44px 36px;
+  .notification-inner {
     border-radius: 24px;
     box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
+    margin: 0 auto;
+    width: 100%;
+    padding-bottom: 105px;
+  }
+
+  .page-header {
+    padding: 44px 36px 32px;
+  }
+
+  .main-content {
+    padding: 20px 36px;
   }
 
   .notification-image {
     width: 200px;
     height: 200px;
   }
+
+  .bottom-nav {
+    max-width: 500px;
+    left: 50%;
+    transform: translateX(-50%);
+    border-radius: 24px 24px 0 0;
+  }
+}
+
+/* Desktop (1367px and up) */
+@media (min-width: 1367px) {
+  .container {
+    background: #f8f9fa;
+    padding: 40px;
+    max-width: 500px;
+    margin: 0 auto;
+  }
+
+  .notification-inner {
+    border-radius: 24px;
+    box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
+    margin: 0 auto;
+    width: 100%;
+    padding-bottom: 110px;
+  }
+
+  .page-header {
+    padding: 48px 40px 36px;
+  }
+
+  .main-content {
+    padding: 20px 40px;
+  }
+
+  .notification-image {
+    width: 200px;
+    height: 200px;
+  }
+
+  .bottom-nav {
+    max-width: 500px;
+    left: 50%;
+    transform: translateX(-50%);
+    border-radius: 24px 24px 0 0;
+  }
 }
 
 /* Landscape Mobile */
 @media (max-height: 600px) and (orientation: landscape) {
-  .notification-card {
-    padding: 24px 20px;
-    margin-top: 0;
-  }
-
   .page-header {
-    margin-bottom: 24px;
+    padding: 20px 16px 12px;
   }
 
   .main-content {
-    padding: 16px 0;
+    padding: 16px 16px;
   }
 
   .notification-graphic {
@@ -373,6 +505,10 @@ export default {
     opacity: 0.8;
   }
 
+  .notification-message {
+    max-width: 280px;
+  }
+
   .notification-message h2 {
     font-size: 18px;
     margin-bottom: 12px;
@@ -382,24 +518,23 @@ export default {
     font-size: 14px;
   }
 
+  .notification-inner {
+    padding-bottom: 70px;
+  }
+
   .bottom-nav {
-    padding: 12px 0 6px;
+    padding: 10px 16px;
   }
 }
 
 /* Very short screens */
 @media (max-height: 500px) {
-  .notification-card {
-    padding: 20px 16px;
-    margin-top: 0;
-  }
-
   .page-header {
-    margin-bottom: 20px;
+    padding: 16px 12px 8px;
   }
 
   .main-content {
-    padding: 12px 0;
+    padding: 12px 12px;
   }
 
   .notification-graphic {
@@ -426,16 +561,19 @@ export default {
     font-size: 13px;
   }
 
+  .notification-inner {
+    padding-bottom: 60px;
+  }
+
   .bottom-nav {
-    padding: 10px 0 4px;
+    padding: 8px 12px;
   }
+}
 
-  .nav-item {
-    padding: 6px 10px;
-  }
-
-  .nav-item i {
-    font-size: 18px;
+/* Fix for iOS zoom on input focus */
+@media screen and (max-width: 767px) {
+  input, textarea {
+    font-size: 16px;
   }
 }
 
@@ -445,6 +583,27 @@ export default {
     padding-left: max(0px, env(safe-area-inset-left));
     padding-right: max(0px, env(safe-area-inset-right));
     padding-bottom: max(0px, env(safe-area-inset-bottom));
+  }
+
+  .notification-inner {
+    border-radius: 24px 24px 0 0;
+  }
+
+  .bottom-nav {
+    padding-bottom: max(16px, env(safe-area-inset-bottom));
+  }
+
+  @media (min-width: 768px) {
+    .notification-inner {
+      border-radius: 24px;
+    }
+  }
+}
+
+/* Fix for Android Chrome */
+@media (-webkit-min-device-pixel-ratio: 0) and (min-resolution: 0.001dpcm) {
+  input, textarea {
+    font-size: 16px !important;
   }
 }
 </style>

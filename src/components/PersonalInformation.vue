@@ -1,6 +1,6 @@
 <template>
   <div class="container">
-    <div class="card personal-info-card">
+    <div class="personal-info-inner">
       <!-- I. Header Section -->
       <div class="header-section">
         <div class="nav-bar">
@@ -12,7 +12,7 @@
           </button>
           <h1 class="screen-title">Personal Information</h1>
         </div>
-        
+
         <div class="avatar-section">
           <div class="avatar-container">
             <div class="avatar-image">
@@ -66,7 +66,7 @@
           <!-- Additional Options -->
           <div class="options-section">
             <div class="divider"></div>
-            
+
             <!-- Connect with Facebook -->
             <div class="option-item" @click="connectFacebook">
               <div class="option-icon">
@@ -99,7 +99,7 @@
         </div>
       </div>
 
-      <!-- IV. Navigation Bar (Same as Profile Page) -->
+      <!-- IV. Navigation Bar - SAME AS HOMEPAGE -->
       <nav class="bottom-nav">
         <div class="nav-items-container">
           <button class="nav-item" :class="{ active: activeNav === 'home' }" @click="goToPage('homepage')">
@@ -111,7 +111,7 @@
           <button class="nav-item" :class="{ active: activeNav === 'notifications' }" @click="goToPage('notifications')">
             <i class="fas fa-bell"></i>
           </button>
-          <button class="nav-item" :class="{ active: activeNav === 'profile' }">
+          <button class="nav-item active">
             <i class="fas fa-user"></i>
           </button>
         </div>
@@ -135,20 +135,20 @@ export default {
     },
 
     goToPage(page) {
-      this.activeNav = page === 'homepage' ? 'home' : 
-                      page === 'trips' ? 'trips' : 
+      this.activeNav = page === 'homepage' ? 'home' :
+                      page === 'trips' ? 'trips' :
                       page === 'notifications' ? 'notifications' : 'profile';
       this.$emit('go-to-page', page)
     },
-    
+
     handleSave() {
       this.$emit('save-changes')
     },
-    
+
     connectFacebook() {
       this.$emit('connect-facebook')
     },
-    
+
     deleteAccount() {
       if (confirm('Are you sure you want to delete your account? This action cannot be undone.')) {
         this.$emit('delete-account')
@@ -159,7 +159,17 @@ export default {
 </script>
 
 <style scoped>
-/* Exact same container structure as profile page */
+/* CSS Variables - SAME AS HOMEPAGE */
+:root {
+  --muted: #6c757d;
+  --dark: #1a1a1a;
+  --teal-1: #1f4f5a;
+  --teal-2: #1f7a8c;
+  --card-shadow: 0 4px 16px rgba(0, 0, 0, 0.08);
+  --hover-shadow: 0 8px 24px rgba(0, 0, 0, 0.12);
+}
+
+/* Exact same container as homepage */
 .container {
   min-height: 100vh;
   min-height: 100dvh;
@@ -172,7 +182,8 @@ export default {
   overflow-x: hidden;
 }
 
-.personal-info-card {
+/* Same card styling as homepage */
+.personal-info-inner {
   background: #ffffff;
   border-radius: 24px 24px 0 0;
   padding: 0;
@@ -185,6 +196,8 @@ export default {
   min-height: auto;
   display: flex;
   flex-direction: column;
+  overflow-y: auto;
+  padding-bottom: 90px; /* Added padding for fixed nav - SAME AS HOMEPAGE */
 }
 
 /* I. Header Section */
@@ -214,6 +227,15 @@ export default {
   display: flex;
   align-items: center;
   justify-content: center;
+  -webkit-tap-highlight-color: transparent;
+  width: 48px;
+  height: 48px;
+  border-radius: 12px;
+  transition: all 0.2s ease;
+}
+
+.back-button:hover {
+  background: rgba(255, 255, 255, 0.1);
 }
 
 .screen-title {
@@ -265,10 +287,13 @@ export default {
   font-weight: 500;
   cursor: pointer;
   padding: 4px 8px;
+  -webkit-tap-highlight-color: transparent;
+  border-radius: 6px;
+  transition: all 0.2s ease;
 }
 
 .edit-photo:hover {
-  text-decoration: underline;
+  background: rgba(255, 255, 255, 0.1);
 }
 
 /* II. Main Content Area */
@@ -297,21 +322,22 @@ export default {
   display: block;
   font-size: 14px;
   font-weight: 600;
-  color: #6B7280;
+  color: var(--muted);
   margin-bottom: 8px;
   padding-left: 5px;
 }
 
 .input-field {
-  border: 1px solid #e0e0e0;
+  border: 1.5px solid #e1e5e9;
   border-radius: 12px;
   padding: 0 16px;
   background: white;
-  transition: border-color 0.2s;
+  transition: all 0.2s ease;
 }
 
 .input-field:focus-within {
-  border-color: #0C3437;
+  border-color: var(--teal-1);
+  box-shadow: 0 0 0 3px rgba(31, 79, 90, 0.1);
 }
 
 .input-text {
@@ -325,7 +351,7 @@ export default {
 }
 
 .input-text:focus {
-  color: #333;
+  color: var(--dark);
 }
 
 .save-button {
@@ -340,15 +366,18 @@ export default {
   cursor: pointer;
   margin-top: 10px;
   margin-bottom: 25px;
-  transition: background-color 0.2s;
+  transition: all 0.2s ease;
+  -webkit-tap-highlight-color: transparent;
 }
 
 .save-button:hover {
   background: #0A2A2D;
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(12, 52, 55, 0.2);
 }
 
 .save-button:active {
-  transform: translateY(1px);
+  transform: translateY(0);
 }
 
 /* Additional Options */
@@ -358,18 +387,19 @@ export default {
 
 .divider {
   height: 1px;
-  background-color: #f0f0f0;
+  background-color: #e9ecef;
   margin: 20px 0;
 }
 
 .option-item {
   display: flex;
   align-items: center;
-  padding: 12px 0;
+  padding: 12px;
   cursor: pointer;
-  transition: background-color 0.2s;
+  transition: all 0.2s ease;
   border-radius: 8px;
   margin-bottom: 8px;
+  -webkit-tap-highlight-color: transparent;
 }
 
 .option-item:hover {
@@ -387,12 +417,12 @@ export default {
 
 .option-text {
   font-size: 15px;
-  color: #666;
+  color: var(--dark);
   font-weight: 500;
 }
 
 .delete-option .option-text {
-  color: #666;
+  color: var(--dark);
 }
 
 /* III. Promotional Banner with Linear Gradient */
@@ -414,12 +444,12 @@ export default {
   left: 0;
   right: 0;
   bottom: 0;
-  background: linear-gradient(135deg, 
-    rgba(12, 52, 55, 0.9) 0%, 
-    rgba(32, 137, 145, 0.9) 17%, 
-    rgba(24, 106, 112, 0.9) 35%, 
-    rgba(24, 119, 126, 0.9) 66%, 
-    rgba(32, 137, 145, 0.9) 82%, 
+  background: linear-gradient(135deg,
+    rgba(12, 52, 55, 0.9) 0%,
+    rgba(32, 137, 145, 0.9) 17%,
+    rgba(24, 106, 112, 0.9) 35%,
+    rgba(24, 119, 126, 0.9) 66%,
+    rgba(32, 137, 145, 0.9) 82%,
     rgba(12, 52, 55, 0.9) 100%);
   z-index: 1;
 }
@@ -437,54 +467,52 @@ export default {
   text-align: center;
 }
 
-/* IV. Navigation Bar (Same as Profile Page) */
+/* Bottom nav - EXACT SAME AS HOMEPAGE */
 .bottom-nav {
-  background-color: #ffffff;
-  border-top: 1px solid #e1e5e9;
-  padding: 16px 0 8px;
-  margin-top: auto;
+    position: fixed;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    background: white;
+    border-top: 1px solid #e9ecef;
+    padding: 16px 24px;
+    display: flex;
+    justify-content: center;
+    z-index: 1000;
 }
-
 .nav-items-container {
-  display: flex;
-  justify-content: space-around;
-  align-items: center;
+    display: flex;
+    justify-content: space-around;
+    width: 100%;
+    max-width: 420px;
 }
-
 .nav-item {
-  background: none;
-  border: none;
-  padding: 8px 16px;
-  cursor: pointer;
-  display: flex;
-  align-items: center;
+    border: 0;
+    background: transparent;
+    font-size: 20px;
+    color: #adb5bd;
+    width: 48px;
+    height: 48px;
+    border-radius: 12px;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
   justify-content: center;
-  color: #666;
-  transition: color 0.2s;
-  -webkit-tap-highlight-color: transparent;
+    transition: all 0.2s ease;
+    -webkit-tap-highlight-color: transparent;
 }
-
-.nav-item i {
-  font-size: 22px;
-}
-
 .nav-item.active {
-  color: #1f4f5a;
+  color: var(--teal-1);
+  background: rgba(56,97,102,0.1);
 }
-
 .nav-item:hover {
-  color: #333;
+  background: rgba(0,0,0,0.03);
 }
 
-/* Enhanced avatar styling */
-.avatar-image {
-  filter: drop-shadow(0 2px 4px rgba(0, 0, 0, 0.2));
-}
+/* ================= RESPONSIVE BREAKPOINTS - SAME AS HOMEPAGE ================= */
 
-/* Exact same responsive breakpoints as profile page */
-
-/* Small Phones (320px - 374px) */
-@media (max-width: 374px) {
+/* Extra Small Phones (under 320px) */
+@media (max-width: 320px) {
   .header-section {
     padding: 40px 16px 20px;
     border-radius: 0 0 20px 20px;
@@ -492,13 +520,11 @@ export default {
 
   .screen-title {
     font-size: 16px;
-    margin-bottom: 20px;
   }
 
   .avatar-image {
     width: 60px;
     height: 60px;
-    margin-bottom: 12px;
   }
 
   .main-content {
@@ -524,12 +550,23 @@ export default {
     line-height: 1.3;
   }
 
-  .nav-item {
-    padding: 8px 12px;
+  .personal-info-inner {
+    padding-bottom: 80px;
   }
 
-  .nav-item i {
-    font-size: 20px;
+  .bottom-nav {
+    padding: 12px 16px;
+  }
+}
+
+/* Small Phones (321px - 374px) */
+@media (min-width: 321px) and (max-width: 374px) {
+  .header-section {
+    padding: 45px 20px 25px;
+  }
+
+  .personal-info-inner {
+    padding-bottom: 85px;
   }
 }
 
@@ -538,6 +575,10 @@ export default {
   .header-section {
     padding: 45px 20px 25px;
   }
+
+  .personal-info-inner {
+    padding-bottom: 90px;
+  }
 }
 
 /* Large Phones (415px - 767px) */
@@ -545,22 +586,27 @@ export default {
   .header-section {
     padding: 45px 24px 25px;
   }
+
+  .personal-info-inner {
+    padding-bottom: 95px;
+  }
 }
 
 /* Small Tablets (768px - 1023px) */
 @media (min-width: 768px) and (max-width: 1023px) {
   .container {
+    background: #f8f9fa;
+    padding: 20px;
     max-width: 768px;
     margin: 0 auto;
   }
 
-  .personal-info-card {
-    max-width: 768px;
-    margin: 0 auto;
+  .personal-info-inner {
     border-radius: 24px;
-    margin-top: 20px;
-    margin-bottom: 20px;
     box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
+    margin: 0 auto;
+    width: 100%;
+    padding-bottom: 100px;
   }
 
   .header-section {
@@ -581,20 +627,30 @@ export default {
     font-size: 15px;
     line-height: 1.4;
   }
+
+  .bottom-nav {
+    max-width: 768px;
+    left: 50%;
+    transform: translateX(-50%);
+    border-radius: 24px 24px 0 0;
+  }
 }
 
 /* Large Tablets (1024px - 1366px) */
 @media (min-width: 1024px) and (max-width: 1366px) {
   .container {
-    max-width: 1024px;
+    background: #f8f9fa;
+    padding: 30px;
+    max-width: 500px;
     margin: 0 auto;
   }
 
-  .personal-info-card {
-    max-width: 500px;
-    margin: 40px auto;
+  .personal-info-inner {
     border-radius: 24px;
     box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
+    margin: 0 auto;
+    width: 100%;
+    padding-bottom: 105px;
   }
 
   .header-section {
@@ -615,6 +671,57 @@ export default {
     font-size: 15px;
     line-height: 1.4;
   }
+
+  .bottom-nav {
+    max-width: 500px;
+    left: 50%;
+    transform: translateX(-50%);
+    border-radius: 24px 24px 0 0;
+  }
+}
+
+/* Desktop (1367px and up) */
+@media (min-width: 1367px) {
+  .container {
+    background: #f8f9fa;
+    padding: 40px;
+    max-width: 500px;
+    margin: 0 auto;
+  }
+
+  .personal-info-inner {
+    border-radius: 24px;
+    box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
+    margin: 0 auto;
+    width: 100%;
+    padding-bottom: 110px;
+  }
+
+  .header-section {
+    border-radius: 24px 24px 0 0;
+    padding: 50px 40px 30px;
+  }
+
+  .main-content {
+    border-radius: 0 0 24px 24px;
+    padding: 30px 32px 20px;
+  }
+
+  .promotion-banner {
+    padding: 18px 24px;
+  }
+
+  .promotion-text {
+    font-size: 15px;
+    line-height: 1.4;
+  }
+
+  .bottom-nav {
+    max-width: 500px;
+    left: 50%;
+    transform: translateX(-50%);
+    border-radius: 24px 24px 0 0;
+  }
 }
 
 /* Landscape Mobile */
@@ -626,7 +733,6 @@ export default {
   .avatar-image {
     width: 50px;
     height: 50px;
-    margin-bottom: 10px;
   }
 
   .main-content {
@@ -646,8 +752,12 @@ export default {
     line-height: 1.3;
   }
 
+  .personal-info-inner {
+    padding-bottom: 70px;
+  }
+
   .bottom-nav {
-    padding: 12px 0 6px;
+    padding: 10px 16px;
   }
 }
 
@@ -660,7 +770,6 @@ export default {
   .avatar-image {
     width: 45px;
     height: 45px;
-    margin-bottom: 8px;
   }
 
   .main-content {
@@ -669,10 +778,6 @@ export default {
 
   .input-text {
     padding: 10px 0;
-  }
-
-  .setting-text {
-    font-size: 14px;
   }
 
   .promotion-banner {
@@ -684,16 +789,19 @@ export default {
     line-height: 1.2;
   }
 
+  .personal-info-inner {
+    padding-bottom: 60px;
+  }
+
   .bottom-nav {
-    padding: 10px 0 4px;
+    padding: 8px 12px;
   }
+}
 
-  .nav-item {
-    padding: 6px 10px;
-  }
-
-  .nav-item i {
-    font-size: 18px;
+/* Fix for iOS zoom on input focus */
+@media screen and (max-width: 767px) {
+  input, textarea {
+    font-size: 16px;
   }
 }
 
@@ -704,28 +812,26 @@ export default {
     padding-right: max(0px, env(safe-area-inset-right));
     padding-bottom: max(0px, env(safe-area-inset-bottom));
   }
+
+  .personal-info-inner {
+    border-radius: 24px 24px 0 0;
+  }
+
+  .bottom-nav {
+    padding-bottom: max(16px, env(safe-area-inset-bottom));
+  }
+
+  @media (min-width: 768px) {
+    .personal-info-inner {
+      border-radius: 24px;
+    }
+  }
 }
 
-/* Smooth transitions */
-.header-section,
-.input-field,
-.save-button,
-.option-item,
-.nav-item {
-  transition: all 0.3s ease;
-}
-
-/* Focus states for accessibility */
-.back-button:focus,
-.edit-photo:focus,
-.save-button:focus,
-.option-item:focus,
-.nav-item:focus {
-  outline: 2px solid #0C3437;
-  outline-offset: 2px;
-}
-
-.input-text:focus {
-  outline: none;
+/* Fix for Android Chrome */
+@media (-webkit-min-device-pixel-ratio: 0) and (min-resolution: 0.001dpcm) {
+  input, textarea {
+    font-size: 16px !important;
+  }
 }
 </style>

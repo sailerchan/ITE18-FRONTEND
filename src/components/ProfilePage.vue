@@ -1,10 +1,10 @@
 <template>
   <div class="container">
-    <div class="card profile-card">
+    <div class="profile-inner">
       <!-- I. Header and User Identity Section -->
       <div class="profile-header">
         <h1 class="screen-title">Profile</h1>
-        
+
         <div class="user-info">
           <div class="avatar">
             <div class="avatar-image">
@@ -33,7 +33,7 @@
                 <path d="M9 18L15 12L9 6" stroke="#666" stroke-width="2"/>
               </svg>
             </div>
-            
+
             <div class="setting-item" @click="handleChangePassword">
               <div class="icon-wrapper">
                 <svg width="24" height="24" viewBox="0 0 24 24" fill="none">
@@ -68,7 +68,7 @@
                 <path d="M9 18L15 12L9 6" stroke="#666" stroke-width="2"/>
               </svg>
             </div>
-            
+
             <div class="setting-item" @click="handleTerms">
               <div class="icon-wrapper">
                 <svg width="24" height="24" viewBox="0 0 24 24" fill="none">
@@ -84,7 +84,7 @@
                 <path d="M9 18L15 12L9 6" stroke="#666" stroke-width="2"/>
               </svg>
             </div>
-            
+
             <div class="setting-item" @click="handleRateUs">
               <div class="icon-wrapper">
                 <svg width="24" height="24" viewBox="0 0 24 24" fill="none">
@@ -116,7 +116,7 @@
               </svg>
             </div>
           </div>
-          
+
           <!-- Premium Feature Banner with Linear Gradient -->
           <div class="promotion-banner">
             <p class="promotion-text">
@@ -127,7 +127,7 @@
         </div>
       </div>
 
-      <!-- V. Navigation Bar -->
+      <!-- V. Navigation Bar - SAME AS HOMEPAGE -->
       <nav class="bottom-nav">
         <div class="nav-items-container">
           <button class="nav-item" :class="{ active: activeNav === 'home' }" @click="goToPage('homepage')">
@@ -169,32 +169,32 @@ export default {
   emits: ['go-to-page', 'logout', 'personal-info', 'change-password'],
   methods: {
     goToPage(page) {
-      this.activeNav = page === 'homepage' ? 'home' : 
-                      page === 'trips' ? 'trips' : 
+      this.activeNav = page === 'homepage' ? 'home' :
+                      page === 'trips' ? 'trips' :
                       page === 'notifications' ? 'notifications' : 'profile';
       this.$emit('go-to-page', page);
     },
-    
+
     handlePersonalInfo() {
       this.$emit('personal-info');
     },
-    
+
     handleChangePassword() {
       this.$emit('change-password');
     },
-    
+
     handleFAQ() {
       alert('FAQ would open here');
     },
-    
+
     handleTerms() {
       alert('Terms of Service would open here');
     },
-    
+
     handleRateUs() {
       alert('Rate Us would open app store or rating dialog');
     },
-    
+
     handleLogout() {
       if (confirm('Are you sure you want to log out?')) {
         this.$emit('logout');
@@ -206,7 +206,17 @@ export default {
 </script>
 
 <style scoped>
-/* Exact same container structure as login page */
+/* CSS Variables - SAME AS HOMEPAGE */
+:root {
+  --muted: #6c757d;
+  --dark: #1a1a1a;
+  --teal-1: #1f4f5a;
+  --teal-2: #1f7a8c;
+  --card-shadow: 0 4px 16px rgba(0, 0, 0, 0.08);
+  --hover-shadow: 0 8px 24px rgba(0, 0, 0, 0.12);
+}
+
+/* Exact same container as homepage */
 .container {
   min-height: 100vh;
   min-height: 100dvh;
@@ -219,7 +229,8 @@ export default {
   overflow-x: hidden;
 }
 
-.profile-card {
+/* Same card styling as homepage */
+.profile-inner {
   background: #ffffff;
   border-radius: 24px 24px 0 0;
   padding: 0;
@@ -232,6 +243,8 @@ export default {
   min-height: auto;
   display: flex;
   flex-direction: column;
+  overflow-y: auto;
+  padding-bottom: 90px; /* Added padding for fixed nav - SAME AS HOMEPAGE */
 }
 
 /* I. Header and User Identity Section */
@@ -333,7 +346,7 @@ export default {
   align-items: center;
   padding: 16px;
   border-bottom: 1px solid #f0f0f0;
-  transition: background-color 0.2s;
+  transition: all 0.2s ease;
   cursor: pointer;
   position: relative;
   -webkit-tap-highlight-color: transparent;
@@ -402,12 +415,12 @@ export default {
   left: 0;
   right: 0;
   bottom: 0;
-  background: linear-gradient(135deg, 
-    rgba(12, 52, 55, 0.9) 0%, 
-    rgba(32, 137, 145, 0.9) 17%, 
-    rgba(24, 106, 112, 0.9) 35%, 
-    rgba(24, 119, 126, 0.9) 66%, 
-    rgba(32, 137, 145, 0.9) 82%, 
+  background: linear-gradient(135deg,
+    rgba(12, 52, 55, 0.9) 0%,
+    rgba(32, 137, 145, 0.9) 17%,
+    rgba(24, 106, 112, 0.9) 35%,
+    rgba(24, 119, 126, 0.9) 66%,
+    rgba(32, 137, 145, 0.9) 82%,
     rgba(12, 52, 55, 0.9) 100%);
   z-index: 1;
 }
@@ -425,54 +438,52 @@ export default {
   text-align: center;
 }
 
-/* V. Navigation Bar */
+/* Bottom nav - EXACT SAME AS HOMEPAGE */
 .bottom-nav {
-  background-color: #ffffff;
-  border-top: 1px solid #e1e5e9;
-  padding: 16px 0 8px;
-  margin-top: auto;
+    position: fixed;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    background: white;
+    border-top: 1px solid #e9ecef;
+    padding: 16px 24px;
+    display: flex;
+    justify-content: center;
+    z-index: 1000;
 }
-
 .nav-items-container {
-  display: flex;
-  justify-content: space-around;
-  align-items: center;
+    display: flex;
+    justify-content: space-around;
+    width: 100%;
+    max-width: 420px;
 }
-
 .nav-item {
-  background: none;
-  border: none;
-  padding: 8px 16px;
-  cursor: pointer;
-  display: flex;
-  align-items: center;
+    border: 0;
+    background: transparent;
+    font-size: 20px;
+    color: #adb5bd;
+    width: 48px;
+    height: 48px;
+    border-radius: 12px;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
   justify-content: center;
-  color: #666;
-  transition: color 0.2s;
-  -webkit-tap-highlight-color: transparent;
+    transition: all 0.2s ease;
+    -webkit-tap-highlight-color: transparent;
 }
-
-.nav-item i {
-  font-size: 22px;
-}
-
 .nav-item.active {
-  color: #1f4f5a;
+  color: var(--teal-1);
+  background: rgba(56,97,102,0.1);
 }
-
 .nav-item:hover {
-  color: #333;
+  background: rgba(0,0,0,0.03);
 }
 
-/* Enhanced avatar styling */
-.avatar-image {
-  filter: drop-shadow(0 2px 4px rgba(0, 0, 0, 0.2));
-}
+/* ================= RESPONSIVE BREAKPOINTS - SAME AS HOMEPAGE ================= */
 
-/* Exact same responsive breakpoints as login page */
-
-/* Small Phones (320px - 374px) */
-@media (max-width: 374px) {
+/* Extra Small Phones (under 320px) */
+@media (max-width: 320px) {
   .profile-header {
     padding: 40px 16px 20px;
     border-radius: 0 0 20px 20px;
@@ -523,12 +534,23 @@ export default {
     line-height: 1.3;
   }
 
-  .nav-item {
-    padding: 8px 12px;
+  .profile-inner {
+    padding-bottom: 80px;
   }
 
-  .nav-item i {
-    font-size: 20px;
+  .bottom-nav {
+    padding: 12px 16px;
+  }
+}
+
+/* Small Phones (321px - 374px) */
+@media (min-width: 321px) and (max-width: 374px) {
+  .profile-header {
+    padding: 45px 20px 25px;
+  }
+
+  .profile-inner {
+    padding-bottom: 85px;
   }
 }
 
@@ -537,6 +559,10 @@ export default {
   .profile-header {
     padding: 45px 20px 25px;
   }
+
+  .profile-inner {
+    padding-bottom: 90px;
+  }
 }
 
 /* Large Phones (415px - 767px) */
@@ -544,22 +570,27 @@ export default {
   .profile-header {
     padding: 45px 24px 25px;
   }
+
+  .profile-inner {
+    padding-bottom: 95px;
+  }
 }
 
 /* Small Tablets (768px - 1023px) */
 @media (min-width: 768px) and (max-width: 1023px) {
   .container {
+    background: #f8f9fa;
+    padding: 20px;
     max-width: 768px;
     margin: 0 auto;
   }
 
-  .profile-card {
-    max-width: 768px;
-    margin: 0 auto;
+  .profile-inner {
     border-radius: 24px;
-    margin-top: 20px;
-    margin-bottom: 20px;
     box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
+    margin: 0 auto;
+    width: 100%;
+    padding-bottom: 100px;
   }
 
   .profile-header {
@@ -580,20 +611,30 @@ export default {
     font-size: 15px;
     line-height: 1.4;
   }
+
+  .bottom-nav {
+    max-width: 768px;
+    left: 50%;
+    transform: translateX(-50%);
+    border-radius: 24px 24px 0 0;
+  }
 }
 
 /* Large Tablets (1024px - 1366px) */
 @media (min-width: 1024px) and (max-width: 1366px) {
   .container {
-    max-width: 1024px;
+    background: #f8f9fa;
+    padding: 30px;
+    max-width: 500px;
     margin: 0 auto;
   }
 
-  .profile-card {
-    max-width: 500px;
-    margin: 40px auto;
+  .profile-inner {
     border-radius: 24px;
     box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
+    margin: 0 auto;
+    width: 100%;
+    padding-bottom: 105px;
   }
 
   .profile-header {
@@ -613,6 +654,57 @@ export default {
   .promotion-text {
     font-size: 15px;
     line-height: 1.4;
+  }
+
+  .bottom-nav {
+    max-width: 500px;
+    left: 50%;
+    transform: translateX(-50%);
+    border-radius: 24px 24px 0 0;
+  }
+}
+
+/* Desktop (1367px and up) */
+@media (min-width: 1367px) {
+  .container {
+    background: #f8f9fa;
+    padding: 40px;
+    max-width: 500px;
+    margin: 0 auto;
+  }
+
+  .profile-inner {
+    border-radius: 24px;
+    box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
+    margin: 0 auto;
+    width: 100%;
+    padding-bottom: 110px;
+  }
+
+  .profile-header {
+    border-radius: 24px 24px 0 0;
+    padding: 50px 40px 30px;
+  }
+
+  .main-content {
+    border-radius: 0 0 24px 24px;
+    padding: 30px 32px 20px;
+  }
+
+  .promotion-banner {
+    padding: 18px 24px;
+  }
+
+  .promotion-text {
+    font-size: 15px;
+    line-height: 1.4;
+  }
+
+  .bottom-nav {
+    max-width: 500px;
+    left: 50%;
+    transform: translateX(-50%);
+    border-radius: 24px 24px 0 0;
   }
 }
 
@@ -653,8 +745,12 @@ export default {
     line-height: 1.3;
   }
 
+  .profile-inner {
+    padding-bottom: 70px;
+  }
+
   .bottom-nav {
-    padding: 12px 0 6px;
+    padding: 10px 16px;
   }
 }
 
@@ -695,16 +791,19 @@ export default {
     line-height: 1.2;
   }
 
+  .profile-inner {
+    padding-bottom: 60px;
+  }
+
   .bottom-nav {
-    padding: 10px 0 4px;
+    padding: 8px 12px;
   }
+}
 
-  .nav-item {
-    padding: 6px 10px;
-  }
-
-  .nav-item i {
-    font-size: 18px;
+/* Fix for iOS zoom on input focus */
+@media screen and (max-width: 767px) {
+  input, textarea {
+    font-size: 16px;
   }
 }
 
@@ -714,6 +813,27 @@ export default {
     padding-left: max(0px, env(safe-area-inset-left));
     padding-right: max(0px, env(safe-area-inset-right));
     padding-bottom: max(0px, env(safe-area-inset-bottom));
+  }
+
+  .profile-inner {
+    border-radius: 24px 24px 0 0;
+  }
+
+  .bottom-nav {
+    padding-bottom: max(16px, env(safe-area-inset-bottom));
+  }
+
+  @media (min-width: 768px) {
+    .profile-inner {
+      border-radius: 24px;
+    }
+  }
+}
+
+/* Fix for Android Chrome */
+@media (-webkit-min-device-pixel-ratio: 0) and (min-resolution: 0.001dpcm) {
+  input, textarea {
+    font-size: 16px !important;
   }
 }
 </style>
