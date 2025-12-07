@@ -44,7 +44,7 @@
                 :src="destination.mapEmbedUrl"
                 width="100%"
                 height="100%"
-                style="border:0; border-radius: 21px;"
+                style="border:0; border-radius: 6px;"
                 allowfullscreen=""
                 loading="lazy"
                 referrerpolicy="no-referrer-when-downgrade"
@@ -52,10 +52,7 @@
               ></iframe>
             </div>
             <div class="map-actions">
-              <button class="map-action-btn" @click="openGoogleMaps">
-                <i class="fas fa-external-link-alt"></i>
-                Open in Google Maps
-              </button>
+
               <button class="map-action-btn" @click="getDirections">
                 <i class="fas fa-directions"></i>
                 Get Directions
@@ -100,9 +97,6 @@
               <option value="2">★★☆☆☆ (2)</option>
               <option value="1">★☆☆☆☆ (1)</option>
             </select>
-            <button class="write-review-btn" @click="writeReview">
-              <i class="fas fa-pen"></i> Write a Review
-            </button>
           </div>
 
           <!-- Full Reviews List -->
@@ -463,13 +457,14 @@ export default {
   color: #555;
   line-height: 1.6;
   margin-top: 15px;
-  text-align: justify;
+  text-align: left;
   font-weight: 400;
   font-family: 'Poppins', sans-serif;
+  padding:10px;
 }
 
 .map-section {
-  margin-top: 25px;
+  margin-top: 10px;
   font-family: 'Poppins', sans-serif;
 }
 
@@ -484,9 +479,7 @@ export default {
 .map {
   width: 100%;
   height: 250px;
-  border-radius: 10px;
   overflow: hidden;
-  border: 1px solid #ddd;
   margin-bottom: 12px;
 }
 
@@ -501,7 +494,7 @@ export default {
 .map-action-btn {
   background: none;
   color: #0c3437;
-  border: 1px solid #0c34371e;
+  border: 0px solid #0c34371e;
   border-radius: 5px;
   padding: 8px 16px;
   font-size: 10px;
@@ -509,7 +502,7 @@ export default {
   cursor: pointer;
   display: flex;
   align-items: center;
-  justify-content: center;
+  justify-content: left;
   gap: 8px;
   transition: background-color 0.3s;
   font-family: 'Poppins', sans-serif;
@@ -518,7 +511,7 @@ export default {
 }
 
 .plan-trip-section {
-  margin-top: 30px;
+  margin-top: 10px;
   padding: 20px 0;
   font-family: 'Poppins', sans-serif;
 }
@@ -787,7 +780,7 @@ export default {
   }
 
   .map {
-    height: 200px;
+    height: 300px;
   }
 
   .rating-summary {
