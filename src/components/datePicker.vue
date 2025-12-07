@@ -3,22 +3,45 @@
     <div class="date-picker-inner">
       <!-- Header -->
       <div class="date-header">
-        <div class="back-arrow" @click="$emit('go-to-page', 'destination-details')">
-          <i class="fas fa-arrow-left"></i>
-          <h1>Plan Trip</h1>
-        </div>
+        <div class="back-arrow" @click="$emit('go-to-page', 'destination-details')">←</div>
+        <h1 class="header-title">Pick date for your trip to {{ selectedDestinationName }}</h1>
       </div>
 
+      <!-- Manual Date Inputs -->
+      <div class="manual-inputs">
+        <div class="input-group">
+          <label class="input-label">From Date</label>
+          <div class="input-wrapper">
+            <input
+              type="date"
+              v-model="manualStartDate"
+              :min="todayFormatted"
+              @change="handleManualStartDateChange"
+              class="date-input-field"
+            >
+            <i class="fas fa-calendar-alt input-icon"></i>
+          </div>
+        </div>
 
-      <h2 class="section-title">Popular places to stay in</h2>
-      <span class="section-subtitle">{{ selectedDestinationName }}</span>
+        <div class="input-group">
+          <label class="input-label">To Date</label>
+          <div class="input-wrapper">
+            <input
+              type="date"
+              v-model="manualEndDate"
+              :min="manualStartDate || todayFormatted"
+              @change="handleManualEndDateChange"
+              class="date-input-field"
+            >
+            <i class="fas fa-calendar-alt input-icon"></i>
+          </div>
+        </div>
+      </div>
 
       <!-- Calendar -->
       <div class="calendar-container">
         <div class="month-nav">
-          <div class="nav-arrow" @click="handlePrevMonth" :class="{ disabled: isCurrentMonth }">
-            ‹
-          </div>
+          <div class="nav-arrow" @click="handlePrevMonth" :class="{ disabled: isCurrentMonth }">‹</div>
           <div class="month-year">{{ currentMonthYear }}</div>
           <div class="nav-arrow" @click="$emit('next-month')">›</div>
         </div>
@@ -45,10 +68,29 @@
         </div>
       </div>
 
-      <!-- Trip Duration Summary -->
-      <div class="date-summary">
+      <!-- Date Range Display -->
+      <div class="date-inputs">
+        <div class="date-label">Selected Dates</div>
+        <div class="date-range-display">
+          <div class="date-display-item">
+            <div class="date-display-label">From</div>
+            <div class="date-display-value">{{ fromDateDisplay }}</div>
+          </div>
+          <div class="date-display-separator">
+            <i class="fas fa-arrow-right"></i>
+          </div>
+          <div class="date-display-item">
+            <div class="date-display-label">To</div>
+            <div class="date-display-value">{{ toDateDisplay }}</div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Selected Dates Summary -->
+      <div v-if="selectedStart && selectedEnd" class="date-summary">
         <div class="summary-header">
-          <p>Trip Duration</p>
+          <i class="fas fa-calendar-check"></i>
+          <span>Trip Duration</span>
         </div>
         <div class="summary-details">
           <div class="summary-item">
@@ -59,14 +101,16 @@
             <span class="summary-label">Days:</span>
             <span class="summary-value">{{ calculateNights() + 1 }}</span>
           </div>
+          <div class="summary-item">
+            <span class="summary-label">Period:</span>
+            <span class="summary-value">{{ selectedStart }} - {{ selectedEnd }} {{ currentMonthYear.split(' ')[0] }}</span>
+          </div>
         </div>
       </div>
 
       <!-- Action Buttons -->
       <div class="action-buttons">
-        <button class="btn btn-cancel" @click="$emit('go-to-page', 'homepage')">
-          Cancel
-        </button>
+        <button class="btn btn-cancel" @click="$emit('go-to-page', 'homepage')">Cancel</button>
         <button
           class="btn btn-next"
           @click="handleNextClick"
@@ -154,14 +198,17 @@ export default {
     getDateClass(day) {
       const classes = [];
 
+      // Check if this is today's date
       if (this.isToday(day)) {
         classes.push('today');
       }
 
+      // Check if date is in the past
       if (this.isPastDate(day)) {
         classes.push('past-date');
       }
 
+      // Check selection range
       if (day === this.selectedStart) {
         classes.push('range-start');
       } else if (day === this.selectedEnd) {
@@ -190,6 +237,7 @@ export default {
     },
 
     handleDateClick(day) {
+      // Don't allow clicking on past dates
       if (this.isPastDate(day)) {
         return;
       }
@@ -198,6 +246,7 @@ export default {
     },
 
     handlePrevMonth() {
+      // Don't allow going to past months from current month
       if (!this.isCurrentMonth) {
         this.$emit('prev-month');
       }
@@ -213,10 +262,12 @@ export default {
     handleManualStartDateChange() {
       if (this.manualStartDate) {
         const date = new Date(this.manualStartDate);
+        // Only emit if date is not in the past
         if (date >= new Date(this.today.getFullYear(), this.today.getMonth(), this.today.getDate())) {
           const day = date.getDate();
           this.$emit('select-date', day);
 
+          // If end date is before start date, clear it
           if (this.manualEndDate && new Date(this.manualEndDate) < date) {
             this.manualEndDate = '';
           }
@@ -232,6 +283,7 @@ export default {
         const date = new Date(this.manualEndDate);
         const startDate = this.manualStartDate ? new Date(this.manualStartDate) : null;
 
+        // Check if end date is after start date and not in the past
         if (!startDate || date >= startDate) {
           if (date >= new Date(this.today.getFullYear(), this.today.getMonth(), this.today.getDate())) {
             const day = date.getDate();
@@ -284,11 +336,11 @@ export default {
 </script>
 
 <style scoped>
+/* Reset and Base Styles */
 * {
   box-sizing: border-box;
   margin: 0;
   padding: 0;
-<<<<<<< HEAD
 }
 
 html, body {
@@ -299,94 +351,63 @@ html, body {
 
 .container {
   width: 100vw;
-=======
-}
-
-.container {
->>>>>>> 5b57a8288f38df82c4159cd03d65c24a2037bc15
   min-height: 100vh;
   min-height: 100dvh;
   background: #ffffff;
   display: flex;
   flex-direction: column;
+  margin: 0;
   padding: 0;
-<<<<<<< HEAD
   overflow-x: hidden;
   position: relative;
-=======
-  margin: 0;
-  width: 100vw;
-  overflow-x: hidden;
->>>>>>> 5b57a8288f38df82c4159cd03d65c24a2037bc15
 }
 
+/* Main Container */
 .date-picker-inner {
- background: #ffffff;
-  padding: 36px 24px;
-  margin-top: 0;
-  position: relative;
-  box-shadow: 0 -8px 32px rgba(0, 0, 0, 0.1);
-<<<<<<< HEAD
-  margin-top: 0;
-  box-sizing: border-box;
-=======
+  background: #ffffff;
   flex: 1;
   width: 100%;
-  box-sizing: border-box;
-  min-height: auto;
   display: flex;
   flex-direction: column;
->>>>>>> 5b57a8288f38df82c4159cd03d65c24a2037bc15
+  padding: 24px;
+  position: relative;
+  box-shadow: 0 -8px 32px rgba(0, 0, 0, 0.1);
+  margin-top: 0;
+  box-sizing: border-box;
 }
 
-/* Header Styles */
+/* Header */
 .date-header {
   background: #ffffff;
-  padding: 24px;
+  padding: 0 0 20px 0;
   border-bottom: 1px solid #e8ecef;
   position: relative;
   margin-bottom: 20px;
+  width: 100%;
 }
 
 .back-arrow {
- position: absolute;
-  left: 10px;
+  position: absolute;
+  left: 0;
   top: 50%;
   transform: translateY(-50%);
-  font-size: 20px;
+  font-size: 24px;
   cursor: pointer;
   color: #333;
   width: 30px;
-  height:20px;
+  height: 30px;
   display: flex;
   align-items: center;
-  justify-content: left;
+  justify-content: center;
   -webkit-tap-highlight-color: transparent;
 }
 
-
-.back-arrow:active {
-  background-color: #f0f0f0;
-}
-
-.date-header h1 {
-  font-size: 24px;
+.header-title {
+  font-size: 18px;
   font-weight: 600;
   color: #333;
   text-align: left;
-  margin-top: 10px;
-  margin-left: 0;
-  padding: 0 50px;
-  padding-top: 4px;
-}
-
-.section-title{
-  padding: 0 0 4px 0;
-  font-size: 18px;
-  font-weight: 700;
-  color: #817d7d;
   margin: 0;
-<<<<<<< HEAD
   padding-left: 40px;
   width: 100%;
   line-height: 1.3;
@@ -501,38 +522,19 @@ html, body {
   color: #0c3437;
   font-size: 14px;
   flex-shrink: 0;
-=======
-  text-align: left;
-}
-
-.section-subtitle {
-  padding: 0 0 16px 0;
-  font-size: 22px;
-  font-weight: 700;
-  color: #0c3437;
-  margin-top: -6px;
-  margin-bottom: 0;
-  text-align: left;
->>>>>>> 5b57a8288f38df82c4159cd03d65c24a2037bc15
 }
 
 /* Calendar Container */
 .calendar-container {
-  background: hwb(0 0% 100% / 0.017);
-  padding: 16px;
-  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.09);
+  background: #ffffff;
+  border-radius: 16px;
+  padding: 20px;
+  margin-bottom: 25px;
+  box-shadow: 0 2px 12px rgba(0, 0, 0, 0.04);
   border: 1px solid #e8ecef;
-<<<<<<< HEAD
   width: 100%;
   box-sizing: border-box;
   overflow: hidden;
-=======
-  width: 95%;
-  box-sizing: border-box;
-  align-items: center;
-  margin:auto;
-  position:relative;
->>>>>>> 5b57a8288f38df82c4159cd03d65c24a2037bc15
 }
 
 /* Month Navigation */
@@ -540,40 +542,29 @@ html, body {
   display: flex;
   justify-content: space-between;
   align-items: center;
-  margin-bottom: 16px;
+  margin-bottom: 20px;
+  padding: 0 10px;
   width: 100%;
-<<<<<<< HEAD
   box-sizing: border-box;
-=======
-  gap: 8px;
->>>>>>> 5b57a8288f38df82c4159cd03d65c24a2037bc15
 }
 
 .nav-arrow {
-  font-size: 20px;
+  font-size: 24px;
   color: #0c3437;
   cursor: pointer;
-  padding: 8px;
+  padding: 8px 12px;
   border-radius: 8px;
-  transition: background-color 0.2s;
+  transition: background-color 0.3s;
   -webkit-tap-highlight-color: transparent;
   flex-shrink: 0;
-<<<<<<< HEAD
   min-width: 44px;
   min-height: 44px;
   display: flex;
   align-items: center;
   justify-content: center;
-=======
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  min-width: 36px;
-  height: 36px;
->>>>>>> 5b57a8288f38df82c4159cd03d65c24a2037bc15
 }
 
-.nav-arrow:active:not(.disabled) {
+.nav-arrow:hover:not(.disabled) {
   background-color: #f0f0f0;
 }
 
@@ -584,20 +575,14 @@ html, body {
 }
 
 .month-year {
-  font-size: 14px;
+  font-size: 18px;
   font-weight: 600;
   color: #0c3437;
   text-align: center;
   flex: 1;
-<<<<<<< HEAD
   padding: 0 10px;
   min-width: 0;
   word-break: break-word;
-=======
-  white-space: nowrap;
-  overflow: hidden;
-  text-overflow: ellipsis;
->>>>>>> 5b57a8288f38df82c4159cd03d65c24a2037bc15
 }
 
 /* Day Headers */
@@ -606,25 +591,19 @@ html, body {
   grid-template-columns: repeat(7, 1fr);
   gap: 4px;
   margin-bottom: 12px;
+  padding: 0 4px;
   width: 100%;
   box-sizing: border-box;
 }
 
 .day-header {
   text-align: center;
-  font-size: 12px;
+  font-size: 14px;
   font-weight: 600;
   color: #0c3437;
   padding: 8px 0;
-<<<<<<< HEAD
   min-width: 0;
   word-break: break-word;
-=======
-  aspect-ratio: 1;
-  display: flex;
-  align-items: center;
-  justify-content: center;
->>>>>>> 5b57a8288f38df82c4159cd03d65c24a2037bc15
 }
 
 /* Date Grid */
@@ -632,10 +611,7 @@ html, body {
   display: grid;
   grid-template-columns: repeat(7, 1fr);
   gap: 4px;
-<<<<<<< HEAD
   padding: 0 4px;
-=======
->>>>>>> 5b57a8288f38df82c4159cd03d65c24a2037bc15
   width: 100%;
   box-sizing: border-box;
 }
@@ -645,10 +621,7 @@ html, body {
   display: flex;
   align-items: center;
   justify-content: center;
-<<<<<<< HEAD
   padding: 1px;
-=======
->>>>>>> 5b57a8288f38df82c4159cd03d65c24a2037bc15
   min-width: 0;
 }
 
@@ -660,38 +633,40 @@ html, body {
   display: flex;
   align-items: center;
   justify-content: center;
-  border-radius: 8px;
+  border-radius: 50%;
   font-size: 14px;
-  font-weight: 600;
+  font-weight: 800;
   color: #0c3437;
   cursor: pointer;
-  transition: all 0.2s ease;
+  transition: all 0.3s ease;
   -webkit-tap-highlight-color: transparent;
-  background: #ededed40;
-  border: none;
-  padding: 0;
+  background: #ededed61;
+  padding: 2px;
+  border-radius: 8px;
   position: relative;
   box-sizing: border-box;
 }
 
-.date-pill:active:not(.past-date) {
-  background-color: #e0e0e0;
-  transform: scale(0.95);
+.date-pill:hover:not(.past-date) {
+  background-color: #f0f0f0;
 }
 
+/* Today's date styling */
 .date-pill.today {
   border: 2px solid #0c3437;
   background: white;
-  font-weight: 700;
+  font-weight: bold;
 }
 
+/* Past date styling */
 .date-pill.past-date {
-  color: #bbb;
+  color: #ccc;
   background: #f5f5f5;
   cursor: not-allowed;
-  opacity: 0.5;
+  opacity: 0.6;
 }
 
+/* Date selection styling */
 .date-pill.range-start,
 .date-pill.range-end {
   background-color: #0c3437;
@@ -700,44 +675,49 @@ html, body {
 }
 
 .date-pill.range-mid {
-  background-color: #95bbb750;
-  color: #0c3437;
-  border-radius: 4px;
+  background-color: #95bbb799;
+  backdrop-filter: blur(10px);
+  color: #0C3437;
+  padding: 5px;
+  border-radius: 8px;
 }
 
 /* Date Summary */
 .date-summary {
-  background: none;
+  background: #f8f9fa;
+  border-radius: 12px;
+  padding: 20px;
+  margin-bottom: 25px;
+  border: 1.5px solid #e1e5e9;
   width: 100%;
   box-sizing: border-box;
 }
 
 .summary-header {
-  margin-bottom: 12px;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin-bottom: 15px;
   color: #0c3437;
   font-weight: 600;
-  font-size: 14px;
-  padding:10px;
+  font-size: 16px;
+}
+
+.summary-header i {
+  font-size: 18px;
 }
 
 .summary-details {
   display: grid;
-  grid-template-columns: repeat(2, 1fr);
-  gap: 12px;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 15px;
   width: 100%;
   box-sizing: border-box;
 }
 
 .summary-item {
   text-align: center;
-<<<<<<< HEAD
   min-width: 0;
-=======
-  padding: 12px;
-  background: none;
-  border-radius: 8px;
-  border: none;
->>>>>>> 5b57a8288f38df82c4159cd03d65c24a2037bc15
 }
 
 .summary-label {
@@ -745,13 +725,12 @@ html, body {
   font-size: 12px;
   color: #666;
   margin-bottom: 4px;
-  font-weight: 500;
 }
 
 .summary-value {
   display: block;
   font-size: 16px;
-  font-weight: 700;
+  font-weight: 600;
   color: #0c3437;
   word-break: break-word;
 }
@@ -761,60 +740,44 @@ html, body {
   display: flex;
   gap: 12px;
   margin-top: auto;
-  padding-top: 8px;
+  padding: 10px 0 0 0;
   width: 100%;
   box-sizing: border-box;
-<<<<<<< HEAD
-=======
-  font-size: 16px;
->>>>>>> 5b57a8288f38df82c4159cd03d65c24a2037bc15
 }
 
 .btn {
   flex: 1;
   padding: 16px;
   border: none;
-<<<<<<< HEAD
   border-radius: 28px;
-=======
-  border-radius: 24px;
->>>>>>> 5b57a8288f38df82c4159cd03d65c24a2037bc15
   font-size: 16px;
   font-weight: 600;
   cursor: pointer;
   transition: all 0.3s ease;
   -webkit-tap-highlight-color: transparent;
   min-width: 0;
-<<<<<<< HEAD
   min-height: 56px;
   box-sizing: border-box;
-=======
-  height: 48px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
->>>>>>> 5b57a8288f38df82c4159cd03d65c24a2037bc15
 }
 
 .btn-cancel {
   background-color: #f8f9fa;
   color: #666;
   border: 1.5px solid #e1e5e9;
+  border-radius: 28px;
 }
 
-.btn-cancel:active {
+.btn-cancel:hover {
   background-color: #e9ecef;
-  transform: scale(0.98);
 }
 
 .btn-next {
-  background-color: #0c3437;
+  background-color: #0C3437;
   color: white;
 }
 
-.btn-next:active:not(:disabled) {
-  background-color: #0a2b2e;
-  transform: scale(0.98);
+.btn-next:hover:not(:disabled) {
+  background-color: #0A2B2E;
 }
 
 .btn-next:disabled {
@@ -825,7 +788,6 @@ html, body {
 
 /* ========== RESPONSIVE BREAKPOINTS ========== */
 
-<<<<<<< HEAD
 /* Extra Small Mobile (up to 320px) */
 @media (max-width: 320px) {
   .date-picker-inner {
@@ -836,88 +798,10 @@ html, body {
     font-size: 15px;
     padding-left: 32px;
     line-height: 1.2;
-=======
-/* Extra Small Devices (320px - 374px) */
-@media (max-width: 374px) {
-  .date-picker-inner {
-    padding: 16px 12px;
-    gap: 16px;
   }
 
-  .back-arrow{
-    width: 24px;
-    height: 24px;
-    font-size: 18px;
-  }
-
-    .date-header h1 {
-    font-size: 18px;
-    padding: 0 36px;
-  }
-  .section-title {
-    font-size: 16px;
-    padding: 0 0 2px 0;
-}
-  .section-subtitle {
-    font-size: 18px;
-    padding: 0 0 12px 0;
-    margin-top: -4px;
-  }
   .back-arrow {
-    width: 24px;
-    height: 24px;
-    font-size: 18px;
-  }
-
-  .calendar-container {
-    border-radius: 10px;
-  }
-
-  .month-year {
-    font-size: 14px;
-  }
-
-  .day-header {
-    font-size: 11px;
-    padding: 8px 0;
-  }
-
-  .date-pill {
-    font-size: 13px;
-    border-radius: 10px;
-  }
-
-  .btn {
-    padding: 16px;
-    font-size: 15px;
-    height: 52px;
-    border-radius: 26px;
-  }
-
-  .summary-item {
-    padding: 14px;
-  }
-
-  .summary-value {
-    font-size: 22px;
-  }
-}
-
-
-/* Small Mobile (375px - 480px) */
-@media (min-width: 375px) and (max-width: 480px) {
-  .date-picker-inner {
-    padding: 16px;
-    gap: 16px;
-  }
-
-  .header-title {
-    font-size: 16px;
->>>>>>> 5b57a8288f38df82c4159cd03d65c24a2037bc15
-  }
-  .header-subtitle {
     font-size: 20px;
-<<<<<<< HEAD
     width: 28px;
     height: 28px;
   }
@@ -1063,53 +947,19 @@ html, body {
 @media (min-width: 768px) and (max-width: 1023px) {
   .container {
     background: #f8f9fa;
-=======
-    padding: 0 0 6px 0;
-  }
-  .header-subtitle2 {
-    font-size: 24px;
-    padding: 0 0 20px 0;
-    margin-top: -20px;
-  }
-
-  .calendar-container {
-    padding: 16px;
-  }
-}
-
-/* Medium Mobile (481px - 600px) */
-@media (min-width: 481px) and (max-width: 600px) {
-  .container {
-    background: #f8f9fa;
-    display: flex;
-    align-items: center;
-    justify-content: center;
->>>>>>> 5b57a8288f38df82c4159cd03d65c24a2037bc15
     padding: 20px;
   }
 
   .date-picker-inner {
-<<<<<<< HEAD
     max-width: 600px;
     width: 100%;
     margin: 0 auto;
     border-radius: 20px;
     padding: 32px 28px;
     box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
-=======
-    max-width: 480px;
-    background: white;
-    border-radius: 16px;
-    padding: 24px;
-    box-shadow: 0 4px 16px rgba(0, 0, 0, 0.08);
->>>>>>> 5b57a8288f38df82c4159cd03d65c24a2037bc15
   }
 
   .header-title {
-    font-size: 17px;
-  }
-
-  .header-subtitle2 {
     font-size: 20px;
     padding-left: 45px;
   }
@@ -1124,64 +974,16 @@ html, body {
     gap: 25px;
   }
 
-  .calendar-container {
-    padding: 20px;
+  .month-year {
+    font-size: 20px;
   }
 
   .day-headers {
     gap: 8px;
   }
 
-<<<<<<< HEAD
   .date-grid {
     gap: 6px;
-=======
-  .btn {
-    padding: 16px;
-    height: 52px;
-    font-size: 16px;
-  }
-}
-
-/* Tablet Portrait (601px - 768px) */
-@media (min-width: 601px) and (max-width: 768px) {
-  .container {
-    background: #f8f9fa;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    padding: 32px;
-  }
-
-  .date-picker-inner {
-    max-width: 560px;
-    background: white;
-    border-radius: 20px;
-    padding: 32px;
-    box-shadow: 0 6px 24px rgba(0, 0, 0, 0.1);
-  }
-
-  .header-title {
-    font-size: 18px;
-  }
-
-  .header-subtitle2 {
-    font-size: 22px;
-    margin-top: 4px;
-  }
-
-  .calendar-container {
-    padding: 24px;
-    margin-top: 16px;
-  }
-
-  .month-year {
-    font-size: 16px;
-  }
-
-  .day-header {
-    font-size: 13px;
->>>>>>> 5b57a8288f38df82c4159cd03d65c24a2037bc15
   }
 
   .date-pill {
@@ -1190,7 +992,6 @@ html, body {
     font-size: 16px;
   }
 
-<<<<<<< HEAD
   .date-range-display {
     padding: 18px;
   }
@@ -1214,31 +1015,10 @@ html, body {
 @media (min-width: 1024px) and (max-width: 1279px) {
   .container {
     background: #f8f9fa;
-=======
-  .btn {
-    padding: 16px 20px;
-    height: 52px;
-    font-size: 16px;
-  }
-
-  .summary-value {
-    font-size: 18px;
-  }
-}
-
-/* Tablet Landscape (769px - 1024px) */
-@media (min-width: 769px) and (max-width: 1024px) {
-  .container {
-    background: #f8f9fa;
-    display: flex;
-    align-items: center;
-    justify-content: center;
->>>>>>> 5b57a8288f38df82c4159cd03d65c24a2037bc15
     padding: 40px;
   }
 
   .date-picker-inner {
-<<<<<<< HEAD
     max-width: 700px;
     width: 100%;
     margin: 0 auto;
@@ -1308,26 +1088,10 @@ html, body {
   .date-picker-inner {
     max-width: 800px;
     padding: 44px 40px;
-=======
-    max-width: 640px;
-    background: white;
-    border-radius: 24px;
-    padding: 40px;
-    box-shadow: 0 8px 32px rgba(0, 0, 0, 0.12);
->>>>>>> 5b57a8288f38df82c4159cd03d65c24a2037bc15
   }
 
   .header-title {
-    font-size: 20px;
-  }
-
-  .header-subtitle {
-    font-size: 16px;
-  }
-
-  .header-subtitle2 {
     font-size: 24px;
-<<<<<<< HEAD
   }
 
   .month-year {
@@ -1399,117 +1163,12 @@ html, body {
 
 /* Ultra Wide (1920px and above) */
 @media (min-width: 1920px) {
-=======
-    margin-top: 6px;
-  }
-
-  .calendar-container {
-    padding: 28px;
-    margin-top: 20px;
-  }
-
-  .date-grid {
-    gap: 6px;
-  }
-
-  .date-pill {
-    font-size: 16px;
-    border-radius: 10px;
-  }
-
-  .btn {
-    padding: 18px 24px;
-    height: 56px;
-    font-size: 17px;
-    border-radius: 28px;
-  }
-}
-
-/* Desktop (1025px and above) */
-@media (min-width: 1025px) {
-  .container {
-    background: #f8f9fa;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    padding: 60px 20px;
-    min-height: 100vh;
-  }
-
   .date-picker-inner {
-    max-width: 720px;
-    background: white;
-    border-radius: 24px;
-    padding: 48px;
-    box-shadow: 0 12px 48px rgba(0, 0, 0, 0.15);
+    max-width: 1000px;
+    padding: 56px 48px;
   }
 
   .header-title {
-    font-size: 22px;
-  }
-
-  .header-subtitle {
-    font-size: 17px;
-  }
-
-  .header-subtitle2 {
-    font-size: 28px;
-    margin-top: 8px;
-  }
-
-  .calendar-container {
-    padding: 32px;
-    margin-top: 24px;
-  }
-
-  .month-year {
-    font-size: 18px;
-  }
-
-  .day-header {
-    font-size: 14px;
-    padding: 10px 0;
-  }
-
-  .date-grid {
-    gap: 8px;
-  }
-
-  .date-pill {
-    font-size: 17px;
-    border-radius: 12px;
-  }
-
-  .btn {
-    height: 60px;
-    font-size: 18px;
-    border-radius: 30px;
-    padding: 20px 28px;
-  }
-
-  .summary-header {
-    font-size: 16px;
-  }
-
-  .summary-label {
-    font-size: 13px;
-  }
-
-  .summary-value {
-    font-size: 20px;
-  }
-}
-
-/* Landscape orientation optimization */
-@media (orientation: landscape) and (max-height: 600px) {
->>>>>>> 5b57a8288f38df82c4159cd03d65c24a2037bc15
-  .date-picker-inner {
-    padding: 12px;
-    gap: 12px;
-  }
-
-  .header-title {
-<<<<<<< HEAD
     font-size: 28px;
   }
 
@@ -1572,104 +1231,18 @@ html, body {
   .calendar-container {
     padding: 12px 8px;
     margin-bottom: 15px;
-=======
-    font-size: 15px;
-    padding: 0 36px;
   }
 
-  .header-subtitle,
-  .header-subtitle2 {
-    font-size: 14px;
-  }
-
-  .calendar-container {
-    padding: 12px;
-    margin-top: 4px;
-  }
-
-  .date-grid {
-    gap: 3px;
-  }
-
-  .date-pill {
-    font-size: 13px;
->>>>>>> 5b57a8288f38df82c4159cd03d65c24a2037bc15
-  }
-
+  .date-inputs,
   .date-summary {
-    padding: 12px;
+    margin-bottom: 15px;
   }
 
-  .summary-details {
-    gap: 8px;
-  }
-
-  .summary-item {
-    padding: 8px;
-  }
-
-  .btn {
-    padding: 10px;
-    height: 44px;
-    font-size: 14px;
+  .action-buttons {
+    padding-top: 10px;
   }
 }
 
-/* Very small landscape screens */
-@media (orientation: landscape) and (max-height: 400px) {
-  .date-header {
-    margin-bottom: 4px;
-    padding-bottom: 8px;
-  }
-
-  .date-picker-inner {
-    gap: 8px;
-  }
-
-  .calendar-container {
-    margin: 0;
-    padding: 8px;
-  }
-
-  .date-summary {
-    display: none;
-  }
-
-  .btn {
-    height: 40px;
-    font-size: 13px;
-  }
-}
-
-/* High-resolution devices */
-@media (-webkit-min-device-pixel-ratio: 2), (min-resolution: 192dpi) {
-  .date-pill {
-    border-width: 1.5px;
-  }
-
-  .btn-cancel {
-    border-width: 1.5px;
-  }
-}
-
-/* Safe area insets for notched devices */
-@supports (padding: max(0px)) {
-  .date-picker-inner {
-    padding-left: max(16px, env(safe-area-inset-left));
-    padding-right: max(16px, env(safe-area-inset-right));
-    padding-top: max(16px, env(safe-area-inset-top));
-    padding-bottom: max(20px, env(safe-area-inset-bottom));
-  }
-
-  @media (max-width: 374px) {
-    .date-picker-inner {
-      padding-left: max(12px, env(safe-area-inset-left));
-      padding-right: max(12px, env(safe-area-inset-right));
-    }
-  }
-}
-
-<<<<<<< HEAD
 /* Touch device optimizations */
 @media (hover: none) and (pointer: coarse) {
   .back-arrow,
@@ -1689,14 +1262,6 @@ html, body {
 
   .date-input-field,
   .btn {
-=======
-/* Prevent zoom on iOS inputs */
-@media screen and (max-width: 767px) {
-  input,
-  select,
-  textarea,
-  button {
->>>>>>> 5b57a8288f38df82c4159cd03d65c24a2037bc15
     font-size: 16px;
   }
 
@@ -1706,35 +1271,13 @@ html, body {
   }
 }
 
-/* Touch device optimizations */
-@media (hover: none) and (pointer: coarse) {
-  .date-pill,
-  .nav-arrow,
-  .back-arrow,
-  .btn {
-    min-height: 44px;
-  }
-
-  .date-pill {
-    min-height: 40px;
-  }
-}
-
-/* Print styles */
-@media print {
+/* Safe area insets for notched devices */
+@supports(padding: max(0px)) {
   .container {
-    background: white !important;
-    box-shadow: none !important;
-    padding: 0 !important;
-  }
-
-  .date-picker-inner {
-    box-shadow: none !important;
-    border: 1px solid #ddd !important;
-  }
-
-  .btn {
-    display: none !important;
+    padding-left: max(0px, env(safe-area-inset-left));
+    padding-right: max(0px, env(safe-area-inset-right));
+    padding-top: max(0px, env(safe-area-inset-top));
+    padding-bottom: max(0px, env(safe-area-inset-bottom));
   }
 
   .date-picker-inner {
