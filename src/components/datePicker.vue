@@ -3,8 +3,8 @@
     <div class="date-picker-inner">
       <!-- Header -->
       <div class="date-header">
-        <div class="back-arrow" @click="$emit('go-to-page', 'destination-details')">←</div>
-        <h1 class="header-title">Pick date for your trip to {{ selectedDestinationName }}</h1>
+        <div class="back-arrow" @click="$emit('go-to-page', 'destination-details')"><i class="fas fa-arrow-left"></i></div>
+        <h1 class="header-title">Pick date</h1>
       </div>
 
       <!-- Manual Date Inputs -->
@@ -64,46 +64,6 @@
                  @click="handleDateClick(day)">
               {{ day }}
             </div>
-          </div>
-        </div>
-      </div>
-
-      <!-- Date Range Display -->
-      <div class="date-inputs">
-        <div class="date-label">Selected Dates</div>
-        <div class="date-range-display">
-          <div class="date-display-item">
-            <div class="date-display-label">From</div>
-            <div class="date-display-value">{{ fromDateDisplay }}</div>
-          </div>
-          <div class="date-display-separator">
-            <i class="fas fa-arrow-right"></i>
-          </div>
-          <div class="date-display-item">
-            <div class="date-display-label">To</div>
-            <div class="date-display-value">{{ toDateDisplay }}</div>
-          </div>
-        </div>
-      </div>
-
-      <!-- Selected Dates Summary -->
-      <div v-if="selectedStart && selectedEnd" class="date-summary">
-        <div class="summary-header">
-          <i class="fas fa-calendar-check"></i>
-          <span>Trip Duration</span>
-        </div>
-        <div class="summary-details">
-          <div class="summary-item">
-            <span class="summary-label">Nights:</span>
-            <span class="summary-value">{{ calculateNights() }}</span>
-          </div>
-          <div class="summary-item">
-            <span class="summary-label">Days:</span>
-            <span class="summary-value">{{ calculateNights() + 1 }}</span>
-          </div>
-          <div class="summary-item">
-            <span class="summary-label">Period:</span>
-            <span class="summary-value">{{ selectedStart }} - {{ selectedEnd }} {{ currentMonthYear.split(' ')[0] }}</span>
           </div>
         </div>
       </div>
@@ -473,63 +433,13 @@ html, body {
   font-size: 16px;
 }
 
-/* Date Range Display */
-.date-inputs {
-  margin-bottom: 25px;
-  width: 100%;
-  box-sizing: border-box;
-}
-
-.date-label {
-  font-size: 14px;
-  color: #666;
-  margin-bottom: 10px;
-  font-weight: 500;
-  width: 100%;
-}
-
-.date-range-display {
-  display: flex;
-  align-items: center;
-  gap: 15px;
-  background: #f8f9fa;
-  border: 1.5px solid #e1e5e9;
-  border-radius: 12px;
-  padding: 15px;
-  width: 100%;
-  box-sizing: border-box;
-}
-
-.date-display-item {
-  flex: 1;
-  min-width: 0;
-}
-
-.date-display-label {
-  font-size: 12px;
-  color: #666;
-  margin-bottom: 4px;
-}
-
-.date-display-value {
-  font-size: 16px;
-  font-weight: 600;
-  color: #0c3437;
-  word-break: break-word;
-}
-
-.date-display-separator {
-  color: #0c3437;
-  font-size: 14px;
-  flex-shrink: 0;
-}
 
 /* Calendar Container */
 .calendar-container {
   background: #ffffff;
   border-radius: 16px;
   padding: 20px;
-  margin-bottom: 25px;
+  margin-top: 25px;
   box-shadow: 0 2px 12px rgba(0, 0, 0, 0.04);
   border: 1px solid #e8ecef;
   width: 100%;
@@ -580,7 +490,7 @@ html, body {
   color: #0c3437;
   text-align: center;
   flex: 1;
-  padding: 0 10px;
+  padding: 0 5px;
   min-width: 0;
   word-break: break-word;
 }
@@ -610,14 +520,14 @@ html, body {
 .date-grid {
   display: grid;
   grid-template-columns: repeat(7, 1fr);
-  gap: 4px;
-  padding: 0 4px;
+  gap: 8px;
+  padding: 0;
   width: 100%;
   box-sizing: border-box;
 }
 
 .date-cell {
-  aspect-ratio: 1;
+
   display: flex;
   align-items: center;
   justify-content: center;
@@ -682,58 +592,7 @@ html, body {
   border-radius: 8px;
 }
 
-/* Date Summary */
-.date-summary {
-  background: #f8f9fa;
-  border-radius: 12px;
-  padding: 20px;
-  margin-bottom: 25px;
-  border: 1.5px solid #e1e5e9;
-  width: 100%;
-  box-sizing: border-box;
-}
 
-.summary-header {
-  display: flex;
-  align-items: center;
-  gap: 10px;
-  margin-bottom: 15px;
-  color: #0c3437;
-  font-weight: 600;
-  font-size: 16px;
-}
-
-.summary-header i {
-  font-size: 18px;
-}
-
-.summary-details {
-  display: grid;
-  grid-template-columns: repeat(3, 1fr);
-  gap: 15px;
-  width: 100%;
-  box-sizing: border-box;
-}
-
-.summary-item {
-  text-align: center;
-  min-width: 0;
-}
-
-.summary-label {
-  display: block;
-  font-size: 12px;
-  color: #666;
-  margin-bottom: 4px;
-}
-
-.summary-value {
-  display: block;
-  font-size: 16px;
-  font-weight: 600;
-  color: #0c3437;
-  word-break: break-word;
-}
 
 /* Action Buttons */
 .action-buttons {
@@ -840,11 +699,6 @@ html, body {
     max-height: 36px;
   }
 
-  .summary-details {
-    grid-template-columns: 1fr;
-    gap: 12px;
-  }
-
   .action-buttons {
     flex-direction: column;
     gap: 10px;
@@ -885,10 +739,11 @@ html, body {
   .calendar-container {
     padding: 16px 12px;
   }
-
+  .date-grid{
+    padding:0 8px;
+  }
   .date-pill {
-    max-width: 40px;
-    max-height: 40px;
+
     font-size: 13px;
   }
 
@@ -1294,8 +1149,9 @@ html, body, .container, .date-picker-inner {
 
 /* Ensure calendar fits on smallest screens */
 @media (max-width: 320px) {
-  .date-grid {
-    gap: 2px;
+date-grid {
+    gap: 4px;
+    padding: 0;  
   }
 
   .day-header {

@@ -22,9 +22,9 @@
       </header>
 
       <section class="hero-section">
-        <div class="hero-card" @click="viewDestination(featuredDestination.id)">
+        <div class="hero-card">
           <img :src="featuredDestination.image" :alt="featuredDestination.name" class="hero-img">
-          <div class="hero-tag">{{ featuredDestination.tag }}</div>
+
           <div class="hero-rating"><i class="fas fa-star"></i> {{ featuredDestination.rating }}</div>
           <div class="hero-gradient"></div>
           <div class="hero-text">
