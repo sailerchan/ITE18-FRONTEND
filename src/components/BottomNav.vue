@@ -6,7 +6,7 @@
         class="nav-item"
         :class="{ active: activePage === 'homepage' }"
       >
-        <i class="fas fa-home"></i>
+        <i class="fa-solid fa-house"></i>
       </button>
 
       <button
