@@ -565,12 +565,12 @@ export default {
       {
         id: 'mastercard',
         name: 'Mastercard',
-        logo: '/images/mastercard.png',
+        logo: '/images/logos/mastercard.png',
       },
       {
         id: 'gcash',
         name: 'GCash',
-        logo: '/images/gcash_logo.png',
+        logo: '/images/logos/gcash_logo.png',
       },
     ])
 
@@ -1299,7 +1299,7 @@ body {
   background: #f0f0f0;
   min-height: 100vh;
   position: relative;
-  padding-bottom: 80px; /* Space for bottom nav */
+  padding-bottom: 0;
 }
 
 .debug-info {
