@@ -112,7 +112,7 @@
       @go-to-page="goToPage"
     />
 
-    <!-- Destination Details Component (Replaces both SiargaoDetails and SiargaoReviewsPage) -->
+    <!-- Destination Details Component -->
     <DestinationDetails
       v-else-if="currentPage === 'destination-details'"
       :destination="currentDestination"
@@ -169,7 +169,7 @@
       @go-to-page="goToPage"
     />
 
-    <!-- GCash Detail Component (Mobile Number Input) -->
+    <!-- GCash Detail Component -->
     <GcashDetail
       v-else-if="currentPage === 'gcash-detail'"
       :total-amount="parseFloat(totalPrice)"
@@ -193,7 +193,6 @@
       @payment-success="handlePaymentSuccess"
     />
 
-    <!-- Payment Success Component - UPDATED -->
     <!-- Payment Success Component -->
     <PaymentSuccess
       v-else-if="currentPage === 'payment-success'"
@@ -213,6 +212,7 @@
 
 <script>
 import { ref, computed } from 'vue'
+import { useTripsStore } from './stores/trips'
 import Login from './components/log_in.vue'
 import Signup from './components/sign_up.vue'
 import ForgotPassword from './components/forgotpassword_page.vue'
@@ -222,7 +222,6 @@ import NotificationPage from './components/NotificationPage.vue'
 import ProfilePage from './components/ProfilePage.vue'
 import PersonalInformation from './components/PersonalInformation.vue'
 import ChangePassword from './components/changePassword.vue'
-// Import the reusable DestinationDetails component
 import DestinationDetails from './components/destination-details.vue'
 import DatePicker from './components/datePicker.vue'
 import Accommodation from './components/accomodation_page.vue'
@@ -245,7 +244,7 @@ export default {
     ProfilePage,
     PersonalInformation,
     ChangePassword,
-    DestinationDetails, // Replace SiargaoDetails and SiargaoReviewsPage with this
+    DestinationDetails,
     DatePicker,
     Accommodation,
     Booking,
@@ -256,12 +255,15 @@ export default {
     ItineraryPage
   },
   setup() {
+    // Initialize trips store
+    const tripsStore = useTripsStore()
+
     // Navigation state
     const currentPage = ref('login')
     const currentBookingView = ref('listing')
     const showDebug = ref(true)
-    const activeDestinationTab = ref('details') // Track which tab is active in destination details
-    const currentDestination = ref(null) // Store the current destination data
+    const activeDestinationTab = ref('details')
+    const currentDestination = ref(null)
 
     // User data
     const loginForm = ref({
@@ -365,8 +367,6 @@ export default {
           }
         ]
       },
-
-      // Naked Island
       2: {
         id: 2,
         name: 'Naked Island',
@@ -406,8 +406,6 @@ export default {
           }
         ]
       },
-
-      // Guyam Island
       3: {
         id: 3,
         name: 'Guyam Island',
@@ -447,8 +445,6 @@ export default {
           }
         ]
       },
-
-      // Cloud 9
       4: {
         id: 4,
         name: 'Cloud 9 Surfing Area',
@@ -774,8 +770,9 @@ export default {
       // Reset to details tab when viewing a new destination
       activeDestinationTab.value = 'details'
 
-      // Set the selected destination ID
+      // Set the selected destination ID - THIS IS CRITICAL FOR TRIPS
       selectedDestinationId.value = id
+      console.log('📍 selectedDestinationId set to:', selectedDestinationId.value)
 
       // Find destination in our data
       const destination = destinationData[id]
@@ -790,6 +787,7 @@ export default {
 
       // Set the destination name for date picker
       selectedDestinationName.value = destination.name
+      console.log('📍 selectedDestinationName set to:', selectedDestinationName.value)
 
       // Navigate to destination details page
       goToPage('destination-details')
@@ -812,16 +810,13 @@ export default {
       goToPage('datepicker')
     }
 
-    // New methods for destination details
     const handleWriteReview = (destinationId) => {
       console.log('Writing review for destination:', destinationId)
-      // In a real app, this would open a review form
       alert(`Review form would open for ${currentDestination.value?.name || 'this destination'}`)
     }
 
     const toggleReviewHelpful = (reviewId) => {
       console.log('Toggling helpful for review:', reviewId)
-      // In a real app, this would update the review helpful count
       if (currentDestination.value && currentDestination.value.reviews) {
         const review = currentDestination.value.reviews.find(r => r.id === reviewId)
         if (review) {
@@ -858,10 +853,11 @@ export default {
         confirmPasswordError: ''
       }
       currentDestination.value = null
+      selectedDestinationId.value = null
+      selectedDestinationName.value = ''
       goToPage('login')
     }
 
-    // Personal Information methods
     const handleSaveChanges = () => {
       console.log('Saving personal information changes')
       alert('Personal information saved successfully!')
@@ -973,27 +969,105 @@ export default {
     }
 
     const handlePaymentSuccess = (paymentData) => {
-      console.log('Payment completed successfully!', paymentData)
+  console.log('🎯 Payment Success Event Received:', paymentData)
+  console.log('📊 Current State:', {
+    selectedDestinationId: selectedDestinationId.value,
+    selectedDestinationName: selectedDestinationName.value,
+    currentDestination: currentDestination.value,
+    selectedProperty: selectedProperty.value,
+    bookingNights: booking.value.nights,
+    bookingDates: booking.value.dates,
+    totalPrice: totalPrice.value
+  })
+      // Generate receipt number
+      const receiptNumber = generateReceiptNumber()
 
-      if (paymentData) {
-        receiptData.value = {
-          amount: paymentData.amount ? paymentData.amount.toFixed(2) : totalPrice.value,
-          paymentMethod: paymentData.paymentMethod || selectedPayment.value?.name || 'GCash',
-          receiptNumber: generateReceiptNumber(),
-          dateTime: new Date().toLocaleString('en-US', {
-            month: 'short',
-            day: '2-digit',
-            year: 'numeric',
-            hour: '2-digit',
-            minute: '2-digit',
-            hour12: true
-          }).replace(',', ' |')
+      // Update receipt data
+      receiptData.value = {
+        amount: paymentData?.amount ? paymentData.amount.toFixed(2) : totalPrice.value,
+        paymentMethod: paymentData?.paymentMethod || selectedPayment.value?.name || 'GCash',
+        receiptNumber: receiptNumber,
+        dateTime: new Date().toLocaleString('en-US', {
+          month: 'short',
+          day: '2-digit',
+          year: 'numeric',
+          hour: '2-digit',
+          minute: '2-digit',
+          hour12: true
+        }).replace(',', ' |')
+      }
+
+      console.log('📋 Receipt Data:', receiptData.value)
+
+      // **CRITICAL: Get destination ID**
+      let destinationId
+      let destinationName
+
+      if (selectedDestinationId.value) {
+        // User clicked from homepage or has selectedDestinationId set
+        destinationId = selectedDestinationId.value
+        destinationName = selectedDestinationName.value || 'Siargao Island'
+        console.log('📍 Using selectedDestinationId:', destinationId, destinationName)
+      } else if (currentDestination.value) {
+        // User came from destination details page
+        destinationId = currentDestination.value.id
+        destinationName = currentDestination.value.name
+        console.log('📍 Using currentDestination:', destinationId, destinationName)
+      } else {
+        // Fallback to Siargao
+        destinationId = 1
+        destinationName = 'Siargao Island'
+        console.log('📍 Using fallback destination:', destinationId, destinationName)
+      }
+
+      // Ensure we have valid dates
+      const tripDates = booking.value.dates || `${new Date().toLocaleDateString('en-US', { month: 'short', day: 'numeric' })} - ${new Date(Date.now() + 3 * 24 * 60 * 60 * 1000).toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' })}`
+
+      // Ensure we have valid nights
+      const tripNights = booking.value.nights || 3
+
+      // Create booking data object
+      const bookingData = {
+        destinationId: destinationId,
+        destinationName: destinationName,
+        dates: tripDates,
+        nights: tripNights,
+        totalPrice: totalPrice.value || '2,150.00',
+        paymentMethod: selectedPayment.value?.name || 'GCash',
+        receiptNumber: receiptNumber,
+        property: {
+          title: selectedProperty.value?.title || `${destinationName} Accommodation`,
+          location: selectedProperty.value?.location || destinationName,
+          image: selectedProperty.value?.image || `/images/destinations/siargao.jpg`
         }
       }
 
-      // Save booking data before navigating
+      console.log('📦 Booking Data for Trip Store:', bookingData)
+
+      // **ADD THE TRIP TO UPCOMING TRIPS**
+      console.log('🔄 Calling tripsStore.addCompletedTrip...')
+      const newTrip = tripsStore.addCompletedTrip(bookingData)
+
+      if (newTrip) {
+        console.log('✅ Trip successfully added:', newTrip)
+        console.log('📋 Current trips in store:', tripsStore.upcomingTrips)
+      } else {
+        console.error('❌ Failed to add trip to store')
+      }
+
+      // Save to localStorage for persistence
+      console.log('💾 Saving to localStorage...')
       saveBookingData()
 
+      // Also force save the trips store
+      tripsStore.saveToLocalStorage()
+
+      // Verify localStorage
+      const savedTrips = localStorage.getItem('userTrips')
+      console.log('📁 localStorage userTrips:', savedTrips)
+
+      // Navigate to payment success page
+      console.log('🚀 Navigating to payment-success page')
       setTimeout(() => {
         goToPage('payment-success')
       }, 1000)
@@ -1006,7 +1080,7 @@ export default {
     const saveBookingData = () => {
       // Save booking information for the itinerary page
       const bookingData = {
-        destination: selectedDestinationName.value,
+        destination: selectedDestinationName.value || 'Siargao Island',
         property: selectedProperty.value,
         dates: booking.value.dates,
         nights: booking.value.nights,
@@ -1017,7 +1091,7 @@ export default {
       }
 
       localStorage.setItem('lastBooking', JSON.stringify(bookingData))
-      console.log('Booking data saved:', bookingData)
+      console.log('💾 Booking data saved to localStorage:', bookingData)
     }
 
     const handleTripSaved = (tripData) => {
@@ -1025,6 +1099,7 @@ export default {
     }
 
     return {
+      tripsStore,
       currentPage,
       currentBookingView,
       showDebug,
