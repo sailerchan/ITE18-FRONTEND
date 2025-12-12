@@ -4,7 +4,7 @@
     <div class="trip-header">
       <!-- Navigation -->
       <div class="nav">
-        <button class="back-arrow" @click="goBack">←</button>
+        <button class="back-arrow" @click="goBack"><i class="fas fa-arrow-left"></i></button>
         <div class="nav-title">Itinerary</div>
       </div>
 
@@ -17,7 +17,7 @@
           <span class="detail-text">{{ tripDates }}</span>
         </div>
         <div class="detail-row">
-          <span class="detail-icon">🏨</span>
+          <span class="detail-icon"><i class="fa-solid fa-bed"></i></span>
           <span class="detail-text">{{ accommodationName }}</span>
         </div>
       </div>
@@ -47,33 +47,28 @@
       >
         <div class="activity-header">
           <div class="time-label">
-            <select
-              class="time-select"
-              v-model="activity.time"
-              @change="updateActivity(activity)"
+            <!-- Custom Time Selector Button -->
+            <button
+              class="time-select-btn"
+              @click="openTimeModal(activity)"
             >
-              <option value="morning">Morning</option>
-              <option value="afternoon">Afternoon</option>
-              <option value="evening">Evening</option>
-            </select>
+              <i class="far fa-clock"></i>
+              <span>{{ getTimeLabel(activity.time) }}</span>
+              <i class="fas fa-chevron-down"></i>
+            </button>
           </div>
-          <div class="activity-content">
-            <div class="activity-details">
-              <input
-                type="text"
-                class="activity-input title-input"
-                placeholder="Activity title..."
-                v-model="activity.title"
-                @input="updateActivity(activity)"
-              >
-              <input
-                type="text"
-                class="activity-input desc-input"
-                placeholder="Add description..."
-                v-model="activity.description"
-                @input="updateActivity(activity)"
-              >
-            </div>
+        </div>
+
+        <div class="activity-content">
+          <div class="activity-details">
+            <!-- Notepad-style Textarea -->
+            <textarea
+              class="activity-textarea"
+              placeholder="What do you want to do at this time?&#10;&#10;Write your plans, activities, or notes here..."
+              v-model="activity.notes"
+              @input="updateActivity(activity)"
+              rows="6"
+            ></textarea>
           </div>
         </div>
       </div>
@@ -89,12 +84,14 @@
       <div class="packlist">
         <div class="packlist-header">
           <div class="packlist-title">Packlist</div>
-          <div
-            class="packlist-arrow"
+          <!-- Beautiful Dropdown Icon -->
+          <button
+            class="packlist-toggle-btn"
             @click="togglePacklist"
+            :class="{ expanded: packlistExpanded }"
           >
-            {{ packlistExpanded ? '⌄' : '›' }}
-          </div>
+            <i class="fas fa-chevron-down"></i>
+          </button>
         </div>
 
         <div class="packlist-card" v-show="packlistExpanded">
@@ -115,7 +112,7 @@
                 <span
                   class="delete-category"
                   @click="deleteCategory(category.id)"
-                >✕</span>
+                ><i class="fas fa-times"></i></span>
               </div>
               <div class="packlist-items">
                 <div
@@ -123,13 +120,15 @@
                   :key="item.id"
                   class="packlist-item"
                 >
-                  <div
-                    class="packlist-checkbox"
-                    :class="{ checked: item.checked }"
-                    @click="toggleItemCheck(category.id, item.id)"
-                  >
-                    {{ item.checked ? '✓' : '' }}
-                  </div>
+                  <!-- Custom Styled Checkbox -->
+                  <label class="custom-checkbox">
+                    <input
+                      type="checkbox"
+                      :checked="item.checked"
+                      @change="toggleItemCheck(category.id, item.id)"
+                    >
+                    <span class="checkmark"></span>
+                  </label>
                   <div
                     class="packlist-text"
                     :class="{ checked: item.checked }"
@@ -139,7 +138,7 @@
                   <span
                     class="delete-item"
                     @click="deleteItem(category.id, item.id)"
-                  >✕</span>
+                  ><i class="fas fa-times"></i></span>
                 </div>
               </div>
               <input
@@ -151,7 +150,9 @@
             </div>
           </div>
 
-          <button class="add-category-btn" @click="addCategory">+ Add New Category</button>
+          <button class="add-category-btn" @click="addCategory">
+            <i class="fas fa-plus"></i> Add New Category
+          </button>
         </div>
       </div>
     </div>
@@ -159,6 +160,76 @@
     <!-- Save Button -->
     <div class="button-container">
       <button class="save-button" @click="saveTrip">Save Trip</button>
+    </div>
+
+    <!-- Time Selection Modal -->
+    <div v-if="showTimeModal" class="modal-overlay" @click.self="closeTimeModal">
+      <div class="modal-content time-modal">
+        <div class="modal-header">
+          <h3 class="modal-title">Select Time</h3>
+          <button class="modal-close" @click="closeTimeModal">
+            <i class="fas fa-times"></i>
+          </button>
+        </div>
+        <div class="time-options">
+          <div
+            class="time-option"
+            :class="{ selected: selectedTime === 'morning' }"
+            @click="selectTime('morning')"
+          >
+            <i class="fas fa-sun"></i>
+            <span>Morning</span>
+          </div>
+          <div
+            class="time-option"
+            :class="{ selected: selectedTime === 'afternoon' }"
+            @click="selectTime('afternoon')"
+          >
+            <i class="fas fa-cloud-sun"></i>
+            <span>Afternoon</span>
+          </div>
+          <div
+            class="time-option"
+            :class="{ selected: selectedTime === 'evening' }"
+            @click="selectTime('evening')"
+          >
+            <i class="fas fa-moon"></i>
+            <span>Evening</span>
+          </div>
+        </div>
+        <div class="modal-actions">
+          <button class="modal-btn cancel-btn" @click="closeTimeModal">
+            Cancel
+          </button>
+          <button class="modal-btn confirm-btn" @click="confirmTimeSelection">
+            Confirm
+          </button>
+        </div>
+      </div>
+    </div>
+
+    <!-- Unsaved Changes Modal -->
+    <div v-if="showLeaveModal" class="modal-overlay" @click.self="showLeaveModal = false">
+      <div class="modal-content">
+        <div class="modal-icon">
+          <i class="fas fa-exclamation-circle"></i>
+        </div>
+        <h3 class="modal-title">Unsaved Changes</h3>
+        <p class="modal-message">
+          You have unsaved changes. Your draft has been auto-saved and you can continue editing later.
+        </p>
+        <p class="modal-submessage">
+          Are you sure you want to leave?
+        </p>
+        <div class="modal-actions">
+          <button class="modal-btn cancel-btn" @click="showLeaveModal = false">
+            Stay & Edit
+          </button>
+          <button class="modal-btn confirm-btn" @click="confirmLeave">
+            Leave
+          </button>
+        </div>
+      </div>
     </div>
   </div>
 </template>
@@ -185,7 +256,13 @@ export default {
       categories: [],
       nextActivityId: 1,
       nextCategoryId: 1,
-      nextItemId: 1
+      nextItemId: 1,
+      hasUnsavedChanges: false,
+      autoSaveTimer: null,
+      showLeaveModal: false,
+      showTimeModal: false,
+      currentActivity: null,
+      selectedTime: 'morning'
     }
   },
   computed: {
@@ -193,25 +270,43 @@ export default {
       return this.activities.filter(activity => activity.day === this.activeDay)
     }
   },
+  watch: {
+    activities: {
+      handler() {
+        this.hasUnsavedChanges = true
+        this.scheduleAutoSave()
+      },
+      deep: true
+    },
+    categories: {
+      handler() {
+        this.hasUnsavedChanges = true
+        this.scheduleAutoSave()
+      },
+      deep: true
+    }
+  },
   mounted() {
     this.loadBookingData()
     this.loadTripDates()
-    this.loadSavedData()
-    // Create first category by default
+    this.loadDraft()
     if (this.categories.length === 0) {
       this.addCategory()
     }
   },
+  beforeUnmount() {
+    if (this.autoSaveTimer) {
+      clearTimeout(this.autoSaveTimer)
+    }
+  },
   methods: {
     loadBookingData() {
-      // Load booking data from localStorage
       const bookingData = localStorage.getItem('lastBooking')
       if (bookingData) {
         try {
           const data = JSON.parse(bookingData)
           console.log('Loaded booking data:', data)
 
-          // Update trip details with booking information
           if (data.destination) {
             this.tripTitle = `Trip to ${data.destination}`
           }
@@ -228,15 +323,13 @@ export default {
             this.totalPrice = parseFloat(data.totalPrice).toFixed(2)
           }
 
-          // Calculate number of days for itinerary
           if (data.nights) {
-            const numberOfDays = Math.min(data.nights + 1, 5) // Max 5 days
+            const numberOfDays = Math.min(data.nights + 1, 5)
             this.days = Array.from({ length: numberOfDays }, (_, i) => ({
               id: i + 1,
               name: `Day ${i + 1}`
             }))
           }
-
         } catch (error) {
           console.error('Error parsing booking data:', error)
         }
@@ -244,7 +337,6 @@ export default {
     },
 
     loadTripDates() {
-      // Try to load dates from localStorage or props
       const savedDates = localStorage.getItem('tripDates')
       if (savedDates) {
         try {
@@ -258,29 +350,61 @@ export default {
       }
     },
 
-    loadSavedData() {
-      // Load saved activities and packlist from localStorage
-      const savedActivities = localStorage.getItem('itineraryActivities')
-      const savedPacklist = localStorage.getItem('itineraryPacklist')
+    loadDraft() {
+      const draftActivities = localStorage.getItem('itineraryDraft_activities')
+      const draftPacklist = localStorage.getItem('itineraryDraft_packlist')
 
-      if (savedActivities) {
+      if (draftActivities) {
         try {
-          this.activities = JSON.parse(savedActivities)
-          this.nextActivityId = Math.max(...this.activities.map(a => a.id), 0) + 1
+          const data = JSON.parse(draftActivities)
+          this.activities = data.activities || []
+          this.nextActivityId = data.nextActivityId || 1
+          console.log('Draft activities loaded')
         } catch (error) {
-          console.error('Error parsing saved activities:', error)
+          console.error('Error parsing draft activities:', error)
         }
       }
 
-      if (savedPacklist) {
+      if (draftPacklist) {
         try {
-          this.categories = JSON.parse(savedPacklist)
-          this.nextCategoryId = Math.max(...this.categories.map(c => c.id), 0) + 1
-          this.nextItemId = Math.max(...this.categories.flatMap(c => c.items.map(i => i.id)), 0) + 1
+          const data = JSON.parse(draftPacklist)
+          this.categories = data.categories || []
+          this.nextCategoryId = data.nextCategoryId || 1
+          this.nextItemId = data.nextItemId || 1
+          console.log('Draft packlist loaded')
         } catch (error) {
-          console.error('Error parsing saved packlist:', error)
+          console.error('Error parsing draft packlist:', error)
         }
       }
+
+      this.hasUnsavedChanges = false
+    },
+
+    scheduleAutoSave() {
+      if (this.autoSaveTimer) {
+        clearTimeout(this.autoSaveTimer)
+      }
+
+      this.autoSaveTimer = setTimeout(() => {
+        this.saveDraft()
+      }, 2000)
+    },
+
+    saveDraft() {
+      const draftActivities = {
+        activities: this.activities,
+        nextActivityId: this.nextActivityId
+      }
+
+      const draftPacklist = {
+        categories: this.categories,
+        nextCategoryId: this.nextCategoryId,
+        nextItemId: this.nextItemId
+      }
+
+      localStorage.setItem('itineraryDraft_activities', JSON.stringify(draftActivities))
+      localStorage.setItem('itineraryDraft_packlist', JSON.stringify(draftPacklist))
+      console.log('Draft auto-saved')
     },
 
     setActiveDay(dayId) {
@@ -296,13 +420,24 @@ export default {
         id: this.nextActivityId++,
         day: this.activeDay,
         time: 'morning',
-        title: '',
-        description: ''
+        notes: ''
       }
       this.activities.push(newActivity)
-      this.saveToLocalStorage()
     },
 
+    updateActivity(activity) {
+      const index = this.activities.findIndex(a => a.id === activity.id)
+      if (index !== -1) {
+        this.activities.splice(index, 1, { ...activity })
+      }
+    },
+
+    updateCategory(category) {
+      const index = this.categories.findIndex(c => c.id === category.id)
+      if (index !== -1) {
+        this.categories.splice(index, 1, { ...category })
+      }
+    },
 
     addCategory() {
       const newCategory = {
@@ -311,13 +446,11 @@ export default {
         items: []
       }
       this.categories.push(newCategory)
-      this.saveToLocalStorage()
     },
 
     deleteCategory(categoryId) {
       if (confirm('Delete this category and all its items?')) {
         this.categories = this.categories.filter(cat => cat.id !== categoryId)
-        this.saveToLocalStorage()
       }
     },
 
@@ -334,7 +467,7 @@ export default {
             checked: false
           })
           input.value = ''
-          this.saveToLocalStorage()
+          this.updateCategory(category)
         }
       }
     },
@@ -345,7 +478,7 @@ export default {
         const item = category.items.find(i => i.id === itemId)
         if (item) {
           item.checked = !item.checked
-          this.saveToLocalStorage()
+          this.updateCategory(category)
         }
       }
     },
@@ -354,22 +487,48 @@ export default {
       const category = this.categories.find(cat => cat.id === categoryId)
       if (category) {
         category.items = category.items.filter(item => item.id !== itemId)
-        this.saveToLocalStorage()
+        this.updateCategory(category)
       }
     },
 
-    saveToLocalStorage() {
-      localStorage.setItem('itineraryActivities', JSON.stringify(this.activities))
-      localStorage.setItem('itineraryPacklist', JSON.stringify(this.categories))
+    // Time Modal Methods
+    openTimeModal(activity) {
+      this.currentActivity = activity
+      this.selectedTime = activity.time
+      this.showTimeModal = true
+    },
+
+    closeTimeModal() {
+      this.showTimeModal = false
+      this.currentActivity = null
+    },
+
+    selectTime(time) {
+      this.selectedTime = time
+    },
+
+    confirmTimeSelection() {
+      if (this.currentActivity) {
+        this.currentActivity.time = this.selectedTime
+        this.updateActivity(this.currentActivity)
+      }
+      this.closeTimeModal()
+    },
+
+    getTimeLabel(time) {
+      const labels = {
+        morning: 'Morning',
+        afternoon: 'Afternoon',
+        evening: 'Evening'
+      }
+      return labels[time] || 'Select Time'
     },
 
     saveTrip() {
-      // Filter out empty activities
       const validActivities = this.activities.filter(activity =>
-        activity.title.trim() !== '' || activity.description.trim() !== ''
+        activity.notes.trim() !== ''
       )
 
-      // Filter out empty categories
       const validCategories = this.categories.filter(category =>
         category.title.trim() !== '' || category.items.length > 0
       )
@@ -377,13 +536,16 @@ export default {
       console.log('Activities to save:', validActivities)
       console.log('Packlist to save:', validCategories)
 
-      // Save to localStorage
       localStorage.setItem('itineraryActivities', JSON.stringify(validActivities))
       localStorage.setItem('itineraryPacklist', JSON.stringify(validCategories))
 
+      localStorage.removeItem('itineraryDraft_activities')
+      localStorage.removeItem('itineraryDraft_packlist')
+
+      this.hasUnsavedChanges = false
+
       alert('Trip saved successfully!')
 
-      // Emit event to parent component
       this.$emit('trip-saved', {
         activities: validActivities,
         packlist: validCategories
@@ -391,6 +553,15 @@ export default {
     },
 
     goBack() {
+      if (this.hasUnsavedChanges) {
+        this.showLeaveModal = true
+      } else {
+        this.$emit('go-back')
+      }
+    },
+
+    confirmLeave() {
+      this.showLeaveModal = false
       this.$emit('go-back')
     }
   }
@@ -411,9 +582,10 @@ export default {
   width: 100vw;
   min-height: 100vh;
   overflow-x: hidden;
+  overflow-y: auto;
   display: flex;
   flex-direction: column;
-  padding-bottom: 20px;
+  padding-bottom: 150px;
 }
 
 /* Dark Header Card */
@@ -577,37 +749,46 @@ export default {
   display: flex;
   align-items: flex-start;
   margin-bottom: 12px;
-  flex-direction: column;
   width: 100%;
 }
 
 .time-label {
-  font-size: 14px;
-  font-weight: 600;
-  color: #0c3437;
-  margin-bottom: 12px;
   width: 100%;
 }
 
-.time-select {
+/* Custom Time Select Button */
+.time-select-btn {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 10px 16px;
+  background: #f8f9fa;
   border: 1px solid #e0e0e0;
   border-radius: 8px;
-  padding: 8px 12px;
   font-size: 14px;
   font-weight: 500;
-  background: white;
-  color: #333;
+  color: #0c3437;
   cursor: pointer;
-  outline: none;
-  width: 100%;
-  max-width: 200px;
-  box-sizing: border-box;
+  transition: all 0.2s;
+  width: auto;
+  min-width: 150px;
+}
+
+.time-select-btn:hover {
+  background: #e8e9ea;
+  border-color: #0c3437;
+}
+
+.time-select-btn i:first-child {
+  font-size: 16px;
+}
+
+.time-select-btn i:last-child {
+  margin-left: auto;
+  font-size: 12px;
 }
 
 .activity-content {
-  display: flex;
-  border-left: 1px solid #e8e8e8;
-  padding-left: 16px;
   width: 100%;
   box-sizing: border-box;
 }
@@ -616,25 +797,33 @@ export default {
   width: 100%;
 }
 
-.activity-input {
-  border: none;
-  outline: none;
+/* Notepad-style Textarea */
+.activity-textarea {
   width: 100%;
-  background: transparent;
-  padding: 4px 0;
-  font-size: 16px;
+  border: 1px solid #e8e8e8;
+  border-radius: 8px;
+  padding: 12px;
+  font-size: 15px;
+  font-family: inherit;
+  line-height: 1.6;
+  color: #333;
+  background: #fafafa;
+  resize: vertical;
+  min-height: 120px;
+  outline: none;
+  transition: all 0.2s;
   box-sizing: border-box;
 }
 
-.title-input {
-  font-weight: 600;
-  margin-bottom: 8px;
-  font-size: 16px;
+.activity-textarea:focus {
+  border-color: #0c3437;
+  background: white;
+  box-shadow: 0 0 0 3px rgba(12, 52, 55, 0.1);
 }
 
-.desc-input {
-  font-size: 14px;
-  color: #666;
+.activity-textarea::placeholder {
+  color: #999;
+  line-height: 1.6;
 }
 
 /* Button Container */
@@ -664,7 +853,7 @@ export default {
 }
 
 .add-button:hover {
-  background-color: #0c3437;
+  background-color: #164148;
 }
 
 /* Packlist Section */
@@ -672,13 +861,14 @@ export default {
   width: 100vw;
   max-width: 100%;
   box-sizing: border-box;
-  margin-bottom: 24px;
+  margin-bottom: 10px;
 }
 
 .packlist {
   padding: 0 20px;
   width: 100%;
   box-sizing: border-box;
+  margin-bottom: 32px;
 }
 
 .packlist-header {
@@ -697,11 +887,33 @@ export default {
   color: #333;
 }
 
-.packlist-arrow {
-  font-size: 20px;
-  color: #666;
+/* Beautiful Dropdown Toggle Button */
+.packlist-toggle-btn {
+  width: 32px;
+  height: 32px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: #f8f9fa;
+  border: 1px solid #e0e0e0;
+  border-radius: 8px;
   cursor: pointer;
-  user-select: none;
+  transition: all 0.3s ease;
+  color: #0c3437;
+}
+
+.packlist-toggle-btn:hover {
+  background: #e8e9ea;
+  border-color: #0c3437;
+}
+
+.packlist-toggle-btn i {
+  font-size: 14px;
+  transition: transform 0.3s ease;
+}
+
+.packlist-toggle-btn.expanded i {
+  transform: rotate(180deg);
 }
 
 .packlist-card {
@@ -744,7 +956,6 @@ export default {
   background: transparent;
   flex: 1;
   padding: 4px 0;
-  font-size: 16px;
   min-width: 0;
   box-sizing: border-box;
 }
@@ -757,16 +968,27 @@ export default {
 .delete-category {
   color: #ff6b6b;
   cursor: pointer;
-  font-size: 14px;
+  font-size: 16px;
   flex-shrink: 0;
   user-select: none;
+  width: 24px;
+  height: 24px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 4px;
+  transition: background 0.2s;
+}
+
+.delete-category:hover {
+  background: #ffe5e5;
 }
 
 .packlist-input {
   width: 100%;
   border: none;
   outline: none;
-  font-size: 16px;
+  font-size: 14px;
   margin-top: 8px;
   padding: 8px 0;
   border-bottom: 1px solid #f0f0f0;
@@ -782,27 +1004,63 @@ export default {
   align-items: center;
   margin-bottom: 12px;
   width: 100%;
-  gap: 8px;
+  gap: 10px;
 }
 
-.packlist-checkbox {
-  width: 20px;
-  height: 20px;
-  border: 2px solid #e0e0e0;
-  border-radius: 4px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  cursor: pointer;
-  transition: all 0.2s;
+/* Custom Checkbox Styling */
+.custom-checkbox {
+  position: relative;
+  display: inline-block;
+  width: 18px;
+  height: 18px;
   flex-shrink: 0;
-  user-select: none;
+  cursor: pointer;
 }
 
-.packlist-checkbox.checked {
-  background-color: 0c3437;
-  color: white;
-  border-color: 0c3437;
+.custom-checkbox input[type="checkbox"] {
+  position: absolute;
+  opacity: 0;
+  cursor: pointer;
+  height: 0;
+  width: 0;
+}
+
+.custom-checkbox .checkmark {
+  position: absolute;
+  top: 0;
+  left: 0;
+  height: 18px;
+  width: 18px;
+  background-color: white;
+  border: 2px solid #d0d0d0;
+  border-radius: 4px;
+  transition: all 0.2s ease;
+}
+
+.custom-checkbox:hover .checkmark {
+  border-color: #0c3437;
+}
+
+.custom-checkbox input:checked ~ .checkmark {
+  background-color: #0c3437;
+  border-color: #0c3437;
+}
+
+.custom-checkbox .checkmark:after {
+  content: "";
+  position: absolute;
+  display: none;
+  left: 5px;
+  top: 2px;
+  width: 4px;
+  height: 8px;
+  border: solid white;
+  border-width: 0 2px 2px 0;
+  transform: rotate(45deg);
+}
+
+.custom-checkbox input:checked ~ .checkmark:after {
+  display: block;
 }
 
 .packlist-text {
@@ -823,9 +1081,20 @@ export default {
 .delete-item {
   color: #ff6b6b;
   cursor: pointer;
-  font-size: 14px;
+  font-size: 16px;
   flex-shrink: 0;
   user-select: none;
+  width: 24px;
+  height: 24px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 4px;
+  transition: background 0.2s;
+}
+
+.delete-item:hover {
+  background: #ffe5e5;
 }
 
 .add-category-btn {
@@ -840,7 +1109,10 @@ export default {
   cursor: pointer;
   transition: all 0.2s;
   margin-top: 16px;
-  font-size: 16px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
   box-sizing: border-box;
 }
 
@@ -867,6 +1139,315 @@ export default {
 
 .save-button:hover {
   background-color: #164148;
+}
+
+/* Time Selection Modal */
+.time-modal {
+  max-width: 400px;
+}
+
+.modal-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 24px;
+  padding-bottom: 16px;
+  border-bottom: 1px solid #e8e8e8;
+}
+
+.modal-close {
+  width: 32px;
+  height: 32px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: #f8f9fa;
+  border: none;
+  border-radius: 8px;
+  cursor: pointer;
+  color: #666;
+  transition: all 0.2s;
+}
+
+.modal-close:hover {
+  background: #e8e9ea;
+  color: #333;
+}
+
+.time-options {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  margin-bottom: 24px;
+}
+
+.time-option {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  padding: 16px;
+  background: #f8f9fa;
+  border: 2px solid #e8e8e8;
+  border-radius: 12px;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+.time-option:hover {
+  background: #e8e9ea;
+  border-color: #0c3437;
+}
+
+.time-option.selected {
+  background: #e8f5f7;
+  border-color: #0c3437;
+  box-shadow: 0 0 0 3px rgba(12, 52, 55, 0.1);
+}
+
+.time-option i {
+  font-size: 24px;
+  color: #0c3437;
+  width: 32px;
+  text-align: center;
+}
+
+.time-option span {
+  font-size: 16px;
+  font-weight: 500;
+  color: #333;
+}
+
+/* Modal Overlay & Content */
+.modal-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background-color: rgba(0, 0, 0, 0.5);
+  backdrop-filter: blur(4px);
+  -webkit-backdrop-filter: blur(4px);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 9999;
+  padding: 20px;
+  animation: fadeIn 0.2s ease-out;
+}
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
+.modal-content {
+  background: white;
+  border-radius: 16px;
+  padding: 32px 24px;
+  max-width: 400px;
+  width: 100%;
+  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.2);
+  text-align: center;
+  animation: slideUp 0.3s ease-out;
+  position: relative;
+}
+
+@keyframes slideUp {
+  from {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.modal-icon {
+  width: 64px;
+  height: 64px;
+  background: #fff3cd;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin: 0 auto 20px;
+}
+
+.modal-icon i {
+  font-size: 32px;
+  color: #f59e0b;
+}
+
+.modal-title {
+  font-size: 22px;
+  font-weight: 700;
+  color: #1a1a1a;
+  margin-bottom: 12px;
+}
+
+.modal-message {
+  font-size: 15px;
+  color: #666;
+  line-height: 1.6;
+  margin-bottom: 8px;
+}
+
+.modal-submessage {
+  font-size: 15px;
+  color: #333;
+  font-weight: 500;
+  margin-bottom: 24px;
+}
+
+.modal-actions {
+  display: flex;
+  gap: 12px;
+  margin-top: 24px;
+}
+
+.modal-btn {
+  flex: 1;
+  padding: 14px 20px;
+  border-radius: 12px;
+  font-size: 16px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.2s;
+  border: none;
+  outline: none;
+}
+
+.cancel-btn {
+  background-color: #f3f4f6;
+  color: #374151;
+  border: 1px solid #e5e7eb;
+}
+
+.cancel-btn:hover {
+  background-color: #e5e7eb;
+}
+
+.cancel-btn:active {
+  transform: scale(0.98);
+}
+
+.confirm-btn {
+  background-color: #0c3437;
+  color: white;
+}
+
+.confirm-btn:hover {
+  background-color: #164148;
+}
+
+.confirm-btn:active {
+  transform: scale(0.98);
+}
+
+/* Mobile optimizations */
+@media (max-width: 479px) {
+  .modal-overlay {
+    padding: 16px;
+  }
+
+  .modal-content {
+    padding: 28px 20px;
+    max-width: 340px;
+  }
+
+  .modal-icon {
+    width: 56px;
+    height: 56px;
+    margin-bottom: 16px;
+  }
+
+  .modal-icon i {
+    font-size: 28px;
+  }
+
+  .modal-title {
+    font-size: 20px;
+    margin-bottom: 10px;
+  }
+
+  .modal-message,
+  .modal-submessage {
+    font-size: 14px;
+  }
+
+  .modal-actions {
+    flex-direction: column-reverse;
+    gap: 10px;
+  }
+
+  .modal-btn {
+    width: 100%;
+    padding: 12px 16px;
+    font-size: 15px;
+  }
+
+  .time-option {
+    padding: 14px;
+  }
+
+  .time-option i {
+    font-size: 20px;
+    width: 28px;
+  }
+
+  .time-option span {
+    font-size: 15px;
+  }
+}
+
+/* Landscape mobile */
+@media (max-width: 767px) and (orientation: landscape) {
+  .modal-content {
+    padding: 20px 16px;
+    max-height: 90vh;
+    overflow-y: auto;
+  }
+
+  .modal-icon {
+    width: 48px;
+    height: 48px;
+    margin-bottom: 12px;
+  }
+
+  .modal-icon i {
+    font-size: 24px;
+  }
+
+  .modal-title {
+    font-size: 18px;
+    margin-bottom: 8px;
+  }
+
+  .modal-message,
+  .modal-submessage {
+    font-size: 13px;
+    margin-bottom: 6px;
+  }
+
+  .modal-actions {
+    margin-top: 16px;
+    gap: 8px;
+  }
+
+  .modal-btn {
+    padding: 10px 16px;
+    font-size: 14px;
+  }
+}
+
+/* Prevent body scroll when modal is open */
+body.modal-open {
+  overflow: hidden;
 }
 
 /* Mobile-specific optimizations */
@@ -912,6 +1493,11 @@ export default {
     min-width: 70px;
   }
 
+  .button-container:last-of-type {
+    margin-bottom: 100px;
+    padding-bottom: 20px;
+  }
+
   .activities-container,
   .button-container,
   .packlist {
@@ -922,26 +1508,15 @@ export default {
     padding: 12px;
   }
 
-  .time-label {
+  .time-select-btn {
     font-size: 13px;
+    padding: 8px 12px;
+    min-width: 140px;
   }
 
-  .time-select {
-    padding: 6px 10px;
-    font-size: 13px;
-    max-width: 150px;
-  }
-
-  .activity-content {
-    padding-left: 12px;
-  }
-
-  .title-input {
-    font-size: 15px;
-  }
-
-  .desc-input {
-    font-size: 13px;
+  .activity-textarea {
+    font-size: 14px;
+    padding: 10px;
   }
 
   .add-button,
@@ -967,7 +1542,7 @@ export default {
   }
 
   .packlist-input {
-    font-size: 15px;
+    font-size: 14px;
   }
 }
 
@@ -982,15 +1557,6 @@ export default {
   .time-label {
     margin-bottom: 0;
     width: auto;
-    min-width: 100px;
-  }
-
-  .time-select {
-    width: auto;
-  }
-
-  .activity-content {
-    flex: 1;
   }
 }
 
@@ -1113,30 +1679,30 @@ export default {
   .delete-category,
   .delete-item,
   .add-category-btn,
-  .packlist-checkbox,
-  .packlist-arrow {
+  .custom-checkbox,
+  .packlist-toggle-btn {
     min-height: 44px;
     min-width: 44px;
   }
 
   .back-arrow,
-  .packlist-checkbox,
+  .custom-checkbox,
   .delete-category,
   .delete-item,
-  .packlist-arrow {
+  .packlist-toggle-btn {
     display: flex;
     align-items: center;
     justify-content: center;
   }
 
-  .time-select {
-    padding: 12px;
+  .time-select-btn {
+    padding: 12px 16px;
     font-size: 16px;
   }
 
-  .activity-input {
+  .activity-textarea {
     font-size: 16px;
-    padding: 8px 0;
+    padding: 12px;
   }
 
   .day-tab {
