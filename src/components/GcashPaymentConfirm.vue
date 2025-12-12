@@ -47,9 +47,21 @@
 
       <!-- Pay Button -->
       <div class="pay-button-section">
-        <button class="pay-button" @click="handlePayment">
-          Pay
+        <button
+          class="pay-button"
+          @click="handlePayment"
+          :disabled="isProcessing"
+        >
+          {{ isProcessing ? 'Processing...' : 'Pay' }}
         </button>
+      </div>
+
+      <!-- Loading Overlay -->
+      <div v-if="isProcessing" class="loading-overlay">
+        <div class="loading-spinner">
+          <div class="spinner"></div>
+          <p>Processing payment...</p>
+        </div>
       </div>
     </div>
   </div>
@@ -70,12 +82,12 @@ export default {
   },
   data() {
     return {
-      additionalFee: 50.00
+      additionalFee: 50.00,
+      isProcessing: false
     }
   },
   computed: {
     baseAmount() {
-      // The totalAmount passed in already includes everything, so we subtract the fee to show it separately
       return this.totalAmount - this.additionalFee
     },
     finalTotal() {
@@ -84,12 +96,38 @@ export default {
   },
   emits: ['go-back', 'payment-success'],
   methods: {
-    handlePayment() {
-      console.log('Processing GCash payment...')
-      this.$emit('payment-success', {
-        amount: this.finalTotal,
-        paymentMethod: 'GCash',
-        transactionId: 'GC' + Date.now()
+    async handlePayment() {
+      // Show loading state
+      this.isProcessing = true
+
+      try {
+        console.log('Processing GCash payment...')
+
+        // Simulate payment processing
+        await this.simulatePaymentProcessing()
+
+        // Emit payment success with receipt data
+        this.$emit('payment-success', {
+          amount: this.finalTotal,
+          paymentMethod: 'GCash',
+          transactionId: 'GC' + Date.now(),
+          timestamp: new Date().toISOString()
+        })
+
+      } catch (error) {
+        console.error('Payment processing failed:', error)
+        alert('Payment failed. Please try again.')
+      } finally {
+        this.isProcessing = false
+      }
+    },
+
+    simulatePaymentProcessing() {
+      return new Promise((resolve) => {
+        // Simulate network delay (2 seconds)
+        setTimeout(() => {
+          resolve()
+        }, 2000)
       })
     }
   }
@@ -277,17 +315,70 @@ export default {
   transition: all 0.3s ease;
   box-shadow: 0 4px 12px rgba(31, 79, 90, 0.3);
   -webkit-tap-highlight-color: transparent;
+  font-family:'Poppins', sans-serif;
 }
 
-.pay-button:hover {
+.pay-button:hover:not(:disabled) {
   background: #173c45;
   transform: translateY(-1px);
   box-shadow: 0 6px 16px rgba(31, 79, 90, 0.4);
 }
 
-.pay-button:active {
+.pay-button:active:not(:disabled) {
   transform: translateY(0);
   box-shadow: 0 2px 8px rgba(31, 79, 90, 0.3);
+}
+
+.pay-button:disabled {
+  background-color: #9ca3af;
+  cursor: not-allowed;
+  transform: none;
+  box-shadow: none;
+  opacity: 0.7;
+}
+
+/* Loading Overlay */
+.loading-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: rgba(255, 255, 255, 0.9);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 1000;
+  backdrop-filter: blur(4px);
+}
+
+.loading-spinner {
+  text-align: center;
+  background: white;
+  padding: 32px;
+  border-radius: 16px;
+  box-shadow: 0 10px 25px rgba(0, 0, 0, 0.1);
+}
+
+.spinner {
+  width: 40px;
+  height: 40px;
+  border: 4px solid #f3f3f3;
+  border-top: 4px solid #0c3437;
+  border-radius: 50%;
+  animation: spin 1s linear infinite;
+  margin: 0 auto 16px;
+}
+
+@keyframes spin {
+  0% { transform: rotate(0deg); }
+  100% { transform: rotate(360deg); }
+}
+
+.loading-spinner p {
+  color: #0c3437;
+  font-weight: 500;
+  margin: 0;
 }
 
 /* Exact same responsive breakpoints as login page */
@@ -343,6 +434,15 @@ export default {
   .pay-button {
     padding: 16px;
     font-size: 16px;
+  }
+
+  .loading-spinner {
+    padding: 24px;
+  }
+
+  .spinner {
+    width: 32px;
+    height: 32px;
   }
 }
 
@@ -440,6 +540,10 @@ export default {
   .pay-button-section {
     padding: 16px 0 0 0;
   }
+
+  .loading-spinner {
+    padding: 24px;
+  }
 }
 
 /* Very short screens */
@@ -476,6 +580,15 @@ export default {
   .pay-button {
     padding: 14px;
     font-size: 16px;
+  }
+
+  .loading-spinner {
+    padding: 20px;
+  }
+
+  .spinner {
+    width: 32px;
+    height: 32px;
   }
 }
 

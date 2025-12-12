@@ -5,6 +5,7 @@
       <!-- List of Accommodation View -->
       <div v-if="currentBookingView === 'listing'">
         <!-- Dynamic Image Header -->
+         <div class="header-container" >
         <div class="image-header" :style="{ backgroundImage: 'linear-gradient(rgba(0,0,0,0.2), rgba(0,0,0,0.2)), url(' + currentPropertyImage + ')' }">
           <button class="close-btn" @click="$emit('go-to-page', 'accommodation')">
             <i class="fas fa-times"></i>
@@ -33,66 +34,78 @@
             <button class="book-button" @click="$emit('show-confirmation-view')">Book Now</button>
           </div>
         </div>
+        </div>
       </div>
 
       <!-- Confirmation View -->
+
       <div v-if="currentBookingView === 'confirmation'">
-        <div class="confirmation-header">
-          <button class="back-button" @click="$emit('show-listing-view')">
-            <i class="fas fa-arrow-left"></i>
-          </button>
-          <div class="confirmation-title">Confirm Booking</div>
-        </div>
-
-        <div class="confirmation-image" :style="{ backgroundImage: 'url(' + currentConfirmationImage + ')' }"></div>
-
-        <div class="booking-summary">
-          <h2 class="property-title">{{ selectedProperty.title }}</h2>
-          <p class="booking-dates"><i class="fa-solid fa-calendar"></i>  {{ bookingDatesDisplay }}</p>
-
-          <div class="price-row">
-            <span>Price</span> 
-            <span>₱{{ selectedProperty.price }}</span>
+        <div class="header-container">
+          <div class="confirmation-header">
+            <button class="back-button" @click="$emit('show-listing-view')">
+              <i class="fas fa-arrow-left"></i>
+            </button>
+            <div class="confirmation-title">Confirm Booking</div>
           </div>
-          <div class="price-row">
-            <span>Nights</span>
-            <span>{{ booking.nights }}</span>
-          </div>
-          <div class="price-row total">
-            <span>Total</span>
-            <span>₱{{ totalPrice }}</span>
-          </div>
-        </div>
 
-        <div class="payment-section">
-          <h3 class="payment-title">Payment Method</h3>
+          <div class="booking-card">
+            <div class="confirmation-image" :style="{ backgroundImage: 'url(' + currentConfirmationImage + ')' }"></div>
 
-          <div v-for="method in paymentMethods"
-               :key="method.id"
-               class="payment-option"
-               :class="{ selected: selectedPayment?.id === method.id }"
-               @click="$emit('select-payment-method', method)">
-            <div class="radio-indicator">
-              <i class="fas fa-check radio-check"></i>
-            </div>
-            <div class="payment-method-content">
-              <img
-                :src="method.logo"
-                :alt="method.name"
-                class="payment-logo"
-                @error="handleImageError"
-              >
-              <span class="payment-name">{{ method.name }}</span>
+            <div class="booking-summary">
+              <h2 class="property-title">{{ selectedProperty.title }}</h2>
+              <p class="booking-dates"><i class="fa-solid fa-calendar"></i> {{ bookingDatesDisplay }}</p>
+
+              <div class="price-row">
+                <span>Price</span>
+                <span>₱{{ selectedProperty.price }}</span>
+              </div>
+              <div class="price-row">
+                <span>Nights</span>
+                <span>{{ booking.nights }}</span>
+              </div>
+              <div class="price-row total">
+                <span>Total</span>
+                <span>₱{{ totalPrice }}</span>
+              </div>
             </div>
           </div>
-
-          <button class="next-button"
-                  :disabled="!selectedPayment"
-                  @click="$emit('handle-next')">
-            Confirm Booking
-          </button>
         </div>
+
+          <div class="payment-section">
+  <h3 class="payment-title">Select Payment Method</h3>
+
+  <div v-for="method in paymentMethods"
+       :key="method.id"
+       class="payment-option"
+       :class="{ selected: selectedPayment?.id === method.id }"
+       @click="$emit('select-payment-method', method)">
+    <div class="payment-method-content">
+      <!-- Logo comes first (left side) -->
+      <img
+        :src="method.logo"
+        :alt="method.name"
+        class="payment-logo"
+        @error="handleImageError"
+      >
+
+      <span class="payment-name">{{ method.name }}</span>
+    </div>
+    <!-- Radio check on right side -->
+    <div class="radio-indicator">
+      <i class="fas fa-check radio-check"></i>
+    </div>
+  </div>
+
+  <button class="next-button"
+          :disabled="!selectedPayment"
+          @click="$emit('handle-next')">
+    Next
+  </button>
+</div>
+
+
       </div>
+
     </div>
   </div>
 </template>
@@ -184,7 +197,10 @@ export default {
   display: flex;
   flex-direction: column;
 }
-
+.header-container{
+  background: #ffffff;
+  padding-bottom: 20px;
+}
 /* Header image */
 .image-header {
     height: 70vh;
@@ -343,103 +359,122 @@ export default {
 /* Confirmation section */
 .confirmation-header {
     display: flex;
-    align-items: center;
-    padding: 16px;
-    background: white;
+  align-items: center;
+  padding: 16px;
+  background: transparent;
 }
 
 .back-button {
     background: none;
-    border: none;
-    font-size: 18px;
-    margin-right: 12px;
-    cursor: pointer;
-    color: #333;
-    width: 44px;
-    height: 44px;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    border-radius: 12px;
-    transition: background-color 0.2s;
-    -webkit-tap-highlight-color: transparent;
+  border: none;
+  font-size: 18px;
+  margin-right: 12px;
+  cursor: pointer;
+  color: #333;
+  width: 44px;
+  height: 44px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 12px;
+  transition: background-color 0.2s;
+  -webkit-tap-highlight-color: transparent;
 }
 
 .back-button:hover {
-    background-color: #f5f5f5;
+     background-color: rgba(0, 0, 0, 0.05);
 }
 
 .confirmation-title {
-    font-size: 18px;
-    font-weight: 600;
-    text-align: left;
-    flex: 1;
-    margin: 0;
+    font-size: 20px;
+  font-weight: 700;
+  text-align: left;
+  flex: 1;
+  margin: 0;
+  color: #1a1a1a;
 }
-
+.booking-card{
+  background: white;
+  border-radius: 20px;
+  border-top-left-radius: 5px;
+  border-top-right-radius: 5px;
+  margin: 0 16px;
+  overflow: hidden;
+  box-shadow: 0 2px 8px rgba(12, 6, 6, 0.464);
+  margin-bottom: 10px;
+}
 .confirmation-image {
-    width: 90%;
-    height: 220px;
-    background-size: cover;
-    background-position: center;
-    margin: 16px auto;
-    border-radius:16px;
+     width: 100%;
+  height: 200px;
+  background-size: cover;
+  background-position: center;
 
 }
 
 .booking-summary {
-    padding: 16px;
-    border-bottom: 1px solid #e0e0e0;
-    background: white;
+    padding: 20px;
+  background: white;
 }
-
+.booking-summary .property-title {
+  font-size: 18px;
+  font-weight: 700;
+  margin: 0 0 8px 0;
+  color: #1a1a1a;
+}
 .booking-dates {
-    color: #666;
-    margin-bottom: 16px;
-    margin-top: 0px;
-    font-size: 14px;
+     color: #666;
+  margin-bottom: 20px;
+  margin-top: 0;
+  font-size: 14px;
+  display: flex;
+  align-items: center;
+  gap: 6px;
 }
 
 .price-row {
-    display: flex;
-    justify-content: space-between;
-    margin-bottom: 8px;
-    font-size: 15px;
+     display: flex;
+  justify-content: space-between;
+  margin-bottom: 8px;
+  font-size: 15px;
+  color: #1a1a1a;
 }
 
 .price-row.total {
     border-top: 1px solid #e0e0e0;
-    padding-top: 12px;
-    margin-top: 12px;
-    font-weight: 700;
-    font-size: 16px;
+  padding-top: 12px;
+  margin-top: 12px;
+  font-weight: 700;
+  font-size: 16px;
 }
 
 .payment-section {
-    padding: 16px;
-    background: white;
+    padding: 24px;
+    background: #ffffff;
     flex: 1;
     display: flex;
     flex-direction: column;
+    margin:15px;
 }
 
 .payment-title {
     font-size: 18px;
-    font-weight: 600;
-    margin-bottom: 16px;
+  font-weight: 700;
+  margin-bottom: 16px;
+  color: #1a1a1a;
 }
 
 .payment-option {
     display: flex;
     align-items: center;
     padding: 16px;
-    border: 1px solid #e0e0e0;
+    border: 1px solid #a8a8a8;
     border-radius: 8px;
     margin-bottom: 12px;
     cursor: pointer;
     transition: all 0.2s;
     -webkit-tap-highlight-color: transparent;
 }
+
 
 .payment-option:hover {
     border-color: #1f4f5a;
@@ -451,15 +486,15 @@ export default {
 }
 
 .radio-indicator {
-    width: 20px;
-    height: 20px;
-    border-radius: 50%;
-    border: 2px solid #d1d5db;
-    margin-right: 12px;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    flex-shrink: 0;
+     width: 20px;
+  height: 20px;
+  border-radius: 50%;
+  border: 2px solid #d1d5db;
+  margin-left: 12px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
 }
 
 .payment-option.selected .radio-indicator {
@@ -480,9 +515,9 @@ export default {
 /* Payment Method Content with Logo */
 .payment-method-content {
     display: flex;
-    align-items: center;
-    gap: 12px;
-    flex: 1;
+  align-items: center;
+  gap: 12px;
+  flex: 1;
 }
 
 .payment-logo {
@@ -490,9 +525,9 @@ export default {
     height: 25px;
     object-fit: contain;
     border-radius: 4px;
-    background: white;
+    background: transparent;
     padding: 2px;
-    border: 1px solid #f0f0f0;
+    border: none;
     flex-shrink: 0;
 }
 

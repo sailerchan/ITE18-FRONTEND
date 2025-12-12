@@ -85,7 +85,7 @@ export default {
       this.$emit('go-back')
     },
     goToItinerary() {
-      this.$emit('go-itinerary') 
+      this.$emit('go-itinerary')
     },
     downloadReceipt() {
       console.log('Downloading receipt...')
@@ -111,8 +111,8 @@ export default {
   margin: 0;
   width: 100vw;
   overflow-x: hidden;
-  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, sans-serif;
-}
+  font-family:'Poppins', sans-serif;
+  }
 
 /* Header Styles */
 .page-header {
@@ -260,6 +260,7 @@ export default {
   letter-spacing: 1px;
   margin: 0;
   white-space: nowrap;
+  font-family:'Poppins', sans-serif;
 }
 
 /* Receipt Details */
@@ -324,13 +325,14 @@ export default {
   border: none;
   color: #1f4f5a;
   font-size: 16px;
-  font-weight: 600;
+  font-weight: 500;
   text-decoration: underline;
   cursor: pointer;
   margin-bottom: 40px;
   padding: 8px 16px;
   transition: color 0.2s ease;
   -webkit-tap-highlight-color: transparent;
+    font-family:'Poppins', sans-serif;
 }
 
 .download-link:hover {
@@ -352,6 +354,7 @@ export default {
   transition: background-color 0.3s;
   -webkit-tap-highlight-color: transparent;
   box-shadow: 0 4px 12px rgba(31, 79, 90, 0.2);
+  font-family:'Poppins', sans-serif;
 }
 
 .okay-button:hover {

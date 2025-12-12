@@ -65,7 +65,8 @@
       <div v-if="isProcessing" class="loading-overlay">
         <div class="loading-spinner">
           <div class="spinner"></div>
-          <p>Processing payment...</p>
+          <p>Connecting to Gcash,</p>
+          <p> please wait...</p>
         </div>
       </div>
     </div>
