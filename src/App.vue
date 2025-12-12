@@ -1,27 +1,6 @@
 <template>
   <div id="app">
-    <!-- Debug Info (commented out) -->
-    <!--<div class="debug-info" v-if="showDebug">
-      <p><strong>Current Page:</strong> {{ currentPage }}</p>
-      <p><strong>Last Destination ID:</strong> {{ selectedDestinationId }}</p>
-      <div class="debug-buttons">
-        <button @click="goToPage('login')">Login</button>
-        <button @click="goToPage('signup')">Signup</button>
-        <button @click="goToPage('forgot-password')">Forgot Password</button>
-        <button @click="goToPage('homepage')">Homepage</button>
-        <button @click="goToPage('trips')">Trips</button>
-        <button @click="goToPage('notifications')">Notifications</button>
-        <button @click="goToPage('profile')">Profile</button>
-        <button @click="goToPage('personal-information')">Personal Info</button>
-        <button @click="goToPage('change-password')">Change Password</button>
-        <button @click="goToPage('destination-details')">Destination Details</button>
-        <button @click="goToPage('itinerary')">Itinerary</button>
-        <button @click="goToPage('payment-success')">Payment Success</button>
-        <button @click="goToPage('gcash-confirm')">GCash Confirm</button>
-      </div>
-    </div>-->
-
-    <!-- Login Component -->
+   <!-- Login Component -->
     <Login
       v-if="currentPage === 'login'"
       :login-form="loginForm"
@@ -107,10 +86,7 @@
     />
 
     <!-- Change Password Component -->
-    <ChangePassword
-      v-else-if="currentPage === 'change-password'"
-      @go-to-page="goToPage"
-    />
+    <ChangePassword v-else-if="currentPage === 'change-password'" @go-to-page="goToPage" />
 
     <!-- Destination Details Component -->
     <DestinationDetails
@@ -207,12 +183,20 @@
       @go-back="goToPage('homepage')"
       @trip-saved="handleTripSaved"
     />
+
+    <!-- Bottom Navigation -->
+    <BottomNav
+      v-if="showNav"
+      :active-page="currentPage"
+      @navigate="handleNavClick"
+    />
   </div>
 </template>
 
 <script>
-import { ref, computed } from 'vue'
+import { ref, computed, watch } from 'vue'
 import { useTripsStore } from './stores/trips'
+import BottomNav from './components/bottomNav.vue'
 import Login from './components/log_in.vue'
 import Signup from './components/sign_up.vue'
 import ForgotPassword from './components/forgotpassword_page.vue'
@@ -235,6 +219,7 @@ import ItineraryPage from './components/ItineraryPage.vue'
 export default {
   name: 'App',
   components: {
+    BottomNav,
     Login,
     Signup,
     ForgotPassword,
@@ -252,7 +237,7 @@ export default {
     GcashDetail,
     GcashPaymentConfirm,
     PaymentSuccess,
-    ItineraryPage
+    ItineraryPage,
   },
   setup() {
     // Initialize trips store
@@ -262,13 +247,14 @@ export default {
     const currentPage = ref('login')
     const currentBookingView = ref('listing')
     const showDebug = ref(true)
+    const showNav = ref(false)
     const activeDestinationTab = ref('details')
     const currentDestination = ref(null)
 
     // User data
     const loginForm = ref({
       email: '',
-      password: ''
+      password: '',
     })
 
     const signupForm = ref({
@@ -278,7 +264,7 @@ export default {
       password: '',
       confirmPassword: '',
       passwordError: '',
-      confirmPasswordError: ''
+      confirmPasswordError: '',
     })
 
     const userName = ref('')
@@ -298,7 +284,7 @@ export default {
     const selectedPayment = ref(null)
     const booking = ref({
       dates: '',
-      nights: 0
+      nights: 0,
     })
 
     // Receipt data for payment success
@@ -306,7 +292,7 @@ export default {
       amount: '2,250.00',
       paymentMethod: 'GCash',
       receiptNumber: '21345255633546',
-      dateTime: 'Nov. 24, 2015 | 18:39 PM'
+      dateTime: 'Nov. 24, 2015 | 18:39 PM',
     })
 
     // Destination data for all destinations
@@ -318,10 +304,14 @@ export default {
         location: 'Surigao del Norte',
         headerImage: '/images/destinations/siargao.jpg',
         distance: '114 km',
-        description: 'Siargao sits on the far eastern edge of the Philippines, facing the open Pacific. Known as the "Surfing Capital of the Philippines", Siargao is mainly responsible for introducing surfing to the country. This tear-drop shaped island offers pristine beaches, crystal-clear waters, and world-class surfing spots like Cloud 9.',
-        mapEmbedUrl: 'https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d1001692.7214812475!2d125.68288039999999!3d9.913874899999999!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x3301f9b2982d8c6f%3A0x7c10a1b5166f150f!2sSiargao%20Island%2C%20Surigao%20del%20Norte!5e0!3m2!1sen!2sph!4v1700000000000!5m2!1sen!2sph',
-        googleMapsUrl: 'https://www.google.com/maps/place/Siargao+Island,+Surigao+del+Norte/@9.9138749,125.6828804,10z/data=!3m1!4b1!4m6!3m5!1s0x3301f9b2982d8c6f:0x7c10a1b5166f150f!8m2!3d9.9138749!4d126.065213!16zL20vMDJ4c2Nf?entry=ttu',
-        directionsUrl: 'https://www.google.com/maps/dir//Siargao+Island,+Surigao+del+Norte/@9.9138749,125.6828804,10z/data=!4m6!4m5!1m0!1m3!2m2!1d126.065213!2d9.9138749?entry=ttu',
+        description:
+          'Siargao sits on the far eastern edge of the Philippines, facing the open Pacific. Known as the "Surfing Capital of the Philippines", Siargao is mainly responsible for introducing surfing to the country. This tear-drop shaped island offers pristine beaches, crystal-clear waters, and world-class surfing spots like Cloud 9.',
+        mapEmbedUrl:
+          'https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d1001692.7214812475!2d125.68288039999999!3d9.913874899999999!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x3301f9b2982d8c6f%3A0x7c10a1b5166f150f!2sSiargao%20Island%2C%20Surigao%20del%20Norte!5e0!3m2!1sen!2sph!4v1700000000000!5m2!1sen!2sph',
+        googleMapsUrl:
+          'https://www.google.com/maps/place/Siargao+Island,+Surigao+del+Norte/@9.9138749,125.6828804,10z/data=!3m1!4b1!4m6!3m5!1s0x3301f9b2982d8c6f:0x7c10a1b5166f150f!8m2!3d9.9138749!4d126.065213!16zL20vMDJ4c2Nf?entry=ttu',
+        directionsUrl:
+          'https://www.google.com/maps/dir//Siargao+Island,+Surigao+del+Norte/@9.9138749,125.6828804,10z/data=!4m6!4m5!1m0!1m3!2m2!1d126.065213!2d9.9138749?entry=ttu',
         averageRating: 4.9,
         totalTravelers: 237,
         reviews: [
@@ -331,7 +321,7 @@ export default {
             rating: 5,
             date: '2024-01-15',
             text: 'Absolutely stunning! Siargao is a paradise for surfers and beach lovers. Cloud 9 was incredible, and the island vibes were so chill. The locals are friendly and the food is amazing.',
-            helpfulCount: 42
+            helpfulCount: 42,
           },
           {
             id: 2,
@@ -339,7 +329,7 @@ export default {
             rating: 5,
             date: '2024-02-10',
             text: 'One of the most beautiful islands I have ever visited. The waves are perfect for surfing and the beaches are pristine. Highly recommend staying in General Luna.',
-            helpfulCount: 28
+            helpfulCount: 28,
           },
           {
             id: 3,
@@ -347,7 +337,7 @@ export default {
             rating: 5,
             date: '2024-03-05',
             text: 'Siargao exceeded all my expectations. The natural beauty is breathtaking and the surfing spots are world-class. The island-hopping tour was the highlight of my trip.',
-            helpfulCount: 35
+            helpfulCount: 35,
           },
           {
             id: 4,
@@ -355,7 +345,7 @@ export default {
             rating: 4,
             date: '2024-03-20',
             text: 'Great destination for surfing beginners and experts alike. The only downside is it gets crowded during peak season. Book accommodation early!',
-            helpfulCount: 19
+            helpfulCount: 19,
           },
           {
             id: 5,
@@ -363,9 +353,9 @@ export default {
             rating: 5,
             date: '2024-04-12',
             text: 'As a Filipino, I am so proud of Siargao. The island is well-maintained and the tourism facilities are excellent. The sunset at Cloud 9 pier is magical.',
-            helpfulCount: 56
-          }
-        ]
+            helpfulCount: 56,
+          },
+        ],
       },
       2: {
         id: 2,
@@ -373,8 +363,10 @@ export default {
         location: 'Siargao, Surigao del Norte',
         headerImage: '/images/destinations/naked-island1.jpg',
         distance: '5 km from General Luna',
-        description: 'Naked Island is a pure sandbar located in the middle of the ocean. The island gets its name from having absolutely no vegetation - just pristine white sand surrounded by crystal clear turquoise waters. It\'s the perfect spot for swimming and sunbathing, though visitors should bring sun protection as there is no natural shade.',
-        mapEmbedUrl: 'https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d125443.9238787154!2d125.9620524!3d9.8782066!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x3301f8e1a2d5a5a5%3A0x7c10a1b5166f150f!2sNaked%20Island%2C%20General%20Luna%2C%20Surigao%20del%20Norte!5e0!3m2!1sen!2sph!4v1700000000000!5m2!1sen!2sph',
+        description:
+          "Naked Island is a pure sandbar located in the middle of the ocean. The island gets its name from having absolutely no vegetation - just pristine white sand surrounded by crystal clear turquoise waters. It's the perfect spot for swimming and sunbathing, though visitors should bring sun protection as there is no natural shade.",
+        mapEmbedUrl:
+          'https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d125443.9238787154!2d125.9620524!3d9.8782066!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x3301f8e1a2d5a5a5%3A0x7c10a1b5166f150f!2sNaked%20Island%2C%20General%20Luna%2C%20Surigao%20del%20Norte!5e0!3m2!1sen!2sph!4v1700000000000!5m2!1sen!2sph',
         googleMapsUrl: 'https://goo.gl/maps/xxxx-naked-island',
         directionsUrl: 'https://goo.gl/maps/xxxx-naked-directions',
         averageRating: 4.8,
@@ -386,7 +378,7 @@ export default {
             rating: 5,
             date: '2024-01-15',
             text: 'Absolutely breathtaking! The sandbar feels like a piece of paradise. The water is crystal clear and perfect for swimming. Bring lots of sunscreen!',
-            helpfulCount: 24
+            helpfulCount: 24,
           },
           {
             id: 7,
@@ -394,7 +386,7 @@ export default {
             rating: 4,
             date: '2024-02-10',
             text: 'Beautiful spot but gets very hot with no shade. Perfect for photos and a quick swim. Make sure to go with a tour that provides umbrella.',
-            helpfulCount: 18
+            helpfulCount: 18,
           },
           {
             id: 8,
@@ -402,9 +394,9 @@ export default {
             rating: 5,
             date: '2024-03-05',
             text: 'Like walking on a postcard! The sand is pure white and the water colors are incredible. One of the highlights of our Siargao trip.',
-            helpfulCount: 32
-          }
-        ]
+            helpfulCount: 32,
+          },
+        ],
       },
       3: {
         id: 3,
@@ -412,8 +404,10 @@ export default {
         location: 'Siargao, Surigao del Norte',
         headerImage: '/images/destinations/guyam1.jpg',
         distance: '7 km from General Luna',
-        description: 'Guyam Island is a small, picturesque island with coconut trees, white sand beaches, and clear blue waters. It\'s part of the famous 3-island tour in Siargao and offers stunning views perfect for photography. The island has some shaded areas under coconut trees and is great for a relaxing afternoon.',
-        mapEmbedUrl: 'https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d125443.9238787154!2d125.9620524!3d9.8782066!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x3301f8e1a2d5a5a5%3A0x7c10a1b5166f150f!2sGuyam%20Island%2C%20General%20Luna%2C%20Surigao%20del%20Norte!5e0!3m2!1sen!2sph!4v1700000000000!5m2!1sen!2sph',
+        description:
+          "Guyam Island is a small, picturesque island with coconut trees, white sand beaches, and clear blue waters. It's part of the famous 3-island tour in Siargao and offers stunning views perfect for photography. The island has some shaded areas under coconut trees and is great for a relaxing afternoon.",
+        mapEmbedUrl:
+          'https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d125443.9238787154!2d125.9620524!3d9.8782066!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x3301f8e1a2d5a5a5%3A0x7c10a1b5166f150f!2sGuyam%20Island%2C%20General%20Luna%2C%20Surigao%20del%20Norte!5e0!3m2!1sen!2sph!4v1700000000000!5m2!1sen!2sph',
         googleMapsUrl: 'https://goo.gl/maps/xxxx-guyam-island',
         directionsUrl: 'https://goo.gl/maps/xxxx-guyam-directions',
         averageRating: 4.7,
@@ -425,7 +419,7 @@ export default {
             rating: 5,
             date: '2024-01-15',
             text: 'Perfect little island! The coconut trees provide nice shade and the water is amazing for swimming. Great for a picnic lunch.',
-            helpfulCount: 22
+            helpfulCount: 22,
           },
           {
             id: 10,
@@ -433,7 +427,7 @@ export default {
             rating: 4,
             date: '2024-02-10',
             text: 'Beautiful island but can get crowded during peak hours. The snorkeling around the island is quite good. Bring your own snacks.',
-            helpfulCount: 15
+            helpfulCount: 15,
           },
           {
             id: 11,
@@ -441,9 +435,9 @@ export default {
             rating: 5,
             date: '2024-03-05',
             text: 'The most photogenic island in Siargao! The contrast between the white sand, blue water, and green palms is stunning.',
-            helpfulCount: 29
-          }
-        ]
+            helpfulCount: 29,
+          },
+        ],
       },
       4: {
         id: 4,
@@ -451,8 +445,10 @@ export default {
         location: 'Siargao, Surigao del Norte',
         headerImage: '/images/destinations/cloud91.jpg',
         distance: '2 km from General Luna',
-        description: 'Cloud 9 is the most famous surfing spot in Siargao, known for its perfect tubular waves. The iconic wooden pier offers the best view of surfers riding the waves. Even if you\'re not a surfer, it\'s worth visiting for the breathtaking sunset views and the lively atmosphere around the area.',
-        mapEmbedUrl: 'https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d125443.9238787154!2d125.9620524!3d9.8782066!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x3301f8e1a2d5a5a5%3A0x7c10a1b5166f150f!2sCloud%209%2C%20General%20Luna%2C%20Surigao%20del%20Norte!5e0!3m2!1sen!2sph!4v1700000000000!5m2!1sen!2sph',
+        description:
+          "Cloud 9 is the most famous surfing spot in Siargao, known for its perfect tubular waves. The iconic wooden pier offers the best view of surfers riding the waves. Even if you're not a surfer, it's worth visiting for the breathtaking sunset views and the lively atmosphere around the area.",
+        mapEmbedUrl:
+          'https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d125443.9238787154!2d125.9620524!3d9.8782066!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x3301f8e1a2d5a5a5%3A0x7c10a1b5166f150f!2sCloud%209%2C%20General%20Luna%2C%20Surigao%20del%20Norte!5e0!3m2!1sen!2sph!4v1700000000000!5m2!1sen!2sph',
         googleMapsUrl: 'https://goo.gl/maps/xxxx-cloud9',
         directionsUrl: 'https://goo.gl/maps/xxxx-cloud9-directions',
         averageRating: 4.9,
@@ -464,15 +460,15 @@ export default {
             rating: 5,
             date: '2024-01-15',
             text: 'As a surfer, this is paradise! The waves are consistently good and the local surf community is welcoming. The pier view is amazing.',
-            helpfulCount: 45
+            helpfulCount: 45,
           },
           {
             id: 13,
             author: 'Emma W., UK',
             rating: 5,
             date: '2024-02-10',
-            text: 'Even if you don\'t surf, the sunset from the pier is worth the visit. So many great cafes and restaurants nearby too.',
-            helpfulCount: 38
+            text: "Even if you don't surf, the sunset from the pier is worth the visit. So many great cafes and restaurants nearby too.",
+            helpfulCount: 38,
           },
           {
             id: 14,
@@ -480,19 +476,21 @@ export default {
             rating: 4,
             date: '2024-03-05',
             text: 'Great surfing spot but gets very crowded. Best to go early in the morning. The energy around Cloud 9 is fantastic though!',
-            helpfulCount: 27
-          }
-        ]
-      }
+            helpfulCount: 27,
+          },
+        ],
+      },
     }
 
     // Sample data for destinations (for homepage display)
     const featuredDestination = ref({
       id: 1,
       name: 'Siargao Island',
-      description: 'Siargao sits on the far eastern edge of the Philippines, facing the open Pacific.',
+      description:
+        'Siargao sits on the far eastern edge of the Philippines, facing the open Pacific.',
       image: '/images/destinations/siargao.jpg',
-      rating: 4.9
+      rating: 4.9,
+      tag: 'Featured'
     })
 
     const destinations = ref([
@@ -501,62 +499,62 @@ export default {
         name: 'Naked Island',
         description: 'A stunning sandbar surrounded by crystal-clear waters.',
         image: '/images/destinations/naked_island.jpg',
-        rating: 4.9
+        rating: 4.9,
       },
       {
         id: 3,
         name: 'Guyam Island',
         description: 'A small, peaceful island ideal for relaxation and snorkeling.',
         image: '/images/destinations/guyam.jpg',
-        rating: 4.7
+        rating: 4.7,
       },
       {
         id: 4,
         name: 'Cloud 9',
         description: 'World-famous surf spot known for its powerful waves.',
         image: '/images/destinations/cloud9.jpg',
-        rating: 4.8
-      }
+        rating: 4.8,
+      },
     ])
 
     // Property data
     const properties = ref({
-      'paradiso': {
+      paradiso: {
         title: 'Paradiso Hostel Bunks',
         subtitle: 'Solo - 1 single bed',
         location: 'General Luna, Philippines',
         description: [
           'Paradiso Hostel is a traditional style building with 5 double occupancy, fully air-conditioned private rooms each with its own toilet and baths, spacious work desks and benches.',
-          'The hostel has its own kitchen should you wish to just chill in your room or if you\'re just feeling lazy (or nursing a hangover).'
+          "The hostel has its own kitchen should you wish to just chill in your room or if you're just feeling lazy (or nursing a hangover).",
         ],
-        price: 700.00,
+        price: 700.0,
         image: '/images/accommodations/paradiso.1.avif',
-        confirmationImage: '/images/accommodations/paradiso.1.avif'
+        confirmationImage: '/images/accommodations/paradiso.1.avif',
       },
-      'copacabana': {
+      copacabana: {
         title: 'Copacabana Siargao',
         subtitle: 'Solo - 1 queen-sized bed',
         location: 'General Luna, Philippines',
         description: [
           'Copacabana Siargao rooms with air-conditioning, private bathrooms, bidets, work desks, free toiletries, showers, and wardrobes. Each room includes a terrace and free WiFi.',
-          'Located just steps away from the famous Cloud 9 surf break, this hotel is perfect for surf enthusiasts and beach lovers alike.'
+          'Located just steps away from the famous Cloud 9 surf break, this hotel is perfect for surf enthusiasts and beach lovers alike.',
         ],
-        price: 2950.00,
+        price: 2950.0,
         image: '/images/accommodations/copacabana.1.jpg',
-        confirmationImage: '/images/accommodations/copacabana.1.jpg'
+        confirmationImage: '/images/accommodations/copacabana.1.jpg',
       },
-      'casavia': {
+      casavia: {
         title: 'Casavia Siargao',
         subtitle: 'Solo - 1 bunked bed',
         location: 'General Luna, Philippines',
         description: [
           'Casavia Siargao in General Luna offers a garden, bar, and free WiFi. Guests can relax in the lounge or prepare meals in the shared kitchen. Additional amenities include air-conditioning, bidet, shower, and wardrobe.',
-          'General Luna Beach is an 8-minute walk away. Nearby attractions include Guyam Island (4 km), Naked Island (14 km), and Magpupungko Rock Pools (38 km).'
+          'General Luna Beach is an 8-minute walk away. Nearby attractions include Guyam Island (4 km), Naked Island (14 km), and Magpupungko Rock Pools (38 km).',
         ],
-        price: 890.00,
+        price: 890.0,
         image: '/images/accommodations/casavia.1.jpg',
-        confirmationImage: '/images/accommodations/casavia.1.jpg'
-      }
+        confirmationImage: '/images/accommodations/casavia.1.jpg',
+      },
     })
 
     // Payment methods with logos
@@ -564,13 +562,13 @@ export default {
       {
         id: 'mastercard',
         name: 'Mastercard',
-        logo: '/images/mastercard.png'
+        logo: '/images/mastercard.png',
       },
       {
         id: 'gcash',
         name: 'GCash',
-        logo: '/images/gcash_logo.png'
-      }
+        logo: '/images/gcash_logo.png',
+      },
     ])
 
     // Computed properties
@@ -579,40 +577,78 @@ export default {
         return destinations.value
       }
       const query = searchQuery.value.toLowerCase()
-      return destinations.value.filter(dest =>
-        dest.name.toLowerCase().includes(query) ||
-        dest.description.toLowerCase().includes(query)
+      return destinations.value.filter(
+        (dest) =>
+          dest.name.toLowerCase().includes(query) || dest.description.toLowerCase().includes(query),
       )
     })
 
     const isSignupFormValid = computed(() => {
-      return signupForm.value.firstName &&
-            signupForm.value.lastName &&
-             signupForm.value.email &&
-             signupForm.value.password &&
-             signupForm.value.confirmPassword &&
-             !signupForm.value.passwordError &&
-             !signupForm.value.confirmPasswordError
+      return (
+        signupForm.value.firstName &&
+        signupForm.value.lastName &&
+        signupForm.value.email &&
+        signupForm.value.password &&
+        signupForm.value.confirmPassword &&
+        !signupForm.value.passwordError &&
+        !signupForm.value.confirmPasswordError
+      )
     })
 
     // Date picker computed properties
     const currentMonthYear = computed(() => {
       const monthNames = [
-        "January", "February", "March", "April", "May", "June",
-        "July", "August", "September", "October", "November", "December"
+        'January',
+        'February',
+        'March',
+        'April',
+        'May',
+        'June',
+        'July',
+        'August',
+        'September',
+        'October',
+        'November',
+        'December',
       ]
       return `${monthNames[currentDate.value.getMonth()]} ${currentDate.value.getFullYear()}`
     })
 
     const fromDateDisplay = computed(() => {
       if (!selectedStart.value) return 'Select start date'
-      const monthNamesShort = ["Jan.", "Feb.", "Mar.", "Apr.", "May", "Jun.", "Jul.", "Aug.", "Sep.", "Oct.", "Nov.", "Dec."]
+      const monthNamesShort = [
+        'Jan.',
+        'Feb.',
+        'Mar.',
+        'Apr.',
+        'May',
+        'Jun.',
+        'Jul.',
+        'Aug.',
+        'Sep.',
+        'Oct.',
+        'Nov.',
+        'Dec.',
+      ]
       return `${monthNamesShort[currentDate.value.getMonth()]} ${selectedStart.value}, ${currentDate.value.getFullYear()}`
     })
 
     const toDateDisplay = computed(() => {
       if (!selectedEnd.value) return 'Select end date'
-      const monthNamesShort = ["Jan.", "Feb.", "Mar.", "Apr.", "May", "Jun.", "Jul.", "Aug.", "Sep.", "Oct.", "Nov.", "Dec."]
+      const monthNamesShort = [
+        'Jan.',
+        'Feb.',
+        'Mar.',
+        'Apr.',
+        'May',
+        'Jun.',
+        'Jul.',
+        'Aug.',
+        'Sep.',
+        'Oct.',
+        'Nov.',
+        'Dec.',
+      ]
       return `${monthNamesShort[currentDate.value.getMonth()]} ${selectedEnd.value}, ${currentDate.value.getFullYear()}`
     })
 
@@ -646,12 +682,36 @@ export default {
 
     const bookingDatesDisplay = computed(() => {
       if (selectedStart.value && selectedEnd.value) {
-        const monthNamesShort = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"]
+        const monthNamesShort = [
+          'Jan',
+          'Feb',
+          'Mar',
+          'Apr',
+          'May',
+          'Jun',
+          'Jul',
+          'Aug',
+          'Sep',
+          'Oct',
+          'Nov',
+          'Dec',
+        ]
         const startMonth = monthNamesShort[currentDate.value.getMonth()]
         const endMonth = monthNamesShort[currentDate.value.getMonth()]
         return `${startMonth} ${selectedStart.value} - ${endMonth} ${selectedEnd.value}, ${currentDate.value.getFullYear()}`
       }
       return 'Select dates'
+    })
+
+    // Update showNav when currentPage changes
+    const updateShowNav = () => {
+      showNav.value = ['homepage', 'trips', 'notifications', 'profile', 'itinerary'].includes(currentPage.value)
+      console.log('Show nav updated:', showNav.value, 'for page:', currentPage.value)
+    }
+
+    // Watch for currentPage changes
+    watch(currentPage, () => {
+      updateShowNav()
     })
 
     // Methods
@@ -661,7 +721,8 @@ export default {
       if (password.length < 8) {
         signupForm.value.passwordError = 'Password must be at least 8 characters long'
       } else if (!/(?=.*[a-z])(?=.*[A-Z])/.test(password)) {
-        signupForm.value.passwordError = 'Password must contain both uppercase and lowercase letters'
+        signupForm.value.passwordError =
+          'Password must contain both uppercase and lowercase letters'
       } else if (!/(?=.*\d)/.test(password)) {
         signupForm.value.passwordError = 'Password must contain at least one number'
       } else {
@@ -690,6 +751,11 @@ export default {
       console.log('Login attempt with:', loginForm.value)
       const nameFromEmail = getNameFromEmail(loginForm.value.email)
       userName.value = nameFromEmail.charAt(0).toUpperCase() + nameFromEmail.slice(1)
+
+      // Save to localStorage
+      localStorage.setItem('userName', userName.value)
+      localStorage.setItem('isAuthenticated', 'true')
+
       goToPage('homepage')
     }
 
@@ -706,7 +772,7 @@ export default {
         firstName: signupForm.value.firstName,
         lastName: signupForm.value.lastName,
         email: signupForm.value.email,
-        password: signupForm.value.password
+        password: signupForm.value.password,
       })
 
       if (signupForm.value.firstName) {
@@ -715,6 +781,10 @@ export default {
         const nameFromEmail = getNameFromEmail(signupForm.value.email)
         userName.value = nameFromEmail.charAt(0).toUpperCase() + nameFromEmail.slice(1)
       }
+
+      // Save to localStorage
+      localStorage.setItem('userName', userName.value)
+      localStorage.setItem('isAuthenticated', 'true')
 
       goToPage('homepage')
     }
@@ -728,6 +798,8 @@ export default {
     const socialLogin = (provider) => {
       console.log(`Social login with ${provider}`)
       userName.value = 'User'
+      localStorage.setItem('userName', userName.value)
+      localStorage.setItem('isAuthenticated', 'true')
       goToPage('homepage')
     }
 
@@ -740,6 +812,13 @@ export default {
       if (page !== 'booking') {
         selectedPayment.value = null
       }
+
+      // Update navigation visibility
+      updateShowNav()
+    }
+
+    const handleNavClick = (page) => {
+      goToPage(page)
     }
 
     const goToPreviousPage = () => {
@@ -752,7 +831,7 @@ export default {
         'change-password': 'profile',
         'forgot-password': 'login',
         'destination-details': 'homepage',
-        'itinerary': 'homepage'
+        itinerary: 'homepage',
       }
 
       if (pageMap[currentPage.value]) {
@@ -794,7 +873,10 @@ export default {
     }
 
     const handlePlanTrip = () => {
-      console.log('Planning trip for destination:', currentDestination.value?.name || 'Siargao Island')
+      console.log(
+        'Planning trip for destination:',
+        currentDestination.value?.name || 'Siargao Island',
+      )
 
       // If we have a current destination from the details page, use it
       if (currentDestination.value) {
@@ -818,7 +900,7 @@ export default {
     const toggleReviewHelpful = (reviewId) => {
       console.log('Toggling helpful for review:', reviewId)
       if (currentDestination.value && currentDestination.value.reviews) {
-        const review = currentDestination.value.reviews.find(r => r.id === reviewId)
+        const review = currentDestination.value.reviews.find((r) => r.id === reviewId)
         if (review) {
           review.helpfulCount = review.helpfulCount + 1
           console.log(`Review ${reviewId} marked as helpful. New count: ${review.helpfulCount}`)
@@ -850,11 +932,16 @@ export default {
         password: '',
         confirmPassword: '',
         passwordError: '',
-        confirmPasswordError: ''
+        confirmPasswordError: '',
       }
       currentDestination.value = null
       selectedDestinationId.value = null
       selectedDestinationName.value = ''
+
+      // Clear localStorage
+      localStorage.removeItem('userName')
+      localStorage.removeItem('isAuthenticated')
+
       goToPage('login')
     }
 
@@ -879,7 +966,7 @@ export default {
       currentDate.value = new Date(
         currentDate.value.getFullYear(),
         currentDate.value.getMonth() - 1,
-        1
+        1,
       )
       selectedStart.value = null
       selectedEnd.value = null
@@ -889,7 +976,7 @@ export default {
       currentDate.value = new Date(
         currentDate.value.getFullYear(),
         currentDate.value.getMonth() + 1,
-        1
+        1,
       )
       selectedStart.value = null
       selectedEnd.value = null
@@ -902,14 +989,16 @@ export default {
       } else {
         selectedEnd.value = day
         if (selectedStart.value > selectedEnd.value) {
-          [selectedStart.value, selectedEnd.value] = [selectedEnd.value, selectedStart.value]
+          ;[selectedStart.value, selectedEnd.value] = [selectedEnd.value, selectedStart.value]
         }
       }
     }
 
     const goToAccommodation = () => {
       if (selectedStart.value && selectedEnd.value) {
-        console.log(`Date range selected for ${selectedDestinationName.value}: ${selectedStart.value} - ${selectedEnd.value} ${currentMonthYear.value}`)
+        console.log(
+          `Date range selected for ${selectedDestinationName.value}: ${selectedStart.value} - ${selectedEnd.value} ${currentMonthYear.value}`,
+        )
         const nights = selectedEnd.value - selectedStart.value
         booking.value.nights = nights
         booking.value.dates = bookingDatesDisplay.value
@@ -956,7 +1045,9 @@ export default {
       } else if (selectedPayment.value.id === 'mastercard') {
         goToPage('mastercard-details')
       } else {
-        alert(`Booking confirmed! Payment method: ${selectedPayment.value.name}\nTotal: ₱${totalPrice.value}`)
+        alert(
+          `Booking confirmed! Payment method: ${selectedPayment.value.name}\nTotal: ₱${totalPrice.value}`,
+        )
         setTimeout(() => {
           goToPage('homepage')
         }, 2000)
@@ -969,16 +1060,16 @@ export default {
     }
 
     const handlePaymentSuccess = (paymentData) => {
-  console.log('🎯 Payment Success Event Received:', paymentData)
-  console.log('📊 Current State:', {
-    selectedDestinationId: selectedDestinationId.value,
-    selectedDestinationName: selectedDestinationName.value,
-    currentDestination: currentDestination.value,
-    selectedProperty: selectedProperty.value,
-    bookingNights: booking.value.nights,
-    bookingDates: booking.value.dates,
-    totalPrice: totalPrice.value
-  })
+      console.log('🎯 Payment Success Event Received:', paymentData)
+      console.log('📊 Current State:', {
+        selectedDestinationId: selectedDestinationId.value,
+        selectedDestinationName: selectedDestinationName.value,
+        currentDestination: currentDestination.value,
+        selectedProperty: selectedProperty.value,
+        bookingNights: booking.value.nights,
+        bookingDates: booking.value.dates,
+        totalPrice: totalPrice.value,
+      })
       // Generate receipt number
       const receiptNumber = generateReceiptNumber()
 
@@ -987,14 +1078,16 @@ export default {
         amount: paymentData?.amount ? paymentData.amount.toFixed(2) : totalPrice.value,
         paymentMethod: paymentData?.paymentMethod || selectedPayment.value?.name || 'GCash',
         receiptNumber: receiptNumber,
-        dateTime: new Date().toLocaleString('en-US', {
-          month: 'short',
-          day: '2-digit',
-          year: 'numeric',
-          hour: '2-digit',
-          minute: '2-digit',
-          hour12: true
-        }).replace(',', ' |')
+        dateTime: new Date()
+          .toLocaleString('en-US', {
+            month: 'short',
+            day: '2-digit',
+            year: 'numeric',
+            hour: '2-digit',
+            minute: '2-digit',
+            hour12: true,
+          })
+          .replace(',', ' |'),
       }
 
       console.log('📋 Receipt Data:', receiptData.value)
@@ -1021,7 +1114,9 @@ export default {
       }
 
       // Ensure we have valid dates
-      const tripDates = booking.value.dates || `${new Date().toLocaleDateString('en-US', { month: 'short', day: 'numeric' })} - ${new Date(Date.now() + 3 * 24 * 60 * 60 * 1000).toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' })}`
+      const tripDates =
+        booking.value.dates ||
+        `${new Date().toLocaleDateString('en-US', { month: 'short', day: 'numeric' })} - ${new Date(Date.now() + 3 * 24 * 60 * 60 * 1000).toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' })}`
 
       // Ensure we have valid nights
       const tripNights = booking.value.nights || 3
@@ -1038,8 +1133,8 @@ export default {
         property: {
           title: selectedProperty.value?.title || `${destinationName} Accommodation`,
           location: selectedProperty.value?.location || destinationName,
-          image: selectedProperty.value?.image || `/images/destinations/siargao.jpg`
-        }
+          image: selectedProperty.value?.image || `/images/destinations/siargao.jpg`,
+        },
       }
 
       console.log('📦 Booking Data for Trip Store:', bookingData)
@@ -1087,7 +1182,7 @@ export default {
         totalPrice: totalPrice.value,
         paymentMethod: selectedPayment.value?.name,
         receiptNumber: receiptData.value.receiptNumber,
-        bookingDate: new Date().toISOString()
+        bookingDate: new Date().toISOString(),
       }
 
       localStorage.setItem('lastBooking', JSON.stringify(bookingData))
@@ -1098,11 +1193,22 @@ export default {
       console.log('Trip saved with data:', tripData)
     }
 
+    const forceLogin = () => {
+      userName.value = 'John Doe'
+      localStorage.setItem('userName', userName.value)
+      localStorage.setItem('isAuthenticated', 'true')
+      goToPage('homepage')
+    }
+
+    // Initialize showNav
+    updateShowNav()
+
     return {
       tripsStore,
       currentPage,
       currentBookingView,
       showDebug,
+      showNav,
       loginForm,
       signupForm,
       userName,
@@ -1163,9 +1269,11 @@ export default {
       handleGcashPaymentSuccess,
       handlePaymentSuccess,
       saveBookingData,
-      handleTripSaved
+      handleTripSaved,
+      handleNavClick,
+      forceLogin,
     }
-  }
+  },
 }
 </script>
 
@@ -1176,20 +1284,26 @@ export default {
   box-sizing: border-box;
 }
 
+body {
+  font-family: 'Poppins', sans-serif;
+  background: #f0f0f0;
+  min-height: 100vh;
+  overflow-x: hidden;
+}
+
 #app {
   font-family: 'Poppins', sans-serif;
   background: #f0f0f0;
   min-height: 100vh;
-  display: flex;
-  align-items: center;
-  justify-content: center;
+  position: relative;
+  padding-bottom: 80px; /* Space for bottom nav */
 }
 
 .debug-info {
   position: fixed;
   top: 10px;
   left: 10px;
-  background: rgba(0,0,0,0.8);
+  background: rgba(0, 0, 0, 0.8);
   color: white;
   padding: 15px;
   border-radius: 8px;

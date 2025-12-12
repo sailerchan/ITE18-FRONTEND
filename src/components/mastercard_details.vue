@@ -1,246 +1,163 @@
 <template>
   <div class="container">
-    <div class="card payment-card">
-      <!-- Header -->
-      <div class="header">
-        <button class="back-btn" @click="$emit('go-back')">
-          <i class="fas fa-arrow-left"></i>
-        </button>
-        <h1>Mastercard Payment</h1>
-      </div>
+    <div class="hero-banner">
+      <img src="/images/logos/girlvector.png" alt="Girl with luggage" class="hero-image">
+    </div>
 
-      <!-- Mastercard Logo -->
-      <div class="mastercard-logo">
-        <img src="/images/logos/mastercard.png" alt="Mastercard" class="logo-image">
-      </div>
+    <div class="card sign-in-card">
+      <div class="welcome-text">Create an Account</div>
+      <h2 class="card-title">Join now and start planning your trip.</h2>
 
-      <!-- Payment Form -->
-      <div class="payment-form">
-        <!-- Name on Card -->
-        <div class="form-group">
-          <label class="form-label">Name on Card</label>
-          <div class="input-box">
-            <input
-              type="text"
-              placeholder="Enter full name"
-              v-model="paymentDetails.name"
-              class="form-input"
-            >
-          </div>
-        </div>
-
-        <!-- Card Number -->
-        <div class="form-group">
-          <label class="form-label">Card Number</label>
-          <div class="input-box card-input-container">
-            <input
-              type="text"
-              placeholder="1234 5678 9012 3456"
-              v-model="paymentDetails.cardNumber"
-              class="form-input card-number"
-              maxlength="19"
-              @input="formatCardNumber"
-            >
-            <div class="card-icon">💳</div>
-          </div>
-        </div>
-
-        <!-- Expiration and CVV -->
-        <div class="row-inputs">
-          <div class="form-group">
-            <label class="form-label">Expiration</label>
+      <form @submit.prevent="$emit('handle-signup')">
+        <!-- First Name and Last Name in a row -->
+        <div class="name-row">
+          <div class="form-group floating-group">
             <div class="input-box">
-              <input
-                type="text"
-                placeholder="MM/YY"
-                v-model="paymentDetails.expiry"
-                class="form-input"
-                maxlength="5"
-                @input="formatExpiry"
-              >
+              <input type="text" id="firstname" class="form-input"
+                     placeholder=" "
+                     :value="signupForm.firstName"
+                     @input="$emit('update:firstName', $event.target.value)"
+                     @focus="handleFocus"
+                     @blur="handleBlur"
+                     required>
+              <label for="firstname" class="floating-label">First Name</label>
             </div>
           </div>
 
-          <div class="form-group">
-            <label class="form-label">CVV</label>
+          <div class="form-group floating-group">
             <div class="input-box">
-              <input
-                type="text"
-                placeholder="123"
-                v-model="paymentDetails.cvv"
-                class="form-input"
-                maxlength="3"
-                @input="formatCVV"
-              >
+              <input type="text" id="lastname" class="form-input"
+                     placeholder=" "
+                     :value="signupForm.lastName"
+                     @input="$emit('update:lastName', $event.target.value)"
+                     @focus="handleFocus"
+                     @blur="handleBlur"
+                     required>
+              <label for="lastname" class="floating-label">Last Name</label>
             </div>
           </div>
         </div>
 
-        <!-- Postal Code -->
-        <div class="form-group">
-          <label class="form-label">Postal Code</label>
+        <div class="form-group floating-group">
           <div class="input-box">
-            <input
-              type="text"
-              placeholder="Enter postal code"
-              v-model="paymentDetails.postalCode"
-              class="form-input"
-              @input="formatPostalCode"
-            >
+            <input type="email" id="email" class="form-input"
+                   placeholder=" "
+                   :value="signupForm.email"
+                   @input="$emit('update:signup-email', $event.target.value)"
+                   @focus="handleFocus"
+                   @blur="handleBlur"
+                   required>
+            <label for="email" class="floating-label">Email Address</label>
           </div>
         </div>
 
-        <!-- Save Card Option -->
-        <div class="save-card">
-          <label class="checkbox-container">
-            <input type="checkbox" v-model="saveCard">
-            <span class="checkmark"></span>
-            Save credit card information
-          </label>
-        </div>
-      </div>
-
-      <!-- Payment Details -->
-      <div class="payment-details">
-        <h2>Payment Details</h2>
-
-        <div class="amount-row">
-          <span>Amount</span>
-          <span>₱{{ totalAmount.toFixed(2) }}</span>
+        <div class="form-group floating-group">
+          <div class="input-box">
+            <input type="password" id="password" class="form-input"
+                   :class="{ 'error': signupForm.passwordError, 'success': signupForm.password && !signupForm.passwordError }"
+                   placeholder=" "
+                   :value="signupForm.password"
+                   @input="$emit('update:signup-password', $event.target.value)"
+                   @focus="handleFocus"
+                   @blur="handleBlurAndValidatePassword"
+                   required>
+            <label for="password" class="floating-label">Password</label>
+            <span class="error-message" v-if="signupForm.passwordError">{{ signupForm.passwordError }}</span>
+            <span class="success-message" v-if="signupForm.password && !signupForm.passwordError">Password looks good!</span>
+          </div>
         </div>
 
-        <div class="amount-row">
-          <span>Additional fee</span>
-          <span>₱{{ additionalFee.toFixed(2) }}</span>
+        <div class="form-group floating-group">
+          <div class="input-box">
+            <input type="password" id="confirmPassword" class="form-input"
+                   :class="{ 'error': signupForm.confirmPasswordError, 'success': signupForm.confirmPassword && !signupForm.confirmPasswordError }"
+                   placeholder=" "
+                   :value="signupForm.confirmPassword"
+                   @input="$emit('update:signup-confirm-password', $event.target.value)"
+                   @focus="handleFocus"
+                   @blur="handleBlurAndValidateConfirmPassword"
+                   required>
+            <label for="confirmPassword" class="floating-label">Confirm Password</label>
+            <span class="error-message" v-if="signupForm.confirmPasswordError">{{ signupForm.confirmPasswordError }}</span>
+            <span class="success-message" v-if="signupForm.confirmPassword && !signupForm.confirmPasswordError">Passwords match!</span>
+          </div>
         </div>
 
-        <div class="divider"></div>
-
-        <div class="total-row">
-          <span>Total</span>
-          <span class="total-amount">₱{{ (totalAmount + additionalFee).toFixed(2) }}</span>
-        </div>
-      </div>
-
-      <!-- Pay Button -->
-      <div class="pay-button-container">
-        <button class="pay-button" @click="processPayment" :disabled="!isFormValid">
-          Pay ₱{{ (totalAmount + additionalFee).toFixed(2) }}
+        <button type="submit" class="sign-in-btn" :disabled="!isSignupFormValid">
+          Sign Up
         </button>
+      </form>
+
+      <div class="divider">
+        <div class="divider-line"></div>
+        <div class="divider-text">or continue with</div>
+        <div class="divider-line"></div>
+      </div>
+
+      <div class="social-buttons">
+        <button class="social-btn" @click="$emit('social-login', 'google')">
+          <img src="/images/logos/icon-google.svg" alt="Google" class="social-icon">
+        </button>
+        <button class="social-btn" @click="$emit('social-login', 'apple')">
+          <img src="/images/logos/icon-apple.webp" alt="Apple" class="social-icon">
+        </button>
+      </div>
+
+      <div class="sign-up-section">
+        Already have an account?
+        <a href="#" class="sign-up-link" @click="$emit('go-to-page', 'login')">Log in.</a>
       </div>
     </div>
   </div>
 </template>
 
 <script>
-import { ref, computed } from 'vue'
-
 export default {
-  name: 'MastercardDetails',
+  name: 'sign_up',
   props: {
-    totalAmount: {
-      type: Number,
-      default: 2950.00
+    signupForm: {
+      type: Object,
+      required: true
     },
-    additionalFee: {
-      type: Number,
-      default: 150.00
+    isSignupFormValid: {
+      type: Boolean,
+      required: true
     }
   },
-  emits: ['go-back', 'payment-success'],
-  setup(props, { emit }) {
-    const paymentDetails = ref({
-      name: '',
-      cardNumber: '',
-      expiry: '',
-      cvv: '',
-      postalCode: ''
-    })
-
-    const saveCard = ref(false)
-
-    const isFormValid = computed(() => {
-      return paymentDetails.value.name &&
-             paymentDetails.value.cardNumber.replace(/\s/g, '').length === 16 &&
-             paymentDetails.value.expiry.length === 5 &&
-             paymentDetails.value.cvv.length === 3 &&
-             paymentDetails.value.postalCode
-    })
-
-    const formatCardNumber = (event) => {
-      let value = event.target.value.replace(/\s+/g, '').replace(/[^0-9]/gi, '')
-      const matches = value.match(/\d{4,16}/g)
-      const match = matches ? matches[0] : ''
-      const parts = []
-
-      for (let i = 0, len = match.length; i < len; i += 4) {
-        parts.push(match.substring(i, i + 4))
-      }
-
-      if (parts.length) {
-        paymentDetails.value.cardNumber = parts.join(' ')
-      } else {
-        paymentDetails.value.cardNumber = value
-      }
-    }
-
-    const formatExpiry = (event) => {
-      let value = event.target.value.replace(/\D/g, '')
-      if (value.length >= 2) {
-        value = value.substring(0, 2) + '/' + value.substring(2, 4)
-      }
-      paymentDetails.value.expiry = value
-    }
-
-    const formatCVV = (event) => {
-      let value = event.target.value.replace(/\D/g, '')
-      if (value.length > 3) {
-        value = value.substring(0, 3)
-      }
-      paymentDetails.value.cvv = value
-    }
-
-    const formatPostalCode = (event) => {
-      let value = event.target.value.replace(/\D/g, '')
-      if (value.length > 4) {
-        value = value.substring(0, 4)
-      }
-      paymentDetails.value.postalCode = value
-    }
-
-    const processPayment = () => {
-      if (!isFormValid.value) {
-        alert('Please fill in all payment details correctly')
-        return
-      }
-
-      // Simulate Mastercard payment processing
-      console.log('Processing Mastercard payment...', paymentDetails.value)
-
-      // Simulate API call delay
-      setTimeout(() => {
-        emit('payment-success')
-      }, 1500)
-    }
-
-    return {
-      paymentDetails,
-      saveCard,
-      totalAmount: ref(props.totalAmount),
-      additionalFee: ref(props.additionalFee),
-      isFormValid,
-      formatCardNumber,
-      formatExpiry,
-      formatCVV,
-      formatPostalCode,
-      processPayment
+  emits: [
+    'update:firstName',
+    'update:lastName',
+    'update:signup-email',
+    'update:signup-password',
+    'update:signup-confirm-password',
+    'validate-password',
+    'validate-confirm-password',
+    'handle-signup',
+    'go-to-page'
+  ],
+  methods: {
+    handleBlurAndValidatePassword() {
+      this.$emit('validate-password');
+      this.handleBlur();
+    },
+    handleBlurAndValidateConfirmPassword() {
+      this.$emit('validate-confirm-password');
+      this.handleBlur();
+    },
+    handleFocus() {
+      // This method ensures the label moves up when input is focused
+      // The CSS will handle the visual effect
+    },
+    handleBlur() {
+      // This method ensures the label stays up if there's content
+      // The CSS will handle the visual effect
     }
   }
 }
 </script>
 
 <style scoped>
-/* Container structure without hero banner */
+/* Base styles matching your login page design */
 .container {
   min-height: 100vh;
   min-height: 100dvh;
@@ -248,78 +165,87 @@ export default {
   display: flex;
   flex-direction: column;
   padding: 0;
-  margin: 0;
+  margin:0;
   width: 100vw;
   overflow-x: hidden;
+  overflow-y: hidden;
+
 }
 
-.payment-card {
+.hero-banner {
+  height: 30vh;
+  min-height: 200px;
+  max-height: 280px;
+  background: linear-gradient(180deg, #F7F5ED 0%, #075258 100%);
+  display: flex;
+  align-items: flex-end;
+  justify-content: center;
+  padding-bottom: 30px;
+  flex-shrink: 0;
+  width: 100%;
+}
+
+.hero-image {
+  width: 181.08px;
+  height: 189px;
+  object-fit: contain;
+}
+
+.sign-in-card {
   background: #ffffff;
-  border-radius: 0;
+  border-radius: 40px 40px 0 0;
   padding: 36px 24px;
-  margin-top: 0;
+  margin-top: -40px;
   position: relative;
+  box-shadow: 0 -8px 32px rgba(0, 0, 0, 0.1);
   flex: 1;
   width: 100%;
   box-sizing: border-box;
   min-height: auto;
 }
 
-/* Header */
-.header {
+.welcome-text {
+  font-size: 30px;
+  font-weight: 700;
+  margin-top: 5px;
+  margin-bottom: 8px;
+  text-align: center;
+  color: #0c3437;
+}
+.card-title {
+  font-size: 12px;
+  font-weight: 400;
+  margin-bottom: 40px;
+  text-align: center;
+  color: #545454;
+}
+.name-row {
   display: flex;
-  align-items: center;
-  margin-bottom: 30px;
+  gap: 12px;
+  margin-bottom: 10px;
 }
 
-.back-btn {
-  background: none;
-  border: none;
-  font-size: 20px;
-  color: #333;
-  padding: 8px;
-  cursor: pointer;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  -webkit-tap-highlight-color: transparent;
+.name-group {
+  flex: 1;
+  margin-bottom: 0;
 }
 
-.header h1 {
-  font-size: 20px;
-  font-weight: 600;
-  color: #333;
-  margin: 0;
-  margin-left: 15px;
+.name-group .form-input {
+  width: 100%;
 }
-
-/* Mastercard Logo */
-.mastercard-logo {
-  display: flex;
-  justify-content: center;
-  margin-bottom: 30px;
-}
-
-.logo-image {
-  width: 80px;
-  height: 50px;
-  object-fit: contain;
-}
-
-/* Form Styles - Same as login page */
-.payment-form {
-  margin-bottom: 30px;
-}
-
-.form-group {
+.floating-group {
+  position: relative;
   margin-bottom: 20px;
+}
+.form-group {
+  margin-bottom: 10px;
 }
 
 .form-label {
   display: block;
-  margin-bottom: 8px;
-  font-weight: 500;
-  color: #333;
+  margin-bottom: 2px;
+  margin-bottom: 4px;
+  color: #333333;
   font-size: 15px;
 }
 
@@ -329,226 +255,229 @@ export default {
 
 .form-input {
   width: 100%;
-  padding: 16px;
+  padding: 20px 18px 8px 18px;
   border: 1.5px solid #e1e5e9;
   border-radius: 10px;
-  font-size: 16px;
+  font-size: 14px;
+  font-weight: 400;
   background-color: #fafbfc;
   transition: all 0.3s ease;
   box-sizing: border-box;
-  -webkit-appearance: none;
+}
+.floating-label {
+  position: absolute;
+  top: 50%;
+  left: 18px;
+  transform: translateY(-50%);
+  color: #b6b6b6;
+  font-size: 14px;
+  font-weight: 400;
+  pointer-events: none;
+  transition: all 0.3s ease;
+  background: #ffffff;
+  padding: 0 4px;
+}
+
+.form-input:focus + .floating-label,
+.form-input:not(:placeholder-shown) + .floating-label {
+  top: 0;
+  transform: translateY(-50%) scale(0.85);
+  color: #0c3437;
+  font-weight: 500;
 }
 
 .form-input:focus {
+  padding: 20px 18px 8px 18px;
   outline: none;
-  border-color: #1f4f5a;
+  border-color: #0c3437;
   background-color: #ffffff;
   box-shadow: 0 0 0 3px rgba(31, 79, 90, 0.1);
 }
 
 .form-input::placeholder {
-  color: #a0a4a8;
+  color: #ffffff;
+;
 }
 
-.card-input-container {
-  position: relative;
+.form-input.error {
+  border-color: #dc3545;
+  background-color: #fff5f5;
 }
 
-.card-number {
-  padding-right: 50px;
+.form-input.success {
+  border-color: #28a745;
+  background-color: #f8fff9;
 }
 
-.card-icon {
-  position: absolute;
-  right: 15px;
-  top: 50%;
-  transform: translateY(-50%);
-  font-size: 20px;
-}
-
-.row-inputs {
-  display: flex;
-  gap: 14px;
-}
-
-.row-inputs .form-group {
-  flex: 1;
-  margin-bottom: 0;
-}
-
-/* Save Card Checkbox */
-.save-card {
-  margin-top: 25px;
-}
-
-.checkbox-container {
-  display: flex;
-  align-items: center;
-  cursor: pointer;
+.error-message {
+  display: block;
+  color: #dc3545;
   font-size: 14px;
-  color: #333;
+  margin-top: 6px;
   font-weight: 500;
 }
 
-.checkbox-container input {
-  display: none;
-}
-
-.checkmark {
-  width: 20px;
-  height: 20px;
-  border: 2px solid #e1e5e9;
-  border-radius: 6px;
-  margin-right: 12px;
-  position: relative;
-  transition: all 0.3s;
-  background-color: #fafbfc;
-}
-
-.checkbox-container input:checked + .checkmark {
-  background: #1f4f5a;
-  border-color: #1f4f5a;
-}
-
-.checkbox-container input:checked + .checkmark::after {
-  content: '✓';
-  position: absolute;
-  color: white;
+.success-message {
+  display: block;
+  color: #28a745;
   font-size: 14px;
-  font-weight: bold;
-  top: 50%;
-  left: 50%;
-  transform: translate(-50%, -50%);
+  margin-top: 6px;
+  font-weight: 500;
 }
 
-/* Payment Details */
-.payment-details {
-  background: #f8f9fa;
-  border: 1.5px solid #e1e5e9;
-  border-radius: 12px;
-  padding: 24px;
-  margin-bottom: 30px;
-}
-
-.payment-details h2 {
-  font-size: 18px;
-  font-weight: 600;
-  color: #333;
-  margin: 0 0 20px 0;
-}
-
-.amount-row {
-  display: flex;
-  justify-content: space-between;
-  margin-bottom: 12px;
-  font-size: 15px;
-  color: #666;
-}
-
-.divider {
-  height: 1px;
-  background: #e0e0e0;
-  margin: 16px 0;
-}
-
-.total-row {
-  display: flex;
-  justify-content: space-between;
-  font-size: 16px;
-  font-weight: 600;
-  color: #333;
-}
-
-.total-amount {
-  color: #1f4f5a;
-  font-size: 18px;
-}
-
-/* Pay Button - Same as login button */
-.pay-button-container {
-  padding-bottom: 20px;
-}
-
-.pay-button {
+.sign-in-btn {
   width: 100%;
-  background-color: #1f4f5a;
+  background-color: #0c3437;
   color: white;
   border: none;
-  border-radius: 10px;
-  padding: 17px;
-  font-size: 17px;
-  font-weight: 600;
+  border-radius: 28px;
+  padding: 14px;
+  font-size: 15px;
+  font-weight: 500;
+  margin-top: 10px;
   cursor: pointer;
   transition: background-color 0.3s;
-  -webkit-tap-highlight-color: transparent;
+  -webkit-tap-highlight-color: transparent; /* Remove tap highlight */
 }
 
-.pay-button:hover:not(:disabled) {
+.sign-in-btn:hover:not(:disabled) {
   background-color: #163a43;
 }
 
-.pay-button:disabled {
+.sign-in-btn:disabled {
   background-color: #cccccc;
   cursor: not-allowed;
 }
 
-/* Responsive breakpoints adjusted for no hero banner */
+.divider {
+  display: flex;
+  align-items: center;
+  margin: 20px 0;
+}
+
+.divider-line {
+  flex: 1;
+  height: 1px;
+  background-color: #ddd;
+}
+
+.divider-text {
+  padding: 0 18px;
+  color: #777;
+  font-size: 14px;
+  white-space: nowrap;
+}
+
+.social-buttons {
+  display: flex;
+  flex-direction: row;
+  gap: 0;
+}
+
+
+.social-btn {
+  width: 15px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background:none;
+  border: 1px solid #ffffff;
+  color: #0c3437;
+  border-radius: 14px;
+  padding: 5px;
+  cursor: pointer;
+  transition: background-color 0.3s;
+  -webkit-tap-highlight-color: transparent;
+   flex: 1; /* Added this line */
+}
+
+.social-icon {
+  width: 20px; /* Adjust size as needed */
+  height: 20px; /* Adjust size as needed */
+  object-fit: contain;
+}
+.sign-up-section {
+  text-align: center;
+  margin-top: 24px;
+  font-size: 13px;
+  color: #333;
+
+}
+
+.sign-up-link {
+  color: #ff1509;
+  text-decoration: none;
+  font-size: 13px;
+  cursor: pointer;
+}
 
 /* Small Phones (320px - 374px) */
 @media (max-width: 374px) {
-  .payment-card {
+  .hero-banner {
+    height: 28vh;
+    min-height: 200px;
+    padding-bottom: 25px;
+
+  }
+  .name-row {
+    gap: 8px;
+  }
+
+  .hero-image {
+    width: 180px;
+    height: 189px;
+  }
+
+  .sign-in-card {
     padding: 32px 20px;
+    margin-top: -35px;
   }
 
-  .logo-image {
-    width: 70px;
-    height: 45px;
+  .welcome-text {
+    font-size: 22px;
   }
 
-  .form-input {
-    padding: 14px;
-    font-size: 15px;
+  .welcome-text span {
+    font-size: 26px;
   }
 
-  .row-inputs {
-    gap: 12px;
-  }
-
-  .payment-details {
-    padding: 20px;
-  }
-
-  .amount-row,
-  .total-row {
+  .card-title {
     font-size: 14px;
-  }
-
-  .total-amount {
-    font-size: 16px;
   }
 }
 
+
 /* Medium Phones (375px - 414px) */
 @media (min-width: 375px) and (max-width: 414px) {
-  .payment-card {
-    padding: 36px 24px;
+  .hero-banner {
+    height: 30vh;
+    min-height: 200px;
   }
 
-  .logo-image {
-    width: 75px;
-    height: 47px;
+  .hero-image {
+    width: 180px;
+    height: 189px;
+  }
+
+  .sign-in-card {
+    padding: 36px 24px;
   }
 }
 
 /* Large Phones (415px - 767px) */
 @media (min-width: 415px) and (max-width: 767px) {
-  .payment-card {
-    padding: 36px 28px;
+  .hero-banner {
+    height: 32vh;
+    min-height: 220px;
   }
 
-  .logo-image {
-    width: 80px;
-    height: 50px;
+  .hero-image {
+    width: 120px;
+    height: 120px;
+  }
+
+  .sign-in-card {
+    padding: 36px 28px;
   }
 }
 
@@ -559,14 +488,23 @@ export default {
     margin: 0 auto;
   }
 
-  .payment-card {
+  .hero-banner {
+    height: 35vh;
+    min-height: 250px;
+    max-height: 300px;
+    border-radius: 0;
+  }
+
+  .hero-image {
+    width: 140px;
+    height: 140px;
+  }
+
+  .sign-in-card {
     max-width: 768px;
-    margin: 0 auto;
+    margin: -50px auto 0 auto;
     border-radius: 24px;
     padding: 40px 32px;
-    margin-top: 20px;
-    margin-bottom: 20px;
-    box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
   }
 }
 
@@ -577,73 +515,78 @@ export default {
     margin: 0 auto;
   }
 
-  .payment-card {
+  .hero-banner {
+    height: 38vh;
+    min-height: 280px;
+    max-height: 350px;
+  }
+
+  .hero-image {
+    width: 160px;
+    height: 160px;
+  }
+
+  .sign-in-card {
     max-width: 500px;
-    margin: 40px auto;
+    margin: -60px auto 0 auto;
     padding: 44px 36px;
-    border-radius: 24px;
-    box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
   }
 }
 
 /* Landscape Mobile */
 @media (max-height: 600px) and (orientation: landscape) {
-  .payment-card {
+  .hero-banner {
+    height: 40vh;
+    min-height: 160px;
+    padding-bottom: 20px;
+  }
+
+  .hero-image {
+    width: 80px;
+    height: 80px;
+  }
+
+  .sign-in-card {
     padding: 24px 20px;
+    margin-top: -30px;
   }
 
   .form-group {
     margin-bottom: 16px;
   }
 
-  .mastercard-logo {
-    margin-bottom: 20px;
+  .divider {
+    margin: 24px 0;
   }
 
-  .logo-image {
-    width: 60px;
-    height: 40px;
-  }
-
-  .payment-form {
-    margin-bottom: 20px;
-  }
-
-  .payment-details {
-    margin-bottom: 20px;
-    padding: 20px;
+  .sign-up-section {
+    margin-top: 24px;
   }
 }
 
 /* Very short screens */
 @media (max-height: 500px) {
-  .payment-card {
+  .hero-banner {
+    height: 35vh;
+    min-height: 140px;
+    padding-bottom: 15px;
+  }
+
+  .hero-image {
+    width: 70px;
+    height: 70px;
+  }
+
+  .sign-in-card {
     padding: 20px 16px;
-  }
-
-  .mastercard-logo {
-    margin-bottom: 15px;
-  }
-
-  .logo-image {
-    width: 50px;
-    height: 35px;
-  }
-
-  .form-input {
-    padding: 12px;
-  }
-
-  .payment-details {
-    padding: 16px;
-    margin-bottom: 15px;
+    margin-top: -25px;
   }
 }
 
 /* Prevent zoom on iOS input focus */
 @media screen and (max-width: 767px) {
   .form-input {
-    font-size: 16px;
+    font-size: 15px; /* Prevents zoom on iOS */
   }
 }
 

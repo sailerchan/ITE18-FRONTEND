@@ -9,9 +9,12 @@
             <div class="location"><i class="fas fa-map-marker-alt"></i> {{ currentLocation }}</div>
             <div class="sep"></div>
             <div class="search-input">
-              <input type="search" placeholder="Search destinations..."
-                     :value="searchQuery"
-                     @input="$emit('update:search-query', $event.target.value)">
+              <input
+                type="search"
+                placeholder="Search destinations..."
+                :value="searchQuery"
+                @input="updateSearchQuery($event.target.value)"
+              >
               <i class="fas fa-search"></i>
             </div>
           </div>
@@ -19,7 +22,7 @@
       </header>
 
       <section class="hero-section">
-        <div class="hero-card">
+        <div class="hero-card" @click="viewDestination(featuredDestination.id)">
           <img :src="featuredDestination.image" :alt="featuredDestination.name" class="hero-img">
           <div class="hero-tag">{{ featuredDestination.tag }}</div>
           <div class="hero-rating"><i class="fas fa-star"></i> {{ featuredDestination.rating }}</div>
@@ -34,35 +37,32 @@
       <section class="popular-destinations">
         <div class="section-header"><h4>Popular Destinations 🔥</h4></div>
         <div class="scroll-wrapper">
-          <div class="destination-card" v-for="destination in filteredDestinations" :key="destination.id" @click="$emit('view-destination', destination.id)">
+          <div
+            class="destination-card"
+            v-for="destination in filteredDestinations"
+            :key="destination.id"
+            @click="viewDestination(destination.id)"
+          >
             <div class="thumb">
               <img :src="destination.image" :alt="destination.name">
-                <div class="rating-pill"><i class="fas fa-star"></i> {{ destination.rating }}</div>
-                    <div class="details-overlay">
-                      <div class="destination-info">
-                        <h5>{{ destination.name }}</h5>
-                        <p>{{ destination.description }}</p>
-                      </div>
-                  </div>
+              <div class="rating-pill"><i class="fas fa-star"></i> {{ destination.rating }}</div>
+              <div class="details-overlay">
+                <div class="destination-info">
+                  <h5>{{ destination.name }}</h5>
+                  <p>{{ destination.description }}</p>
                 </div>
+              </div>
             </div>
           </div>
-      </section>
-      <nav class="bottom-nav">
-        <div class="nav-items-container">
-          <button class="nav-item active" @click="handleNavClick('home')"><i class="fas fa-home"></i></button>
-          <button class="nav-item" @click="handleNavClick('trips')"><i class="fas fa-route"></i></button>
-          <button class="nav-item" @click="handleNavClick('notifications')"><i class="fas fa-bell"></i></button>
-          <button class="nav-item" @click="handleNavClick('profile')"><i class="fas fa-user"></i></button>
         </div>
-      </nav>
+      </section>
     </div>
   </div>
 </template>
 
 <script>
 export default {
-  name: 'home_page',
+  name: 'HomePage',
   props: {
     userName: {
       type: String,
@@ -89,12 +89,7 @@ export default {
       required: true
     }
   },
-  emits: [
-    'update:search-query',
-    'view-destination',
-    'set-active-nav',
-    'go-to-page'
-  ],
+  emits: ['update:search-query', 'view-destination'],
   data() {
     return {
       greeting: ''
@@ -107,14 +102,11 @@ export default {
     else this.greeting = "Good evening,";
   },
   methods: {
-    handleNavClick(navItem) {
-      // Emit the set-active-nav event for the parent component
-      this.$emit('set-active-nav', navItem);
-
-      // If it's the trips nav item, also emit go-to-page event
-      if (navItem === 'trips') {
-        this.$emit('go-to-page', 'trips');
-      }
+    updateSearchQuery(value) {
+      this.$emit('update:search-query', value);
+    },
+    viewDestination(id) {
+      this.$emit('view-destination', id);
     }
   }
 }
@@ -182,31 +174,34 @@ export default {
 }
 
 .search-row {
-    display: flex;
-    align-items: center;
-    padding: 0 24px 16px;
-    background: white;
-    margin-top:10px;
+  display: flex;
+  align-items: center;
+  padding: 0 24px 16px;
+  background: white;
+  margin-top: 10px;
 }
+
 .search-bar {
-    display: flex;
-    align-items: center;
-    gap: 15px;
-    background: #fff;
-    border-radius: 30px;
-    padding: 10px 16px;
-    border: 1.5px solid #e9ecef;
-    flex: 1;
-    box-shadow: 0 2px 12px rgba(0,0,0,0.04);
-    transition: all .3s ease;
-    margin-left: -10px;
-    margin-right: -10px;
-    margin-bottom: 0px;
+  display: flex;
+  align-items: center;
+  gap: 15px;
+  background: #fff;
+  border-radius: 30px;
+  padding: 10px 16px;
+  border: 1.5px solid #e9ecef;
+  flex: 1;
+  box-shadow: 0 2px 12px rgba(0, 0, 0, 0.04);
+  transition: all .3s ease;
+  margin-left: -10px;
+  margin-right: -10px;
+  margin-bottom: 0px;
 }
+
 .search-bar:focus-within {
-    border-color: var(--teal-1);
-    box-shadow: 0 4px 16px rgba(56,97,102,0.1);
+  border-color: var(--teal-1);
+  box-shadow: 0 4px 16px rgba(56, 97, 102, 0.1);
 }
+
 .location {
   display: flex;
   gap: 10px;
@@ -214,17 +209,19 @@ export default {
   color: var(--teal-2);
   font-size: 12px;
   font-weight: 600;
-
 }
+
 .location i {
   color: var(--teal-2);
   font-size: 15px;
 }
+
 .sep {
   width: 1px;
   height: 28px;
   background: #e9ecef;
 }
+
 .search-input {
   display: flex;
   align-items: center;
@@ -232,8 +229,8 @@ export default {
   flex: 1;
   color: #adb5bd;
   font-size: 12px;
-
 }
+
 .search-input input {
   border: 0;
   outline: 0;
@@ -241,11 +238,12 @@ export default {
   width: 100%;
   font-size: 12px;
   color: #495057;
-
 }
+
 .search-input input::placeholder {
   color: #adb5bd;
 }
+
 .search-input i {
   color: #ced4da;
   font-size: 15px;
@@ -256,43 +254,47 @@ export default {
   padding: 16px 24px 12px;
   background: white;
 }
+
 /*Siargao Photo*/
 .hero-card {
-    width: 90%;
-    margin:auto;
-    height: 350px;
-    border-radius: 30px;
-    overflow: hidden;
-    position: relative;
-    background: #e9ecef;
-    box-shadow: var(--card-shadow);
-    cursor: pointer;
-    transition: all .4s ease;
-    -webkit-tap-highlight-color: transparent;
-
+  width: 90%;
+  margin: auto;
+  height: 350px;
+  border-radius: 30px;
+  overflow: hidden;
+  position: relative;
+  background: #e9ecef;
+  box-shadow: var(--card-shadow);
+  cursor: pointer;
+  transition: all .4s ease;
+  -webkit-tap-highlight-color: transparent;
 }
+
 .hero-card:hover {
   transform: translateY(-6px);
   box-shadow: var(--hover-shadow);
 }
+
 .hero-img {
-    width: 100%;
-    height: 100%;
-    object-fit: cover;
-    object-position: center top;
-    display: block;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  object-position: center top;
+  display: block;
 }
+
 .hero-tag {
-    position: absolute;
-    top: 16px;
-    left: 20px;
-    background: none;
-    color: #fff;
-    padding: 6px 10px;
-    border-radius: 12px;
-    font-size: 11px;
-    font-weight: 600;
+  position: absolute;
+  top: 16px;
+  left: 20px;
+  background: none;
+  color: #fff;
+  padding: 6px 10px;
+  border-radius: 12px;
+  font-size: 11px;
+  font-weight: 600;
 }
+
 .hero-rating {
   position: absolute;
   top: 16px;
@@ -308,35 +310,40 @@ export default {
   border: 1px solid rgba(255, 255, 255, 0.5);
   margin: 0;
 }
+
 .hero-rating i {
   color: #ffc107;
   font-size: 13px;
 }
+
 .hero-gradient {
-    position: absolute;
-    left: 0;
-    right: 0;
-    bottom: 0;
-    height: 65%;
-    background: linear-gradient(180deg, rgba(0,0,0,0) 0%, rgba(0,0,0,0.8) 100%);
+  position: absolute;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  height: 65%;
+  background: linear-gradient(180deg, rgba(0, 0, 0, 0) 0%, rgba(0, 0, 0, 0.8) 100%);
 }
+
 .hero-text {
-    position: absolute;
-    left: 20px;
-    bottom: 20px;
-    color: #fff;
-    right: 20px;
+  position: absolute;
+  left: 20px;
+  bottom: 20px;
+  color: #fff;
+  right: 20px;
 }
+
 .hero-text h3 {
   margin: 0;
   font-size: 22px;
   font-weight: 800;
   margin-bottom: 8px;
 }
+
 .hero-text p {
   margin: 0;
   font-size: 13px;
-  color: rgba(255,255,255,0.9);
+  color: rgba(255, 255, 255, 0.9);
 }
 
 /* Popular destinations */
@@ -346,25 +353,29 @@ export default {
   flex: 1;
   margin-bottom: 20px;
 }
+
 .section-header {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    margin-bottom: 10px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 10px;
 }
+
 .section-header h4 {
   font-size: 18px;
   font-weight: 800;
   color: var(--dark);
 }
+
 .scroll-wrapper {
-    display: flex;
-    gap: 20px;
-    overflow-x: auto;
-    padding: 20px 0;
-    scroll-behavior: smooth;
-    -webkit-overflow-scrolling: touch;
+  display: flex;
+  gap: 20px;
+  overflow-x: auto;
+  padding: 20px 0;
+  scroll-behavior: smooth;
+  -webkit-overflow-scrolling: touch;
 }
+
 .scroll-wrapper::-webkit-scrollbar {
   display: none;
 }
@@ -382,21 +393,25 @@ export default {
   -webkit-tap-highlight-color: transparent;
   flex-shrink: 0;
 }
+
 .destination-card:hover {
   transform: translateY(-4px);
   box-shadow: var(--hover-shadow);
 }
+
 .thumb {
   position: relative;
   height: 100%;
   width: 100%;
 }
+
 .thumb img {
   width: 100%;
   height: 100%;
   object-fit: cover;
   object-position: center;
 }
+
 .rating-pill {
   position: absolute;
   top: 16px;
@@ -412,9 +427,11 @@ export default {
   border: 1px solid rgba(255, 255, 255, 0.5);
   margin: 0;
 }
+
 .rating-pill i {
   color: #ffc107;
 }
+
 .details-overlay {
   position: absolute;
   bottom: 12px;
@@ -431,60 +448,22 @@ export default {
   border: 1px solid rgba(255, 255, 255, 0.388);
   box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
 }
-  .destination-card h5 {
-    font-size: 15px;
-    margin: 14px 14px 1px;
-    margin-top: 5px;
-    font-weight: 700;
-    color: white;
-}
-.destination-card p {
-    font-size: 12px;
-    color: #ffffff;
-    margin: 0 14px 5px;
+
+.destination-card h5 {
+  font-size: 15px;
+  margin: 14px 14px 1px;
+  margin-top: 5px;
+  font-weight: 700;
+  color: white;
 }
 
-/* Bottom nav - FIXED POSITION */
-.bottom-nav {
-    position: fixed; /* Changed from sticky to fixed */
-    bottom: 0;
-    left: 0;
-    right: 0;
-    background: white;
-    border-top: 1px solid #e9ecef;
-    padding: 16px 24px;
-    display: flex;
-    justify-content: center;
-    z-index: 1000; /* Ensure nav stays on top */
+.destination-card p {
+  font-size: 12px;
+  color: #ffffff;
+  margin: 0 14px 5px;
 }
-.nav-items-container {
-    display: flex;
-    justify-content: space-around;
-    width: 100%;
-    max-width: 420px;
-}
-.nav-item {
-    border: 0;
-    background: transparent;
-    font-size: 20px;
-    color: #adb5bd;
-    width: 48px;
-    height: 48px;
-    border-radius: 12px;
-    cursor: pointer;
-    display: flex;
-    align-items: center;
-  justify-content: center;
-    transition: all 0.2s ease;
-    -webkit-tap-highlight-color: transparent;
-}
-.nav-item.active {
-  color: var(--teal-1);
-  background: rgba(56,97,102,0.1);
-}
-.nav-item:hover {
-  background: rgba(0,0,0,0.03);
-}
+
+/* Remove bottom-nav styles from here since it's now a separate component */
 
 /* ================= RESPONSIVE BREAKPOINTS ================= */
 
@@ -539,10 +518,6 @@ export default {
 
   .homepage-inner {
     padding-bottom: 80px; /* Adjusted for smaller screens */
-  }
-
-  .bottom-nav {
-    padding: 12px 16px;
   }
 }
 
@@ -707,13 +682,6 @@ export default {
   .section-header h4 {
     font-size: 20px;
   }
-
-  .bottom-nav {
-    max-width: 768px;
-    left: 50%;
-    transform: translateX(-50%);
-    border-radius: 24px 24px 0 0;
-  }
 }
 
 /* Large Tablets (1024px - 1366px) */
@@ -758,13 +726,6 @@ export default {
     min-width: 280px;
     height: 360px;
   }
-
-  .bottom-nav {
-    max-width: 500px;
-    left: 50%;
-    transform: translateX(-50%);
-    border-radius: 24px 24px 0 0;
-  }
 }
 
 /* Desktop (1367px and up) */
@@ -795,13 +756,6 @@ export default {
   .destination-card {
     min-width: 300px;
     height: 380px;
-  }
-
-  .bottom-nav {
-    max-width: 500px;
-    left: 50%;
-    transform: translateX(-50%);
-    border-radius: 24px 24px 0 0;
   }
 }
 
@@ -842,10 +796,6 @@ export default {
 
   .homepage-inner {
     padding-bottom: 70px; /* Adjusted for landscape */
-  }
-
-  .bottom-nav {
-    padding: 10px 16px;
   }
 }
 
@@ -891,10 +841,6 @@ export default {
   .homepage-inner {
     padding-bottom: 60px; /* Adjusted for very short screens */
   }
-
-  .bottom-nav {
-    padding: 8px 12px;
-  }
 }
 
 /* Fix for iOS zoom on input focus */
@@ -905,7 +851,7 @@ export default {
 }
 
 /* Safe area insets for notched devices */
-@supports(padding: max(0px)) {
+@supports (padding: max(0px)) {
   .container {
     padding-left: max(0px, env(safe-area-inset-left));
     padding-right: max(0px, env(safe-area-inset-right));
@@ -914,10 +860,6 @@ export default {
 
   .homepage-inner {
     border-radius: 24px 24px 0 0;
-  }
-
-  .bottom-nav {
-    padding-bottom: max(16px, env(safe-area-inset-bottom));
   }
 
   @media (min-width: 768px) {

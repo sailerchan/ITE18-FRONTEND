@@ -14,7 +14,7 @@
             <input type="email" id="email" class="form-input"
                    placeholder=" "
                    :value="loginForm.email"
-                   @input="$emit('update:email', $event.target.value)"
+                   @input="$emit('update:login-email', $event.target.value)"
                    @focus="handleFocus"
                    @blur="handleBlur"
                    required>
@@ -27,7 +27,7 @@
             <input type="password" id="password" class="form-input"
                    placeholder=" "
                    :value="loginForm.password"
-                   @input="$emit('update:password', $event.target.value)"
+                   @input="$emit('update:login-password', $event.target.value)"
                    @focus="handleFocus"
                    @blur="handleBlur"
                    required>
@@ -71,8 +71,8 @@ export default {
     }
   },
   emits: [
-    'update:email',
-    'update:password',
+    'update:login-email',
+    'update:login-password',
     'handle-login',
     'social-login',
     'go-to-page'

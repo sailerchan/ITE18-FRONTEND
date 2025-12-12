@@ -480,8 +480,6 @@ export default {
   background: rgba(0,0,0,0.03);
 }
 
-/* ================= RESPONSIVE BREAKPOINTS - SAME AS HOMEPAGE ================= */
-
 /* Extra Small Phones (under 320px) */
 @media (max-width: 320px) {
   .profile-header {
