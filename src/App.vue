@@ -172,17 +172,20 @@
     <!-- GCash Detail Component -->
     <GcashDetail
       v-else-if="currentPage === 'gcash-detail'"
-      :total-amount="parseFloat(totalPrice)"
-      @go-back="goToPage('booking')"
-      @payment-success="handleGcashPaymentSuccess"
+  :total-amount="parseFloat(totalPrice)"
+  :selected-destination-name="selectedDestinationName"
+  :selected-accommodation="selectedProperty.title || 'Accommodation'"
+  @go-back="goToPage('booking')"
+  @payment-success="handleGcashPaymentSuccess"
     />
 
     <!-- GCash Payment Confirmation Component -->
     <GcashPaymentConfirm
       v-else-if="currentPage === 'gcash-confirm'"
-      :total-amount="parseFloat(totalPrice)"
-      @go-back="goToPage('gcash-detail')"
-      @payment-success="handlePaymentSuccess"
+  :total-amount="parseFloat(totalPrice) + 50"
+  :selected-accommodation="selectedProperty.title || 'Paradiso Hostel'"
+  @go-back="goToPage('gcash-detail')"
+  @payment-success="handlePaymentSuccess"
     />
 
     <!-- Mastercard Details Component -->

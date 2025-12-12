@@ -13,16 +13,12 @@
 
       <div class="trip-details">
         <div class="detail-row">
-          <span class="detail-icon">📅</span>
+          <span class="detail-icon"><i class="fa-solid fa-calendar"></i></span>
           <span class="detail-text">{{ tripDates }}</span>
         </div>
         <div class="detail-row">
           <span class="detail-icon">🏨</span>
           <span class="detail-text">{{ accommodationName }}</span>
-        </div>
-        <div class="detail-row">
-          <span class="detail-icon">💰</span>
-          <span class="detail-text">Total: PHP {{ totalPrice }}</span>
         </div>
       </div>
     </div>
@@ -406,7 +402,6 @@ export default {
   margin: 0;
   padding: 0;
   box-sizing: border-box;
-  font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
 }
 
 .itinerary-page {
@@ -423,8 +418,8 @@ export default {
 
 /* Dark Header Card */
 .trip-header {
-  background-color: #1f4f5a;
-  border-radius: 0 0 24px 24px;
+  background-color: #0c3437;
+  border-radius: 0 0 100px 100px;
   padding: 20px;
   margin: 0;
   box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
@@ -554,7 +549,7 @@ export default {
   left: 0;
   right: 0;
   height: 3px;
-  background-color: #1f4f5a;
+  background-color: #0c3437;
   border-radius: 3px 3px 0 0;
 }
 
@@ -589,7 +584,7 @@ export default {
 .time-label {
   font-size: 14px;
   font-weight: 600;
-  color: #1f4f5a;
+  color: #0c3437;
   margin-bottom: 12px;
   width: 100%;
 }
@@ -654,7 +649,7 @@ export default {
 /* Add Button */
 .add-button {
   width: 100%;
-  background-color: #1f4f5a;
+  background-color: #0c3437;
   color: white;
   border: none;
   border-radius: 12px;
@@ -669,7 +664,7 @@ export default {
 }
 
 .add-button:hover {
-  background-color: #164148;
+  background-color: #0c3437;
 }
 
 /* Packlist Section */
@@ -805,9 +800,9 @@ export default {
 }
 
 .packlist-checkbox.checked {
-  background-color: #1f4f5a;
+  background-color: 0c3437;
   color: white;
-  border-color: #1f4f5a;
+  border-color: 0c3437;
 }
 
 .packlist-text {
@@ -836,7 +831,7 @@ export default {
 .add-category-btn {
   width: 100%;
   background-color: transparent;
-  color: #1f4f5a;
+  color: #0c3437;
   border: 1px dashed #1f4f5a;
   border-radius: 8px;
   padding: 12px;
@@ -856,7 +851,7 @@ export default {
 /* Save Button */
 .save-button {
   width: 100%;
-  background-color: #1f4f5a;
+  background-color: #0c3437;
   color: white;
   border: none;
   border-radius: 12px;
