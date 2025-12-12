@@ -73,10 +73,10 @@ export default {
     receiptData: {
       type: Object,
       default: () => ({
-        amount: '2,250.00',
+        amount: '',
         paymentMethod: 'GCash',
-        receiptNumber: '213452 5563 3546',
-        dateTime: 'Nov. 24, 2025 | 10:30 PM'
+        receiptNumber: '',
+        dateTime: ''
       })
     }
   },
@@ -85,7 +85,7 @@ export default {
       this.$emit('go-back')
     },
     goToItinerary() {
-      this.$emit('go-itinerary') // Changed from go-home to go-itinerary
+      this.$emit('go-itinerary') 
     },
     downloadReceipt() {
       console.log('Downloading receipt...')
@@ -95,7 +95,7 @@ export default {
   },
   emits: [
     'go-back',
-    'go-itinerary' // Changed from go-home to go-itinerary
+    'go-itinerary'
   ]
 }
 </script>
@@ -158,7 +158,7 @@ export default {
 .success-circle {
   width: 120px;
   height: 120px;
-  border: 8px solid #4caf50;
+  border: 8px solid #32bd37;
   border-radius: 50%;
   display: flex;
   align-items: center;
@@ -168,7 +168,7 @@ export default {
 }
 
 .success-circle i {
-  color: #4caf50;
+  color: #32bd37;
   font-size: 48px;
   font-weight: bold;
 }
@@ -191,7 +191,7 @@ export default {
 .success-message {
   font-size: 24px;
   font-weight: 700;
-  color: #4caf50;
+  color: #32bd37;
   margin: 0 0 40px 0;
   animation: fadeInUp 0.6s ease-out 0.2s both;
 }
@@ -341,10 +341,10 @@ export default {
 .okay-button {
   width: 100%;
   max-width: 400px;
-  background-color: #1f4f5a;
+  background-color: #0c3437;
   color: white;
   border: none;
-  border-radius: 10px;
+  border-radius: 50px;
   padding: 17px;
   font-size: 17px;
   font-weight: 600;

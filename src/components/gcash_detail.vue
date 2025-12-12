@@ -21,7 +21,7 @@
           <div class="transaction-details">
             <div class="details-grid">
               <div class="label">Merchant</div>
-              <div class="value">Paradiso Hostel</div>
+              <div class="value">{{ selectedAccommodation || 'Accommodation' }}</div>
 
               <div class="label">Amount Due</div>
               <div class="value amount">PHP {{ totalAmount.toFixed(2) }}</div>
@@ -79,7 +79,14 @@ export default {
     totalAmount: {
       type: Number,
       required: true,
-      default: 2250.00
+    },
+    selectedDestinationName: {
+      type: String,
+      required: true,
+    },
+    selectedAccommodation: {
+      type: String,
+      default: 'Accommodation'
     }
   },
   data() {
@@ -258,7 +265,7 @@ export default {
 
 /* Transaction Details Box */
 .transaction-details {
-  background-color: #1f4f5a;
+  background-color: #0c3437;
   color: white;
   padding: 24px;
 }
@@ -347,10 +354,10 @@ export default {
 .next-button {
   width: 100%;
   padding: 16px;
-  background-color: #1f4f5a;
+  background-color: #0c3437;
   color: white;
   border: none;
-  border-radius: 12px;
+  border-radius: 50px;
   font-size: 16px;
   font-weight: 600;
   cursor: pointer;
@@ -361,7 +368,7 @@ export default {
 }
 
 .next-button:hover:not(.disabled) {
-  background-color: #173c45;
+  background-color: #0c3437;
   transform: translateY(-2px);
   box-shadow: 0 6px 16px rgba(31, 79, 90, 0.3);
 }

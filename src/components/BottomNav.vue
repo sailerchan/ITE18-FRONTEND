@@ -67,6 +67,13 @@ export default {
   display: flex;
   justify-content: center;
   z-index: 1000;
+
+  /* These properties prevent movement during scrolling */
+  -webkit-backface-visibility: hidden;
+  backface-visibility: hidden;
+  transform: translateZ(0);
+  -webkit-transform: translateZ(0);
+  will-change: transform;
 }
 
 .nav-items-container {
@@ -90,6 +97,8 @@ export default {
   justify-content: center;
   transition: all 0.2s ease;
   -webkit-tap-highlight-color: transparent;
+  -webkit-backface-visibility: hidden;
+  backface-visibility: hidden;
 }
 
 .nav-item.active {
@@ -134,7 +143,8 @@ export default {
   .bottom-nav {
     max-width: 768px;
     left: 50%;
-    transform: translateX(-50%);
+    transform: translateX(-50%) translateZ(0);
+    -webkit-transform: translateX(-50%) translateZ(0);
     border-radius: 24px 24px 0 0;
   }
 }
@@ -143,7 +153,8 @@ export default {
   .bottom-nav {
     max-width: 500px;
     left: 50%;
-    transform: translateX(-50%);
+    transform: translateX(-50%) translateZ(0);
+    -webkit-transform: translateX(-50%) translateZ(0);
     border-radius: 24px 24px 0 0;
   }
 }
@@ -153,5 +164,24 @@ export default {
   .bottom-nav {
     padding-bottom: max(16px, env(safe-area-inset-bottom));
   }
+}
+
+/* For iOS Safari to prevent bouncing effects */
+@supports (-webkit-touch-callout: none) {
+  .bottom-nav {
+    position: fixed;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    -webkit-transform: translate3d(0, 0, 0);
+    transform: translate3d(0, 0, 0);
+    -webkit-overflow-scrolling: touch;
+  }
+}
+
+/* Additional fix for mobile browsers */
+html, body {
+  overscroll-behavior: none;
+  -webkit-overflow-scrolling: touch;
 }
 </style>

@@ -322,10 +322,7 @@ export default {
     padding: 20px 16px;
   }
 
-  .accommodation-header h1 {
-    font-size: 18px;
-    padding: 0 36px;
-  }
+
 
   .accommodation-back-arrow {
     width: 24px;
@@ -482,10 +479,6 @@ export default {
     box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
   }
 
-  .accommodation-header h1 {
-    font-size: 26px;
-    padding: 0 60px;
-  }
 
   .accommodation-section-title {
     font-size: 20px;
@@ -539,10 +532,6 @@ export default {
     box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
   }
 
-  .accommodation-header h1 {
-    font-size: 28px;
-    padding: 0 70px;
-  }
 
   .accommodation-section-title {
     font-size: 22px;
