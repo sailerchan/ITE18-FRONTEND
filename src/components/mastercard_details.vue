@@ -124,8 +124,10 @@
 
       <!-- Pay Button -->
       <div class="pay-button-container">
-        <button class="pay-button" @click="processPayment" :disabled="!isFormValid || isProcessing">
-
+        <button class="pay-button" @click="processPayment" :disabled="!isFormValid || isProcessing">{{ isProcessing
+              ? 'Processing...'
+              : 'Pay ₱' + (totalAmount + additionalFee).toFixed(2)
+            }}
         </button>
       </div>
 
@@ -243,13 +245,15 @@ export default {
         })
       }, 2000)
     }
+const localTotalAmount = ref(props.totalAmount)
+const localAdditionalFee = ref(props.additionalFee)
 
-    return {
-      paymentDetails,
-      saveCard,
-      isProcessing,
-
-  
+return {
+  paymentDetails,
+  saveCard,
+  isProcessing,
+  localTotalAmount,
+  localAdditionalFee,
       isFormValid,
       formatCardNumber,
       formatExpiry,
