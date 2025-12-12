@@ -4,7 +4,7 @@
       <!-- Navigation Header -->
       <div class="header">
         <button class="back-btn" @click="$emit('go-back')">
-          <i class="fas fa-chevron-left"></i>
+          <i class="fas fa-arrow-left"></i>
         </button>
         <h1 class="header-title">Confirm Payment</h1>
       </div>
@@ -18,7 +18,7 @@
       <div class="transaction-card">
         <!-- Payee Header -->
         <div class="payee-header">
-          <h2 class="payee-name">Paradiso Hostel</h2>
+          <h2 class="payee-name">{{ selectedAccommodation || 'Paradiso Hostel' }}</h2>
         </div>
 
         <!-- Payment Summary -->
@@ -30,16 +30,16 @@
           <div class="amount-breakdown">
             <div class="amount-row">
               <span class="amount-label">Amount</span>
-              <span class="amount-value">PHP 2,100.00</span>
+              <span class="amount-value">PHP {{ baseAmount.toFixed(2) }}</span>
             </div>
             <div class="amount-row">
               <span class="amount-label">Additional fee</span>
-              <span class="amount-value">PHP 50.00</span>
+              <span class="amount-value">PHP {{ additionalFee.toFixed(2) }}</span>
             </div>
             <div class="divider"></div>
             <div class="amount-row total-row">
               <span class="total-label">Total</span>
-              <span class="total-value">PHP 2,150.00</span>
+              <span class="total-value">PHP {{ finalTotal.toFixed(2) }}</span>
             </div>
           </div>
         </div>
@@ -62,6 +62,24 @@ export default {
     totalAmount: {
       type: Number,
       default: 2150.00
+    },
+    selectedAccommodation: {
+      type: String,
+      default: 'Paradiso Hostel'
+    }
+  },
+  data() {
+    return {
+      additionalFee: 50.00
+    }
+  },
+  computed: {
+    baseAmount() {
+      // The totalAmount passed in already includes everything, so we subtract the fee to show it separately
+      return this.totalAmount - this.additionalFee
+    },
+    finalTotal() {
+      return this.baseAmount + this.additionalFee
     }
   },
   emits: ['go-back', 'payment-success'],
@@ -69,7 +87,7 @@ export default {
     handlePayment() {
       console.log('Processing GCash payment...')
       this.$emit('payment-success', {
-        amount: this.totalAmount,
+        amount: this.finalTotal,
         paymentMethod: 'GCash',
         transactionId: 'GC' + Date.now()
       })
@@ -121,7 +139,7 @@ export default {
   background: none;
   border: none;
   font-size: 18px;
-  color: #007AFF;
+  color: black;
   padding: 8px;
   cursor: pointer;
   display: flex;
@@ -172,7 +190,7 @@ export default {
 
 /* Payee Header */
 .payee-header {
-  background: #1f4f5a;
+  background: #0c3437;
   padding: 20px;
   text-align: center;
 }
@@ -182,7 +200,6 @@ export default {
   font-size: 18px;
   font-weight: 600;
   margin: 0;
-  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
 }
 
 /* Payment Summary */
@@ -249,16 +266,15 @@ export default {
 
 .pay-button {
   width: 100%;
-  background: #1f4f5a;
+  background: #0c3437;
   color: white;
   border: none;
-  border-radius: 12px;
+  border-radius: 50px;
   padding: 18px;
   font-size: 18px;
   font-weight: 600;
   cursor: pointer;
   transition: all 0.3s ease;
-  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
   box-shadow: 0 4px 12px rgba(31, 79, 90, 0.3);
   -webkit-tap-highlight-color: transparent;
 }

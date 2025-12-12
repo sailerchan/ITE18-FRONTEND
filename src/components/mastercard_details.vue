@@ -124,9 +124,17 @@
 
       <!-- Pay Button -->
       <div class="pay-button-container">
-        <button class="pay-button" @click="processPayment" :disabled="!isFormValid">
-          Pay ₱{{ (totalAmount + additionalFee).toFixed(2) }}
+        <button class="pay-button" @click="processPayment" :disabled="!isFormValid || isProcessing">
+          {{ isProcessing ? 'Processing...' : `Pay ₱${(totalAmount + additionalFee).toFixed(2)}` }}
         </button>
+      </div>
+
+      <!-- Loading Overlay -->
+      <div v-if="isProcessing" class="loading-overlay">
+        <div class="loading-spinner">
+          <div class="spinner"></div>
+          <p>Processing payment...</p>
+        </div>
       </div>
     </div>
   </div>
@@ -144,7 +152,7 @@ export default {
     },
     additionalFee: {
       type: Number,
-      default: 150.00
+      default: 50.00
     }
   },
   emits: ['go-back', 'payment-success'],
@@ -158,6 +166,7 @@ export default {
     })
 
     const saveCard = ref(false)
+    const isProcessing = ref(false)
 
     const isFormValid = computed(() => {
       return paymentDetails.value.name &&
@@ -214,18 +223,31 @@ export default {
         return
       }
 
+      // Show loading state
+      isProcessing.value = true
+
       // Simulate Mastercard payment processing
       console.log('Processing Mastercard payment...', paymentDetails.value)
 
       // Simulate API call delay
       setTimeout(() => {
-        emit('payment-success')
-      }, 1500)
+        isProcessing.value = false
+
+        // Emit payment success with data
+        emit('payment-success', {
+          amount: props.totalAmount + props.additionalFee,
+          paymentMethod: 'Mastercard',
+          transactionId: 'MC' + Date.now(),
+          cardLastFour: paymentDetails.value.cardNumber.replace(/\s/g, '').slice(-4),
+          timestamp: new Date().toISOString()
+        })
+      }, 2000)
     }
 
     return {
       paymentDetails,
       saveCard,
+      isProcessing,
       totalAmount: ref(props.totalAmount),
       additionalFee: ref(props.additionalFee),
       isFormValid,
@@ -471,10 +493,10 @@ export default {
 
 .pay-button {
   width: 100%;
-  background-color: #1f4f5a;
+  background-color: #0c3437;
   color: white;
   border: none;
-  border-radius: 10px;
+  border-radius: 50px;
   padding: 17px;
   font-size: 17px;
   font-weight: 600;
@@ -490,6 +512,49 @@ export default {
 .pay-button:disabled {
   background-color: #cccccc;
   cursor: not-allowed;
+}
+
+/* Loading Overlay */
+.loading-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: rgba(255, 255, 255, 0.9);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 1000;
+}
+
+.loading-spinner {
+  text-align: center;
+  background: white;
+  padding: 32px;
+  border-radius: 16px;
+  box-shadow: 0 10px 25px rgba(0, 0, 0, 0.1);
+}
+
+.spinner {
+  width: 40px;
+  height: 40px;
+  border: 4px solid #f3f3f3;
+  border-top: 4px solid #1f4f5a;
+  border-radius: 50%;
+  animation: spin 1s linear infinite;
+  margin: 0 auto 16px;
+}
+
+@keyframes spin {
+  0% { transform: rotate(0deg); }
+  100% { transform: rotate(360deg); }
+}
+
+.loading-spinner p {
+  color: #1f4f5a;
+  font-weight: 500;
+  margin: 0;
 }
 
 /* Responsive breakpoints adjusted for no hero banner */
