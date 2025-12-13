@@ -617,43 +617,45 @@ export default {
       return `${monthNames[currentDate.value.getMonth()]} ${currentDate.value.getFullYear()}`
     })
 
-    const fromDateDisplay = computed(() => {
-      if (!selectedStart.value) return 'Select start date'
-      const monthNamesShort = [
-        'Jan.',
-        'Feb.',
-        'Mar.',
-        'Apr.',
-        'May',
-        'Jun.',
-        'Jul.',
-        'Aug.',
-        'Sep.',
-        'Oct.',
-        'Nov.',
-        'Dec.',
-      ]
-      return `${monthNamesShort[currentDate.value.getMonth()]} ${selectedStart.value}, ${currentDate.value.getFullYear()}`
-    })
+   const fromDateDisplay = computed(() => {
+  if (!selectedStart.value) return 'Select start date'
+  const monthNamesShort = [
+    'Jan.',
+    'Feb.',
+    'Mar.',
+    'Apr.',
+    'May',
+    'Jun.',
+    'Jul.',
+    'Aug.',
+    'Sep.',
+    'Oct.',
+    'Nov.',
+    'Dec.',
+  ]
+  return `${monthNamesShort[selectedStart.value.getMonth()]} ${selectedStart.value.getDate()}, ${selectedStart.value.getFullYear()}`
+})
 
-    const toDateDisplay = computed(() => {
-      if (!selectedEnd.value) return 'Select end date'
-      const monthNamesShort = [
-        'Jan.',
-        'Feb.',
-        'Mar.',
-        'Apr.',
-        'May',
-        'Jun.',
-        'Jul.',
-        'Aug.',
-        'Sep.',
-        'Oct.',
-        'Nov.',
-        'Dec.',
-      ]
-      return `${monthNamesShort[currentDate.value.getMonth()]} ${selectedEnd.value}, ${currentDate.value.getFullYear()}`
-    })
+const toDateDisplay = computed(() => {
+  if (!selectedEnd.value) return 'Select end date'
+  const monthNamesShort = [
+    'Jan.',
+    'Feb.',
+    'Mar.',
+    'Apr.',
+    'May',
+    'Jun.',
+    'Jul.',
+    'Aug.',
+    'Sep.',
+    'Oct.',
+    'Nov.',
+    'Dec.',
+  ]
+  return `${monthNamesShort[selectedEnd.value.getMonth()]} ${selectedEnd.value.getDate()}, ${selectedEnd.value.getFullYear()}`
+})
+
+
 
     const calendarDays = computed(() => {
       const year = currentDate.value.getFullYear()
@@ -684,27 +686,28 @@ export default {
     })
 
     const bookingDatesDisplay = computed(() => {
-      if (selectedStart.value && selectedEnd.value) {
-        const monthNamesShort = [
-          'Jan',
-          'Feb',
-          'Mar',
-          'Apr',
-          'May',
-          'Jun',
-          'Jul',
-          'Aug',
-          'Sep',
-          'Oct',
-          'Nov',
-          'Dec',
-        ]
-        const startMonth = monthNamesShort[currentDate.value.getMonth()]
-        const endMonth = monthNamesShort[currentDate.value.getMonth()]
-        return `${startMonth} ${selectedStart.value} - ${endMonth} ${selectedEnd.value}, ${currentDate.value.getFullYear()}`
-      }
-      return 'Select dates'
-    })
+  if (selectedStart.value && selectedEnd.value) {
+    const monthNamesShort = [
+      'Jan',
+      'Feb',
+      'Mar',
+      'Apr',
+      'May',
+      'Jun',
+      'Jul',
+      'Aug',
+      'Sep',
+      'Oct',
+      'Nov',
+      'Dec',
+    ]
+    const startMonth = monthNamesShort[selectedStart.value.getMonth()]
+    const endMonth = monthNamesShort[selectedEnd.value.getMonth()]
+    return `${startMonth} ${selectedStart.value.getDate()} - ${endMonth} ${selectedEnd.value.getDate()}, ${selectedEnd.value.getFullYear()}`
+  }
+  return 'Select dates'
+})
+
 
     // Update showNav when currentPage changes
     const updateShowNav = () => {
@@ -971,8 +974,7 @@ export default {
         currentDate.value.getMonth() - 1,
         1,
       )
-      selectedStart.value = null
-      selectedEnd.value = null
+      
     }
 
     const nextMonth = () => {
@@ -981,35 +983,46 @@ export default {
         currentDate.value.getMonth() + 1,
         1,
       )
-      selectedStart.value = null
+      
+    }
+
+    const selectDate = (date) => {
+  // date is now a Date object, not just a day number
+  if (!selectedStart.value || (selectedStart.value && selectedEnd.value)) {
+    // Starting new selection
+    selectedStart.value = date
+    selectedEnd.value = null
+  } else {
+    // Selecting end date
+    if (date >= selectedStart.value) {
+      selectedEnd.value = date
+    } else {
+      // If user clicks earlier date, make it the new start
+      selectedStart.value = date
       selectedEnd.value = null
     }
+  }
+}
 
-    const selectDate = (day) => {
-      if (!selectedStart.value || (selectedStart.value && selectedEnd.value)) {
-        selectedStart.value = day
-        selectedEnd.value = null
-      } else {
-        selectedEnd.value = day
-        if (selectedStart.value > selectedEnd.value) {
-          ;[selectedStart.value, selectedEnd.value] = [selectedEnd.value, selectedStart.value]
-        }
-      }
-    }
 
     const goToAccommodation = () => {
-      if (selectedStart.value && selectedEnd.value) {
-        console.log(
-          `Date range selected for ${selectedDestinationName.value}: ${selectedStart.value} - ${selectedEnd.value} ${currentMonthYear.value}`,
-        )
-        const nights = selectedEnd.value - selectedStart.value
-        booking.value.nights = nights
-        booking.value.dates = bookingDatesDisplay.value
-        goToPage('accommodation')
-      } else {
-        alert('Please select a complete date range')
-      }
-    }
+  if (selectedStart.value && selectedEnd.value) {
+    console.log(
+      `Date range selected for ${selectedDestinationName.value}: ${selectedStart.value.toLocaleDateString()} - ${selectedEnd.value.toLocaleDateString()}`,
+    )
+    
+    // Calculate nights using full dates
+    const timeDiff = selectedEnd.value.getTime() - selectedStart.value.getTime()
+    const nights = Math.ceil(timeDiff / (1000 * 3600 * 24))
+    
+    booking.value.nights = nights
+    booking.value.dates = bookingDatesDisplay.value
+    goToPage('accommodation')
+  } else {
+    alert('Please select a complete date range')
+  }
+}
+
 
     const viewBooking = (propertyId) => {
       selectedProperty.value = properties.value[propertyId] || properties.value.paradiso

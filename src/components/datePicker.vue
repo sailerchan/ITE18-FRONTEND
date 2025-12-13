@@ -8,42 +8,48 @@
       </div>
 
       <!-- Manual Date Inputs -->
-      <div class="manual-inputs">
-        <div class="input-group">
-          <label class="input-label">From Date</label>
-          <div class="input-wrapper">
-            <input
-              type="date"
-              v-model="manualStartDate"
-              :min="todayFormatted"
-              @change="handleManualStartDateChange"
-              class="date-input-field"
-            >
-            <i class="fas fa-calendar-alt input-icon"></i>
-          </div>
-        </div>
+<div class="manual-inputs">
+  <div class="input-group">
+    <label class="input-label">From Date</label>
+    <div class="input-wrapper">
+      <input
+        type="text"
+        v-model="manualStartDate"
+        placeholder="MM/DD/YYYY"
+        @input="handleManualStartDateChange"
+        @blur="validateStartDateFormat"
+        class="date-input-field"
+        maxlength="10"
+      >
+      <i class="fas fa-calendar-alt input-icon"></i>
+    </div>
+  </div>
 
-        <div class="input-group">
-          <label class="input-label">To Date</label>
-          <div class="input-wrapper">
-            <input
-              type="date"
-              v-model="manualEndDate"
-              :min="manualStartDate || todayFormatted"
-              @change="handleManualEndDateChange"
-              class="date-input-field"
-            >
-            <i class="fas fa-calendar-alt input-icon"></i>
-          </div>
-        </div>
-      </div>
+  <div class="input-group">
+    <label class="input-label">To Date</label>
+    <div class="input-wrapper">
+      <input
+        type="text"
+        v-model="manualEndDate"
+        placeholder="MM/DD/YYYY"
+        @input="handleManualEndDateChange"
+        @blur="validateEndDateFormat"
+        class="date-input-field"
+        maxlength="10"
+      >
+      <i class="fas fa-calendar-alt input-icon"></i>
+    </div>
+  </div>
+</div>
+
 
       <!-- Calendar -->
       <div class="calendar-container">
         <div class="month-nav">
           <div class="nav-arrow" @click="handlePrevMonth" :class="{ disabled: isCurrentMonth }">‹</div>
           <div class="month-year">{{ currentMonthYear }}</div>
-          <div class="nav-arrow" @click="$emit('next-month')">›</div>
+          <div class="nav-arrow" @click="handleNextMonth" :class="{ disabled: isMaxMonth }">›</div>
+
         </div>
 
         <div class="day-headers">
@@ -95,11 +101,11 @@ export default {
       required: true
     },
     selectedStart: {
-      type: Number,
+      type: Date,  // Changed to Date object instead of Number
       default: null
     },
     selectedEnd: {
-      type: Number,
+      type: Date,  // Changed to Date object instead of Number
       default: null
     },
     currentMonthYear: {
@@ -117,6 +123,10 @@ export default {
     calendarDays: {
       type: Array,
       required: true
+    },
+    maxMonthsAhead: {
+      type: Number,
+      default: 3  // Allow selection up to 3 months ahead
     }
   },
   emits: [
@@ -131,17 +141,24 @@ export default {
     return {
       manualStartDate: '',
       manualEndDate: '',
-      today: new Date()
+      today: new Date(),
+      selectingStartDate: true  // Track whether we're selecting start or end
     }
   },
   computed: {
-    todayFormatted() {
-      return this.formatDateForInput(this.today);
+    maxAllowedDate() {
+      const maxDate = new Date();
+      maxDate.setMonth(maxDate.getMonth() + this.maxMonthsAhead);
+      return maxDate;
     },
     isCurrentMonth() {
       const now = new Date();
       return this.currentDate.getMonth() === now.getMonth() &&
              this.currentDate.getFullYear() === now.getFullYear();
+    },
+    isMaxMonth() {
+      return this.currentDate.getMonth() === this.maxAllowedDate.getMonth() &&
+             this.currentDate.getFullYear() === this.maxAllowedDate.getFullYear();
     },
     todayDate() {
       const now = new Date();
@@ -155,30 +172,143 @@ export default {
     }
   },
   methods: {
+    formatDateInput(value) {
+      let cleaned = value.replace(/\D/g, '');
+
+      if (cleaned.length >= 2) {
+        cleaned = cleaned.substring(0, 2) + '/' + cleaned.substring(2);
+      }
+      if (cleaned.length >= 5) {
+        cleaned = cleaned.substring(0, 5) + '/' + cleaned.substring(5, 9);
+      }
+
+      return cleaned;
+    },
+
+    parseDateString(dateString) {
+      const parts = dateString.split('/');
+      if (parts.length === 3) {
+        const month = parseInt(parts[0], 10);
+        const day = parseInt(parts[1], 10);
+        const year = parseInt(parts[2], 10);
+
+        if (month >= 1 && month <= 12 && day >= 1 && day <= 31 && year >= 1000) {
+          const date = new Date(year, month - 1, day);
+          // Verify the date is valid (handles invalid dates like 02/30/2025)
+          if (date.getMonth() === month - 1 && date.getDate() === day) {
+            return date;
+          }
+        }
+      }
+      return null;
+    },
+
+    isValidDate(dateString) {
+      const date = this.parseDateString(dateString);
+      if (!date || isNaN(date.getTime())) {
+        return false;
+      }
+
+      const today = new Date();
+      today.setHours(0, 0, 0, 0);
+
+      if (date < today) {
+        return false;
+      }
+
+      if (date > this.maxAllowedDate) {
+        return false;
+      }
+
+      return true;
+    },
+
+    handleManualStartDateChange(event) {
+      this.manualStartDate = this.formatDateInput(event.target.value);
+    },
+
+    handleManualEndDateChange(event) {
+      this.manualEndDate = this.formatDateInput(event.target.value);
+    },
+
+    validateStartDateFormat() {
+      if (this.manualStartDate.length === 10) {
+        if (this.isValidDate(this.manualStartDate)) {
+          const date = this.parseDateString(this.manualStartDate);
+          this.$emit('select-date', date);
+
+          if (this.manualEndDate) {
+            const endDate = this.parseDateString(this.manualEndDate);
+            if (endDate && endDate < date) {
+              this.manualEndDate = '';
+              this.$emit('select-date', null);
+            }
+          }
+        } else {
+          alert('Please enter a valid date in MM/DD/YYYY format within the allowed range');
+          this.manualStartDate = '';
+        }
+      }
+    },
+
+    validateEndDateFormat() {
+      if (this.manualEndDate.length === 10) {
+        if (this.isValidDate(this.manualEndDate)) {
+          const endDate = this.parseDateString(this.manualEndDate);
+          const startDate = this.manualStartDate ? this.parseDateString(this.manualStartDate) : null;
+
+          if (!startDate) {
+            alert('Please select a start date first');
+            this.manualEndDate = '';
+            return;
+          }
+
+          if (endDate >= startDate) {
+            this.$emit('select-date', endDate);
+          } else {
+            alert('End date must be after start date');
+            this.manualEndDate = '';
+          }
+        } else {
+          alert('Please enter a valid date in MM/DD/YYYY format within the allowed range');
+          this.manualEndDate = '';
+        }
+      }
+    },
+
     getDateClass(day) {
       const classes = [];
+      const currentViewDate = new Date(this.currentYear, this.currentMonth, day);
 
-      // Check if this is today's date
       if (this.isToday(day)) {
         classes.push('today');
       }
 
-      // Check if date is in the past
       if (this.isPastDate(day)) {
         classes.push('past-date');
       }
 
-      // Check selection range
-      if (day === this.selectedStart) {
+      if (this.isBeyondMaxDate(day)) {
+        classes.push('past-date');
+      }
+
+      // Compare full dates for range selection
+      if (this.selectedStart && this.isSameDate(currentViewDate, this.selectedStart)) {
         classes.push('range-start');
-      } else if (day === this.selectedEnd) {
+      } else if (this.selectedEnd && this.isSameDate(currentViewDate, this.selectedEnd)) {
         classes.push('range-end');
       } else if (this.selectedStart && this.selectedEnd &&
-                 day > this.selectedStart && day < this.selectedEnd) {
+                 currentViewDate > this.selectedStart && currentViewDate < this.selectedEnd) {
         classes.push('range-mid');
       }
 
       return classes.join(' ');
+    },
+
+    isSameDate(date1, date2) {
+      return date1.getFullYear() === date2.getFullYear() &&
+             date1.getMonth() === date2.getMonth() &&
+             date1.getDate() === date2.getDate();
     },
 
     isToday(day) {
@@ -196,72 +326,43 @@ export default {
       return selectedDate < today;
     },
 
+    isBeyondMaxDate(day) {
+      const selectedDate = new Date(this.currentYear, this.currentMonth, day);
+      return selectedDate > this.maxAllowedDate;
+    },
+
     handleDateClick(day) {
-      // Don't allow clicking on past dates
-      if (this.isPastDate(day)) {
+      if (this.isPastDate(day) || this.isBeyondMaxDate(day)) {
         return;
       }
 
-      this.$emit('select-date', day);
+      const clickedDate = new Date(this.currentYear, this.currentMonth, day);
+      this.$emit('select-date', clickedDate);
     },
 
     handlePrevMonth() {
-      // Don't allow going to past months from current month
       if (!this.isCurrentMonth) {
         this.$emit('prev-month');
       }
     },
 
-    formatDateForInput(date) {
-      const year = date.getFullYear();
+    handleNextMonth() {
+      if (!this.isMaxMonth) {
+        this.$emit('next-month');
+      }
+    },
+
+    formatDateForDisplay(date) {
       const month = String(date.getMonth() + 1).padStart(2, '0');
       const day = String(date.getDate()).padStart(2, '0');
-      return `${year}-${month}-${day}`;
-    },
-
-    handleManualStartDateChange() {
-      if (this.manualStartDate) {
-        const date = new Date(this.manualStartDate);
-        // Only emit if date is not in the past
-        if (date >= new Date(this.today.getFullYear(), this.today.getMonth(), this.today.getDate())) {
-          const day = date.getDate();
-          this.$emit('select-date', day);
-
-          // If end date is before start date, clear it
-          if (this.manualEndDate && new Date(this.manualEndDate) < date) {
-            this.manualEndDate = '';
-          }
-        } else {
-          this.manualStartDate = '';
-          alert('Cannot select past dates');
-        }
-      }
-    },
-
-    handleManualEndDateChange() {
-      if (this.manualEndDate) {
-        const date = new Date(this.manualEndDate);
-        const startDate = this.manualStartDate ? new Date(this.manualStartDate) : null;
-
-        // Check if end date is after start date and not in the past
-        if (!startDate || date >= startDate) {
-          if (date >= new Date(this.today.getFullYear(), this.today.getMonth(), this.today.getDate())) {
-            const day = date.getDate();
-            this.$emit('select-date', day);
-          } else {
-            this.manualEndDate = '';
-            alert('Cannot select past dates');
-          }
-        } else {
-          this.manualEndDate = '';
-          alert('End date must be after start date');
-        }
-      }
+      const year = date.getFullYear();
+      return `${month}/${day}/${year}`;
     },
 
     calculateNights() {
       if (this.selectedStart && this.selectedEnd) {
-        return this.selectedEnd - this.selectedStart;
+        const timeDiff = this.selectedEnd.getTime() - this.selectedStart.getTime();
+        return Math.ceil(timeDiff / (1000 * 3600 * 24));
       }
       return 0;
     },
@@ -277,16 +378,14 @@ export default {
   watch: {
     selectedStart(newVal) {
       if (newVal) {
-        const date = new Date(this.currentYear, this.currentMonth, newVal);
-        this.manualStartDate = this.formatDateForInput(date);
+        this.manualStartDate = this.formatDateForDisplay(newVal);
       } else {
         this.manualStartDate = '';
       }
     },
     selectedEnd(newVal) {
       if (newVal) {
-        const date = new Date(this.currentYear, this.currentMonth, newVal);
-        this.manualEndDate = this.formatDateForInput(date);
+        this.manualEndDate = this.formatDateForDisplay(newVal);
       } else {
         this.manualEndDate = '';
       }
@@ -294,6 +393,8 @@ export default {
   }
 }
 </script>
+
+
 
 <style scoped>
 /* Reset and Base Styles */
@@ -1151,7 +1252,7 @@ html, body, .container, .date-picker-inner {
 @media (max-width: 320px) {
 date-grid {
     gap: 4px;
-    padding: 0;  
+    padding: 0;
   }
 
   .day-header {
