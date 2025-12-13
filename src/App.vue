@@ -51,13 +51,22 @@
     />
 
     <!-- Trips Component -->
-    <TripsPage
-      v-else-if="currentPage === 'trips'"
-      @go-back="goToPage('homepage')"
-      @plan-trip="handlePlanTrip"
-      @go-to-page="goToPage"
-    />
+    <!-- Trips Component -->
+<TripsPage
+  v-else-if="currentPage === 'trips'"
+  @go-back="goToPage('homepage')"
+  @plan-trip="handlePlanTrip"
+  @go-to-page="goToPage"
+  @open-details="openTripDetails"
+/>
 
+    <!--Trip Details Component-->
+    <TripDetailsPage
+  v-else-if="currentPage === 'trip-details'"
+  :trip="selectedTrip"
+  @go-back="goToPage('trips')"
+  @edit-trip="handleEditTrip"
+/>
     <!-- Notification Component -->
     <NotificationPage
       v-else-if="currentPage === 'notifications'"
@@ -218,6 +227,7 @@ import GcashDetail from './components/gcash_detail.vue'
 import GcashPaymentConfirm from './components/GcashPaymentConfirm.vue'
 import PaymentSuccess from './components/paymentsuccess.vue'
 import ItineraryPage from './components/ItineraryPage.vue'
+import TripDetailsPage from './components/TripDetailsPage.vue'
 
 export default {
   name: 'App',
@@ -228,6 +238,7 @@ export default {
     ForgotPassword,
     Homepage,
     TripsPage,
+    TripDetailsPage,
     NotificationPage,
     ProfilePage,
     PersonalInformation,
@@ -245,6 +256,7 @@ export default {
   setup() {
     // Initialize trips store
     const tripsStore = useTripsStore()
+    const selectedTrip = ref(null)
 
     // Navigation state
     const currentPage = ref('login')
@@ -974,7 +986,7 @@ const toDateDisplay = computed(() => {
         currentDate.value.getMonth() - 1,
         1,
       )
-      
+
     }
 
     const nextMonth = () => {
@@ -983,7 +995,7 @@ const toDateDisplay = computed(() => {
         currentDate.value.getMonth() + 1,
         1,
       )
-      
+
     }
 
     const selectDate = (date) => {
@@ -1003,6 +1015,16 @@ const toDateDisplay = computed(() => {
     }
   }
 }
+const openTripDetails = (trip) => {
+  console.log('Opening trip details:', trip)
+  selectedTrip.value = trip
+  goToPage('trip-details')
+}
+
+const handleEditTrip = (trip) => {
+  console.log('Editing trip:', trip)
+  alert('Edit trip functionality coming soon!')
+}
 
 
     const goToAccommodation = () => {
@@ -1010,11 +1032,11 @@ const toDateDisplay = computed(() => {
     console.log(
       `Date range selected for ${selectedDestinationName.value}: ${selectedStart.value.toLocaleDateString()} - ${selectedEnd.value.toLocaleDateString()}`,
     )
-    
+
     // Calculate nights using full dates
     const timeDiff = selectedEnd.value.getTime() - selectedStart.value.getTime()
     const nights = Math.ceil(timeDiff / (1000 * 3600 * 24))
-    
+
     booking.value.nights = nights
     booking.value.dates = bookingDatesDisplay.value
     goToPage('accommodation')
@@ -1105,6 +1127,7 @@ const toDateDisplay = computed(() => {
           })
           .replace(',', ' |'),
       }
+
 
       console.log('📋 Receipt Data:', receiptData.value)
 
@@ -1288,6 +1311,9 @@ const toDateDisplay = computed(() => {
       handleTripSaved,
       handleNavClick,
       forceLogin,
+      selectedTrip,
+      openTripDetails,  // Make sure this is here
+      handleEditTrip,
     }
   },
 }
