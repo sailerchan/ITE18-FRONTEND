@@ -1,31 +1,43 @@
 <template>
   <div id="app">
-   <!-- Login Component -->
-    <Login
-      v-if="currentPage === 'login'"
-      :login-form="loginForm"
-      @update:email="loginForm.email = $event"
-      @update:password="loginForm.password = $event"
-      @handle-login="handleLogin"
-      @social-login="socialLogin"
-      @go-to-page="goToPage"
+
+    <OnboardingLogo v-if="screen === 'splash'" />
+
+    <OnboardingExplore
+      v-else-if="screen === 'onboarding'"
+      @go-to-page="handleOnboardingComplete"
     />
+
+    <!-- Login Component -->
+    <Login
+  v-else-if="screen === 'login' && currentPage === 'login'"
+  :login-form="loginForm"
+  @update:email="loginForm.email = $event"
+  @update:password="loginForm.password = $event"
+  @handle-login="handleLogin"
+  @social-login="socialLogin"
+  @go-to-page="goToPage"
+/>
+
 
     <!-- Signup Component -->
     <Signup
-      v-else-if="currentPage === 'signup'"
-      :signup-form="signupForm"
-      :is-signup-form-valid="isSignupFormValid"
-      @update:firstName="signupForm.firstName = $event"
-      @update:lastName="signupForm.lastName = $event"
-      @update:email="signupForm.email = $event"
-      @update:password="signupForm.password = $event"
-      @update:confirmPassword="signupForm.confirmPassword = $event"
-      @validate-password="validatePassword"
-      @validate-confirm-password="validateConfirmPassword"
-      @handle-signup="handleSignup"
-      @go-to-page="goToPage"
-    />
+  v-else-if="currentPage === 'signup'"
+  :signup-form="signupForm"
+  :is-signup-form-valid="isSignupFormValid"
+  @update:firstName="signupForm.firstName = $event"
+  @update:lastName="signupForm.lastName = $event"
+  @update:email="signupForm.email = $event"
+  @update:password="signupForm.password = $event"
+  @update:confirmPassword="signupForm.confirmPassword = $event"
+  @validate-password="validatePassword"
+  @validate-confirm-password="validateConfirmPassword"
+  @handle-signup="handleSignup"
+  @go-to-page="goToPage"
+/>
+
+
+
 
     <!-- Forgot Password Component -->
     <ForgotPassword
@@ -206,9 +218,12 @@
 </template>
 
 <script>
-import { ref, computed, watch } from 'vue'
+import { ref, computed, watch, onMounted} from 'vue'
+import { useOnboardingStore } from './stores/onboarding'
 import { useTripsStore } from './stores/trips'
-import BottomNav from './components/bottomNav.vue'
+import OnboardingLogo from './components/onboarding/logo_opening.vue'
+import OnboardingExplore from './components/onboarding/onboardingscreen.vue'
+import BottomNav from './components/BottomNav.vue'
 import Login from './components/log_in.vue'
 import Signup from './components/sign_up.vue'
 import ForgotPassword from './components/forgotpassword_page.vue'
@@ -229,9 +244,12 @@ import PaymentSuccess from './components/paymentsuccess.vue'
 import ItineraryPage from './components/ItineraryPage.vue'
 import TripDetailsPage from './components/TripDetailsPage.vue'
 
+
 export default {
   name: 'App',
   components: {
+    OnboardingLogo,
+    OnboardingExplore,
     BottomNav,
     Login,
     Signup,
@@ -258,6 +276,15 @@ export default {
     const tripsStore = useTripsStore()
     const selectedTrip = ref(null)
 
+    const onboarding = useOnboardingStore()
+
+    onMounted(() => {
+      onboarding.init()
+    })
+
+const screen = computed(() => onboarding.currentScreen)
+
+
     // Navigation state
     const currentPage = ref('login')
     const currentBookingView = ref('listing')
@@ -265,6 +292,15 @@ export default {
     const showNav = ref(false)
     const activeDestinationTab = ref('details')
     const currentDestination = ref(null)
+
+
+    const handleOnboardingComplete = (page) => {
+  // Mark onboarding as seen
+  onboarding.finishOnboarding()
+  // Navigate to the page (signup)
+  goToPage(page)
+}
+
 
     // User data
     const loginForm = ref({
@@ -1292,7 +1328,10 @@ export default {
 
     return {
       tripsStore,
+      onboarding,
+      screen,
       currentPage,
+      handleOnboardingComplete,
       currentBookingView,
       showDebug,
       showNav,
@@ -1380,6 +1419,9 @@ body {
   background: #f0f0f0;
   min-height: 100vh;
   overflow-x: hidden;
+  width: 100%;
+  max-width: 100vw;
+  position: relative;
 }
 
 #app {
@@ -1388,6 +1430,9 @@ body {
   min-height: 100vh;
   position: relative;
   padding-bottom: 0;
+  width: 100%;
+  max-width: 100vw;
+  overflow-x: hidden;
 }
 
 .debug-info {
