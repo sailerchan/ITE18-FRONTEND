@@ -2,34 +2,34 @@ import { ref, computed } from 'vue'
 import { defineStore } from 'pinia'
 
 export const useTripsStore = defineStore('trips', () => {
-  // Sample destinations data - UPDATED TO MATCH HOMEPAGE IMAGES
+  // Sample destinations data
   const destinations = ref([
     {
       id: 1,
       name: 'Siargao Island',
       description: 'Surfing capital of the Philippines',
-      image: '/images/destinations/siargao.jpg', // This matches homepage
+      image: '/images/destinations/siargao.jpg',
       rating: 4.9
     },
     {
       id: 2,
       name: 'Naked Island',
       description: 'A stunning sandbar surrounded by crystal-clear waters.',
-      image: '/images/destinations/naked_island.jpg', // Updated to match homepage
+      image: '/images/destinations/naked_island.jpg',
       rating: 4.9
     },
     {
       id: 3,
       name: 'Guyam Island',
       description: 'A small, peaceful island ideal for relaxation and snorkeling.',
-      image: '/images/destinations/guyam.jpg', // Updated to match homepage
+      image: '/images/destinations/guyam.jpg',
       rating: 4.7
     },
     {
       id: 4,
       name: 'Cloud 9',
       description: 'World-famous surf spot known for its powerful waves.',
-      image: '/images/destinations/cloud9.jpg', // Updated to match homepage
+      image: '/images/destinations/cloud9.jpg',
       rating: 4.8
     }
   ])
@@ -42,7 +42,7 @@ export const useTripsStore = defineStore('trips', () => {
 
   // Getter for upcoming trips
   const getUpcomingTrips = computed(() => {
-    console.log('🔄 Getting upcoming trips:', upcomingTrips.value)
+    console.log('📄 Getting upcoming trips:', upcomingTrips.value)
     return upcomingTrips.value
   })
 
@@ -60,9 +60,18 @@ export const useTripsStore = defineStore('trips', () => {
     return destination ? destination.image : '/images/default-trip.jpg'
   }
 
+  // Get trip by ID (for viewing details)
+  const getTripById = (tripId) => {
+    const upcoming = upcomingTrips.value.find(trip => trip.id === tripId)
+    if (upcoming) return upcoming
+    
+    const past = pastTrips.value.find(trip => trip.id === tripId)
+    return past
+  }
+
   // Add a COMPLETED trip (after booking/payment)
   const addCompletedTrip = (bookingData) => {
-    console.log('🏨 addCompletedTrip called with:', bookingData)
+    console.log('🎨 addCompletedTrip called with:', bookingData)
 
     const { destinationId, destinationName, dates, nights, totalPrice, paymentMethod, receiptNumber, property } = bookingData
 
@@ -79,7 +88,7 @@ export const useTripsStore = defineStore('trips', () => {
 
     // Create a new trip object
     const newTrip = {
-      id: Date.now(), // Unique ID based on timestamp
+      id: Date.now(),
       destinationId: destinationId,
       destinationName: destinationName || destination.name,
       bookingDate: new Date().toISOString(),
@@ -92,9 +101,16 @@ export const useTripsStore = defineStore('trips', () => {
       accommodation: property || {
         title: `${destination.name} Accommodation`,
         location: destination.name,
-        image: destination.image // Use the destination image here
+        image: destination.image
       },
-      destinationImage: destination.image // Add destination image separately
+      destinationImage: destination.image,
+      // NEW: Itinerary and Packlist fields
+      itinerary: {
+        activities: []
+      },
+      packlist: {
+        categories: []
+      }
     }
 
     console.log('✈️ New trip created:', newTrip)
@@ -110,6 +126,36 @@ export const useTripsStore = defineStore('trips', () => {
     console.log('💾 Saved to localStorage')
 
     return newTrip
+  }
+
+  // Update trip itinerary and packlist
+  const updateTripDetails = (tripId, itineraryData, packlistData) => {
+    const trip = getTripById(tripId)
+    
+    if (!trip) {
+      console.error('Trip not found:', tripId)
+      return false
+    }
+
+    // Update itinerary
+    if (itineraryData) {
+      trip.itinerary = {
+        activities: itineraryData.activities || []
+      }
+    }
+
+    // Update packlist
+    if (packlistData) {
+      trip.packlist = {
+        categories: packlistData.categories || []
+      }
+    }
+
+    // Save to localStorage
+    saveToLocalStorage()
+
+    console.log('✅ Trip details updated:', trip)
+    return true
   }
 
   // Save trips to localStorage
@@ -131,12 +177,12 @@ export const useTripsStore = defineStore('trips', () => {
         const tripsData = JSON.parse(savedTrips)
         upcomingTrips.value = tripsData.upcomingTrips || []
         pastTrips.value = tripsData.pastTrips || []
-        console.log('📥 Loaded trips from localStorage:', tripsData)
+        console.log('🔥 Loaded trips from localStorage:', tripsData)
       } catch (error) {
         console.error('Error loading trips from localStorage:', error)
       }
     } else {
-      console.log('📭 No trips found in localStorage')
+      console.log('🔭 No trips found in localStorage')
     }
   }
 
@@ -180,7 +226,9 @@ export const useTripsStore = defineStore('trips', () => {
     getPastTrips,
     getDestinationById,
     getDestinationImage,
+    getTripById,
     addCompletedTrip,
+    updateTripDetails,
     loadFromLocalStorage,
     cancelTrip,
     completeTrip,

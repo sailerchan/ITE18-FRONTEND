@@ -51,22 +51,22 @@
     />
 
     <!-- Trips Component -->
-    <!-- Trips Component -->
-<TripsPage
-  v-else-if="currentPage === 'trips'"
-  @go-back="goToPage('homepage')"
-  @plan-trip="handlePlanTrip"
-  @go-to-page="goToPage"
-  @open-details="openTripDetails"
-/>
+    <TripsPage
+      v-else-if="currentPage === 'trips'"
+      @go-back="goToPage('homepage')"
+      @plan-trip="handlePlanTrip"
+      @go-to-page="goToPage"
+      @open-details="openTripDetails"
+    />
 
     <!--Trip Details Component-->
     <TripDetailsPage
-  v-else-if="currentPage === 'trip-details'"
-  :trip="selectedTrip"
-  @go-back="goToPage('trips')"
-  @edit-trip="handleEditTrip"
-/>
+      v-else-if="currentPage === 'trip-details'"
+      :trip="selectedTrip"
+      @go-back="goToPage('trips')"
+      @edit-trip="handleEditTrip"
+    />
+
     <!-- Notification Component -->
     <NotificationPage
       v-else-if="currentPage === 'notifications'"
@@ -157,20 +157,20 @@
     <!-- GCash Detail Component -->
     <GcashDetail
       v-else-if="currentPage === 'gcash-detail'"
-  :total-amount="parseFloat(totalPrice)"
-  :selected-destination-name="selectedDestinationName"
-  :selected-accommodation="selectedProperty.title || 'Accommodation'"
-  @go-back="goToPage('booking')"
-  @payment-success="handleGcashPaymentSuccess"
+      :total-amount="parseFloat(totalPrice)"
+      :selected-destination-name="selectedDestinationName"
+      :selected-accommodation="selectedProperty.title || 'Accommodation'"
+      @go-back="goToPage('booking')"
+      @payment-success="handleGcashPaymentSuccess"
     />
 
     <!-- GCash Payment Confirmation Component -->
     <GcashPaymentConfirm
       v-else-if="currentPage === 'gcash-confirm'"
-  :total-amount="parseFloat(totalPrice) + 50"
-  :selected-accommodation="selectedProperty.title || 'Paradiso Hostel'"
-  @go-back="goToPage('gcash-detail')"
-  @payment-success="handlePaymentSuccess"
+      :total-amount="parseFloat(totalPrice) + 50"
+      :selected-accommodation="selectedProperty.title || 'Paradiso Hostel'"
+      @go-back="goToPage('gcash-detail')"
+      @payment-success="handlePaymentSuccess"
     />
 
     <!-- Mastercard Details Component -->
@@ -192,7 +192,7 @@
     <!-- Itinerary Page Component -->
     <ItineraryPage
       v-else-if="currentPage === 'itinerary'"
-      @go-back="goToPage('homepage')"
+      @go-back="goToItineraryBack"
       @trip-saved="handleTripSaved"
     />
 
@@ -630,44 +630,42 @@ export default {
     })
 
    const fromDateDisplay = computed(() => {
-  if (!selectedStart.value) return 'Select start date'
-  const monthNamesShort = [
-    'Jan.',
-    'Feb.',
-    'Mar.',
-    'Apr.',
-    'May',
-    'Jun.',
-    'Jul.',
-    'Aug.',
-    'Sep.',
-    'Oct.',
-    'Nov.',
-    'Dec.',
-  ]
-  return `${monthNamesShort[selectedStart.value.getMonth()]} ${selectedStart.value.getDate()}, ${selectedStart.value.getFullYear()}`
-})
+      if (!selectedStart.value) return 'Select start date'
+      const monthNamesShort = [
+        'Jan.',
+        'Feb.',
+        'Mar.',
+        'Apr.',
+        'May',
+        'Jun.',
+        'Jul.',
+        'Aug.',
+        'Sep.',
+        'Oct.',
+        'Nov.',
+        'Dec.',
+      ]
+      return `${monthNamesShort[selectedStart.value.getMonth()]} ${selectedStart.value.getDate()}, ${selectedStart.value.getFullYear()}`
+    })
 
-const toDateDisplay = computed(() => {
-  if (!selectedEnd.value) return 'Select end date'
-  const monthNamesShort = [
-    'Jan.',
-    'Feb.',
-    'Mar.',
-    'Apr.',
-    'May',
-    'Jun.',
-    'Jul.',
-    'Aug.',
-    'Sep.',
-    'Oct.',
-    'Nov.',
-    'Dec.',
-  ]
-  return `${monthNamesShort[selectedEnd.value.getMonth()]} ${selectedEnd.value.getDate()}, ${selectedEnd.value.getFullYear()}`
-})
-
-
+    const toDateDisplay = computed(() => {
+      if (!selectedEnd.value) return 'Select end date'
+      const monthNamesShort = [
+        'Jan.',
+        'Feb.',
+        'Mar.',
+        'Apr.',
+        'May',
+        'Jun.',
+        'Jul.',
+        'Aug.',
+        'Sep.',
+        'Oct.',
+        'Nov.',
+        'Dec.',
+      ]
+      return `${monthNamesShort[selectedEnd.value.getMonth()]} ${selectedEnd.value.getDate()}, ${selectedEnd.value.getFullYear()}`
+    })
 
     const calendarDays = computed(() => {
       const year = currentDate.value.getFullYear()
@@ -698,28 +696,27 @@ const toDateDisplay = computed(() => {
     })
 
     const bookingDatesDisplay = computed(() => {
-  if (selectedStart.value && selectedEnd.value) {
-    const monthNamesShort = [
-      'Jan',
-      'Feb',
-      'Mar',
-      'Apr',
-      'May',
-      'Jun',
-      'Jul',
-      'Aug',
-      'Sep',
-      'Oct',
-      'Nov',
-      'Dec',
-    ]
-    const startMonth = monthNamesShort[selectedStart.value.getMonth()]
-    const endMonth = monthNamesShort[selectedEnd.value.getMonth()]
-    return `${startMonth} ${selectedStart.value.getDate()} - ${endMonth} ${selectedEnd.value.getDate()}, ${selectedEnd.value.getFullYear()}`
-  }
-  return 'Select dates'
-})
-
+      if (selectedStart.value && selectedEnd.value) {
+        const monthNamesShort = [
+          'Jan',
+          'Feb',
+          'Mar',
+          'Apr',
+          'May',
+          'Jun',
+          'Jul',
+          'Aug',
+          'Sep',
+          'Oct',
+          'Nov',
+          'Dec',
+        ]
+        const startMonth = monthNamesShort[selectedStart.value.getMonth()]
+        const endMonth = monthNamesShort[selectedEnd.value.getMonth()]
+        return `${startMonth} ${selectedStart.value.getDate()} - ${endMonth} ${selectedEnd.value.getDate()}, ${selectedEnd.value.getFullYear()}`
+      }
+      return 'Select dates'
+    })
 
     // Update showNav when currentPage changes
     const updateShowNav = () => {
@@ -986,7 +983,6 @@ const toDateDisplay = computed(() => {
         currentDate.value.getMonth() - 1,
         1,
       )
-
     }
 
     const nextMonth = () => {
@@ -995,56 +991,113 @@ const toDateDisplay = computed(() => {
         currentDate.value.getMonth() + 1,
         1,
       )
-
     }
 
     const selectDate = (date) => {
-  // date is now a Date object, not just a day number
-  if (!selectedStart.value || (selectedStart.value && selectedEnd.value)) {
-    // Starting new selection
-    selectedStart.value = date
-    selectedEnd.value = null
-  } else {
-    // Selecting end date
-    if (date >= selectedStart.value) {
-      selectedEnd.value = date
-    } else {
-      // If user clicks earlier date, make it the new start
-      selectedStart.value = date
-      selectedEnd.value = null
+      // date is now a Date object, not just a day number
+      if (!selectedStart.value || (selectedStart.value && selectedEnd.value)) {
+        // Starting new selection
+        selectedStart.value = date
+        selectedEnd.value = null
+      } else {
+        // Selecting end date
+        if (date >= selectedStart.value) {
+          selectedEnd.value = date
+        } else {
+          // If user clicks earlier date, make it the new start
+          selectedStart.value = date
+          selectedEnd.value = null
+        }
+      }
     }
-  }
-}
-const openTripDetails = (trip) => {
-  console.log('Opening trip details:', trip)
-  selectedTrip.value = trip
-  goToPage('trip-details')
-}
 
-const handleEditTrip = (trip) => {
-  console.log('Editing trip:', trip)
-  alert('Edit trip functionality coming soon!')
-}
+    const openTripDetails = (trip) => {
+      console.log('Opening trip details:', trip)
+      selectedTrip.value = trip
+      goToPage('trip-details')
+    }
 
+    const handleEditTrip = (trip) => {
+      console.log('Editing trip:', trip)
+
+      // Store the trip being edited
+      selectedTrip.value = trip
+
+      // Set the trip data for the itinerary page
+      if (trip) {
+        selectedDestinationName.value = trip.destinationName
+        selectedDestinationId.value = trip.destinationId
+
+        // Store in localStorage so ItineraryPage can access it
+        localStorage.setItem('editingTripId', trip.id.toString())
+      }
+
+      // Navigate to itinerary page
+      goToPage('itinerary')
+    }
+
+    const handleTripSaved = (tripData) => {
+      console.log('Trip saved with data:', tripData)
+
+      // Get the trip ID we're editing
+      const editingTripId = localStorage.getItem('editingTripId')
+
+      if (editingTripId) {
+        // Update existing trip
+        const tripId = parseInt(editingTripId)
+        tripsStore.updateTripDetails(
+          tripId,
+          { activities: tripData.activities },
+          { categories: tripData.packlist }
+        )
+
+        // Clear the editing flag
+        localStorage.removeItem('editingTripId')
+
+        console.log('✅ Trip updated in store')
+      }
+    }
+
+    const goToItineraryBack = () => {
+      const editingTripId = localStorage.getItem('editingTripId')
+
+      if (editingTripId) {
+        // If we were editing a trip, go back to trip details
+        const tripId = parseInt(editingTripId)
+        const trip = tripsStore.getTripById(tripId)
+
+        if (trip) {
+          selectedTrip.value = trip
+          goToPage('trip-details')
+        } else {
+          goToPage('trips')
+        }
+
+        // Clear the editing flag
+        localStorage.removeItem('editingTripId')
+      } else {
+        // Otherwise go back to homepage
+        goToPage('homepage')
+      }
+    }
 
     const goToAccommodation = () => {
-  if (selectedStart.value && selectedEnd.value) {
-    console.log(
-      `Date range selected for ${selectedDestinationName.value}: ${selectedStart.value.toLocaleDateString()} - ${selectedEnd.value.toLocaleDateString()}`,
-    )
+      if (selectedStart.value && selectedEnd.value) {
+        console.log(
+          `Date range selected for ${selectedDestinationName.value}: ${selectedStart.value.toLocaleDateString()} - ${selectedEnd.value.toLocaleDateString()}`,
+        )
 
-    // Calculate nights using full dates
-    const timeDiff = selectedEnd.value.getTime() - selectedStart.value.getTime()
-    const nights = Math.ceil(timeDiff / (1000 * 3600 * 24))
+        // Calculate nights using full dates
+        const timeDiff = selectedEnd.value.getTime() - selectedStart.value.getTime()
+        const nights = Math.ceil(timeDiff / (1000 * 3600 * 24))
 
-    booking.value.nights = nights
-    booking.value.dates = bookingDatesDisplay.value
-    goToPage('accommodation')
-  } else {
-    alert('Please select a complete date range')
-  }
-}
-
+        booking.value.nights = nights
+        booking.value.dates = bookingDatesDisplay.value
+        goToPage('accommodation')
+      } else {
+        alert('Please select a complete date range')
+      }
+    }
 
     const viewBooking = (propertyId) => {
       selectedProperty.value = properties.value[propertyId] || properties.value.paradiso
@@ -1127,7 +1180,6 @@ const handleEditTrip = (trip) => {
           })
           .replace(',', ' |'),
       }
-
 
       console.log('📋 Receipt Data:', receiptData.value)
 
@@ -1228,10 +1280,6 @@ const handleEditTrip = (trip) => {
       console.log('💾 Booking data saved to localStorage:', bookingData)
     }
 
-    const handleTripSaved = (tripData) => {
-      console.log('Trip saved with data:', tripData)
-    }
-
     const forceLogin = () => {
       userName.value = 'John Doe'
       localStorage.setItem('userName', userName.value)
@@ -1312,8 +1360,9 @@ const handleEditTrip = (trip) => {
       handleNavClick,
       forceLogin,
       selectedTrip,
-      openTripDetails,  // Make sure this is here
+      openTripDetails,
       handleEditTrip,
+      goToItineraryBack,
     }
   },
 }

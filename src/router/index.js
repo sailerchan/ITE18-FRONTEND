@@ -112,7 +112,7 @@ const routes = [
     path: '/itinerary',
     name: 'itinerary',
     component: () => import('../components/ItineraryPage.vue'),
-    meta: { requiresAuth: true, showNav: true } // Show nav on itinerary
+    meta: { requiresAuth: true, showNav: false} // No nav on itinerary
   },
   // Add a catch-all route for 404 errors
   {

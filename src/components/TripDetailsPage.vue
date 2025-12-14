@@ -8,14 +8,13 @@
         </button>
         <div class="details-header-text">
           <span class="details-label">Details</span>
-          <!-- destination + dates placeholders -->
           <h1 class="trip-title">
             Trip to<br>
-            <span class="trip-destination">Destination Name</span>
+            <span class="trip-destination">{{ tripDestination }}</span>
           </h1>
         </div>
         <div class="details-dates">
-          <span class="dates-text">Nov 12 – 14, 2025</span>
+          <span class="dates-text">{{ tripDates }}</span>
         </div>
       </header>
 
@@ -25,22 +24,31 @@
         <section class="details-card">
           <h2 class="card-title">Accommodation</h2>
           <div class="card-divider"></div>
-          
-          <p class="card-heading">Property name here</p>
-          <p class="card-text">Address / location line</p>
-          <p class="card-text">Other accommodation details...</p>
+
+          <p class="card-heading">{{ accommodationTitle }}</p>
+          <p class="card-text">{{ accommodationLocation }}</p>
+          <p class="card-text">Receipt No: {{ receiptNumber }}</p>
+          <p class="card-text">Payment: {{ paymentMethod }}</p>
+          <p class="card-text">Booked on: {{ bookingDate }}</p>
         </section>
 
         <!-- Itinerary card -->
         <section class="details-card">
           <h2 class="card-title">Itinerary</h2>
           <div class="card-divider"></div>
-          <p class="card-heading">Day 1</p>
-          <ul class="card-list">
-            <li>Morning activity</li>
-            <li>Afternoon activity</li>
-            <li>Evening activity</li>
-          </ul>
+
+          <div v-if="hasItinerary">
+            <div v-for="(dayActivities, day) in groupedActivities" :key="day">
+              <p class="card-heading">Day {{ day }}</p>
+              <ul class="card-list">
+                <li v-for="activity in dayActivities" :key="activity.id">
+                  <strong>{{ formatTime(activity.time) }}:</strong> {{ activity.notes }}
+                </li>
+              </ul>
+            </div>
+          </div>
+
+          <p v-else class="card-text empty-state">No itinerary added yet</p>
         </section>
 
         <!-- Packlist card -->
@@ -48,44 +56,28 @@
           <h2 class="card-title">Packlist</h2>
           <div class="card-divider"></div>
 
-          <p class="card-heading">Essentials</p>
-          <ul class="checkbox-list">
-            <li>
-              <label>
-                <input type="checkbox">
-                <span>Item 1</span>
-              </label>
-            </li>
-            <li>
-              <label>
-                <input type="checkbox">
-                <span>Item 2</span>
-              </label>
-            </li>
-          </ul>
+          <div v-if="hasPacklist">
+            <div v-for="category in packlistCategories" :key="category.id" class="category-section">
+              <p class="card-heading">{{ category.title }}</p>
+              <ul class="checkbox-list">
+                <li v-for="item in category.items" :key="item.id">
+                  <label>
+                    <input type="checkbox" :checked="item.checked" @change="togglePacklistItem(category.id, item.id)">
+                    <span :class="{ 'checked-item': item.checked }">{{ item.text }}</span>
+                  </label>
+                </li>
+              </ul>
+            </div>
+          </div>
 
-          <p class="card-heading">Clothing</p>
-          <ul class="checkbox-list">
-            <li>
-              <label>
-                <input type="checkbox">
-                <span>Clothing item 1</span>
-              </label>
-            </li>
-            <li>
-              <label>
-                <input type="checkbox">
-                <span>Clothing item 2</span>
-              </label>
-            </li>
-          </ul>
+          <p v-else class="card-text empty-state">No packlist added yet</p>
         </section>
       </main>
 
       <!-- Bottom Edit button -->
       <div class="edit-bar">
-        <button class="edit-button" @click="$emit('edit-trip')">
-          Edit
+        <button class="edit-button" @click="handleEditTrip">
+          Edit Itinerary
         </button>
       </div>
     </div>
@@ -93,9 +85,130 @@
 </template>
 
 <script>
+import { ref, computed, onMounted } from 'vue'
+import { useTripsStore } from '../stores/trips'
+
 export default {
   name: 'TripDetailsPage',
-  emits: ['go-back', 'edit-trip']
+  props: {
+    trip: {
+      type: Object,
+      required: true
+    }
+  },
+  emits: ['go-back', 'edit-trip'],
+  setup(props, { emit }) {
+    const tripsStore = useTripsStore()
+
+    // Computed properties for display
+    const tripDestination = computed(() => props.trip?.destinationName || 'Unknown Destination')
+
+    const tripDates = computed(() => props.trip?.dates || 'No dates selected')
+
+    const accommodationTitle = computed(() =>
+      props.trip?.accommodation?.title || 'No accommodation booked'
+    )
+
+    const accommodationLocation = computed(() =>
+      props.trip?.accommodation?.location || ''
+    )
+
+    const receiptNumber = computed(() =>
+      props.trip?.receiptNumber || 'N/A'
+    )
+
+    const paymentMethod = computed(() =>
+      props.trip?.paymentMethod || 'N/A'
+    )
+
+    const bookingDate = computed(() => {
+      if (!props.trip?.bookingDate) return 'N/A'
+      const date = new Date(props.trip.bookingDate)
+      return date.toLocaleDateString('en-US', {
+        month: 'short',
+        day: 'numeric',
+        year: 'numeric'
+      })
+    })
+
+    // Itinerary data
+    const activities = computed(() =>
+      props.trip?.itinerary?.activities || []
+    )
+
+    const hasItinerary = computed(() =>
+      activities.value.length > 0
+    )
+
+    const groupedActivities = computed(() => {
+      const grouped = {}
+      activities.value.forEach(activity => {
+        if (!grouped[activity.day]) {
+          grouped[activity.day] = []
+        }
+        grouped[activity.day].push(activity)
+      })
+      return grouped
+    })
+
+    // Packlist data
+    const packlistCategories = computed(() =>
+      props.trip?.packlist?.categories || []
+    )
+
+    const hasPacklist = computed(() =>
+      packlistCategories.value.length > 0
+    )
+
+    // Methods
+    const formatTime = (time) => {
+      const timeMap = {
+        morning: 'Morning',
+        afternoon: 'Afternoon',
+        evening: 'Evening'
+      }
+      return timeMap[time] || time
+    }
+
+    const togglePacklistItem = (categoryId, itemId) => {
+      const category = packlistCategories.value.find(c => c.id === categoryId)
+      if (category) {
+        const item = category.items.find(i => i.id === itemId)
+        if (item) {
+          item.checked = !item.checked
+          // Save to store
+          tripsStore.saveToLocalStorage()
+        }
+      }
+    }
+
+    const handleEditTrip = () => {
+      console.log('Editing trip:', props.trip)
+      // Store the trip ID in localStorage so ItineraryPage knows which trip to edit
+      if (props.trip?.id) {
+        localStorage.setItem('editingTripId', props.trip.id.toString())
+      }
+      emit('edit-trip', props.trip)
+    }
+
+    return {
+      tripDestination,
+      tripDates,
+      accommodationTitle,
+      accommodationLocation,
+      receiptNumber,
+      paymentMethod,
+      bookingDate,
+      activities,
+      hasItinerary,
+      groupedActivities,
+      packlistCategories,
+      hasPacklist,
+      formatTime,
+      togglePacklistItem,
+      handleEditTrip
+    }
+  }
 }
 </script>
 
@@ -106,7 +219,6 @@ export default {
   --teal-1: #0c3437;
 }
 
-/* CONTAINER */
 .container {
   min-height: 100vh;
   min-height: 100dvh;
@@ -123,7 +235,6 @@ export default {
   flex-direction: column;
 }
 
-/* TOP HEADER AREA (dark teal) */
 .details-header {
   background: #0c3437;
   color: #ffff;
@@ -134,7 +245,7 @@ export default {
   align-items: flex-start;
   position: absolute;
   width: 100%;
-  height:200px;
+  height: 200px;
   z-index: 1;
   margin: 0;
 }
@@ -159,7 +270,6 @@ export default {
 
 .details-label {
   font-size: 16px;
-  
 }
 
 .trip-title {
@@ -168,8 +278,7 @@ export default {
   font-weight: 600;
   line-height: 1.3;
   padding-top: 30px;
-  margin-left:-30px;
-  
+  margin-left: -30px;
 }
 
 .trip-destination {
@@ -178,27 +287,24 @@ export default {
 
 .details-dates {
   margin-left: 8px;
-  padding-top:80px;
-  
+  padding-top: 80px;
 }
 
 .dates-text {
   font-size: 12px;
   opacity: 0.9;
-  font-weight:200;
+  font-weight: 200;
 }
 
-/* MAIN WHITE CONTENT */
 .details-main {
   flex: 1;
   padding: 0 30px;
   background: #f8f9fa;
-  flex-direction:column;
+  flex-direction: column;
   gap: 12px;
   bottom: 2px;
 }
 
-/* CARD BASE (white rounded boxes) */
 .details-card {
   background: #ffffff;
   border-radius: 16px;
@@ -207,11 +313,12 @@ export default {
   margin-bottom: 12px;
 }
 
-.details-main .details-card:first-child{
+.details-main .details-card:first-child {
   margin-top: 150px;
-  position:relative;
+  position: relative;
   z-index: 2;
 }
+
 .card-title {
   font-size: 16px;
   font-weight: 600;
@@ -223,17 +330,21 @@ export default {
   height: 1px;
   margin: 8px 0 10px;
   border-top: 1px dashed #e5e7eb;
-  border-image: repeating-linear-gradient(
-    to right, #e5e7eb 0 12px, 
-    trasnparent 12px 18px) 1;
-  
 }
 
 .card-heading {
   font-size: 14px;
   font-weight: 600;
-  margin: 0 0 6px;
+  margin: 12px 0 6px;
   color: var(--dark);
+}
+
+.category-section {
+  margin-bottom: 16px;
+}
+
+.category-section:last-child {
+  margin-bottom: 0;
 }
 
 .card-text {
@@ -243,7 +354,13 @@ export default {
   line-height: 1.4;
 }
 
-/* ITINERARY LIST */
+.card-text.empty-state {
+  color: #9ca3af;
+  font-style: italic;
+  text-align: center;
+  padding: 12px 0;
+}
+
 .card-list {
   list-style: none;
   padding: 0;
@@ -253,14 +370,19 @@ export default {
 .card-list li {
   font-size: 12px;
   color: #374151;
-  margin-bottom: 3px;
+  margin-bottom: 6px;
+  line-height: 1.5;
 }
 
-/* CHECKBOX LISTS */
+.card-list li strong {
+  color: var(--teal-1);
+  font-weight: 600;
+}
+
 .checkbox-list {
   list-style: none;
   padding: 0;
-  margin: 4px 0 12px;
+  margin: 4px 0 8px;
 }
 
 .checkbox-list li {
@@ -278,16 +400,21 @@ export default {
 .checkbox-list input[type='checkbox'] {
   margin-right: 8px;
 }
+
+.checked-item {
+  text-decoration: line-through;
+  color: #9ca3af;
+}
+
 .details-card:last-child {
   margin-bottom: 4px;
 }
-/* EDIT BUTTON BAR */
+
 .edit-bar {
   padding: 16px;
   background: #0c3437;
   margin: 20px;
   border-radius: 50px;
-  
 }
 
 .edit-button {
@@ -298,10 +425,9 @@ export default {
   font-size: 16px;
   font-weight: 500;
   cursor: pointer;
-  font-family:'Poppins', sans-serif;
+  font-family: 'Poppins', sans-serif;
 }
 
-/* basic breakpoints */
 @media (min-width: 768px) {
   .container {
     background: #f8f9fa;
@@ -315,4 +441,4 @@ export default {
     overflow: hidden;
   }
 }
-</style>
+</style> 

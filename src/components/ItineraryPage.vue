@@ -298,7 +298,22 @@ export default {
     if (this.autoSaveTimer) {
       clearTimeout(this.autoSaveTimer)
     }
-  },
+  // NEW: Check if we're editing an existing trip
+  const editingTripId = localStorage.getItem('editingTripId')
+
+  if (editingTripId) {
+    // Load existing trip data
+    this.loadExistingTripData(parseInt(editingTripId))
+  } else {
+    // Load draft if creating new trip
+    this.loadDraft()
+  }
+
+  if (this.categories.length === 0) {
+    this.addCategory()
+  }
+},
+
   methods: {
     loadBookingData() {
       const bookingData = localStorage.getItem('lastBooking')
@@ -563,8 +578,40 @@ export default {
     confirmLeave() {
       this.showLeaveModal = false
       this.$emit('go-back')
+    },
+
+    loadExistingTripData(tripId) {
+    const tripsStore = useTripsStore()
+    const trip = tripsStore.getTripById(tripId)
+
+    if (trip) {
+      console.log('📖 Loading existing trip data:', trip)
+
+      // Load trip details
+      this.tripTitle = `Trip to ${trip.destinationName}`
+      this.tripDates = trip.dates
+      this.accommodationName = trip.accommodation?.title || 'Accommodation'
+      this.totalPrice = trip.totalPrice
+
+      // Load itinerary activities
+      if (trip.itinerary?.activities && trip.itinerary.activities.length > 0) {
+        this.activities = [...trip.itinerary.activities]
+        this.nextActivityId = Math.max(...this.activities.map(a => a.id)) + 1
+      }
+
+      // Load packlist
+      if (trip.packlist?.categories && trip.packlist.categories.length > 0) {
+        this.categories = [...trip.packlist.categories]
+        this.nextCategoryId = Math.max(...this.categories.map(c => c.id)) + 1
+        this.nextItemId = Math.max(...this.categories.flatMap(c => c.items.map(i => i.id))) + 1
+      }
+
+      this.hasUnsavedChanges = false
     }
   }
+
+  }
+
 }
 </script>
 
