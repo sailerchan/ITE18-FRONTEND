@@ -76,8 +76,8 @@
     <TripDetailsPage
       v-else-if="currentPage === 'trip-details'"
       :trip="selectedTrip"
-      @go-back="goToPage('trips')"
-      @edit-trip="handleEditTrip"
+      @go-back="handleTripDetailsBack"
+      @edit-itinerary="handleEditItinerary"
     />
 
     <!-- Notification Component -->
@@ -199,7 +199,7 @@
       v-else-if="currentPage === 'payment-success'"
       :receipt-data="receiptData"
       @go-back="goToPreviousPage"
-      @go-itinerary="goToPage('itinerary')"
+      @go-itinerary="goToItineraryFromSuccess"
     />
 
     <!-- Itinerary Page Component -->
@@ -219,7 +219,7 @@
 </template>
 
 <script>
-import { ref, computed, watch, onMounted} from 'vue'
+import { ref, computed, watch, onMounted } from 'vue'
 import { useOnboardingStore } from './stores/onboarding'
 import { useTripsStore } from './stores/trips'
 import OnboardingLogo from './components/onboarding/logo_opening.vue'
@@ -244,7 +244,6 @@ import GcashPaymentConfirm from './components/GcashPaymentConfirm.vue'
 import PaymentSuccess from './components/paymentsuccess.vue'
 import ItineraryPage from './components/ItineraryPage.vue'
 import TripDetailsPage from './components/TripDetailsPage.vue'
-
 
 export default {
   name: 'App',
@@ -283,8 +282,7 @@ export default {
       onboarding.init()
     })
 
-const screen = computed(() => onboarding.currentScreen)
-
+    const screen = computed(() => onboarding.currentScreen)
 
     // Navigation state
     const currentPage = ref('login')
@@ -294,14 +292,12 @@ const screen = computed(() => onboarding.currentScreen)
     const activeDestinationTab = ref('details')
     const currentDestination = ref(null)
 
-
     const handleOnboardingComplete = (page) => {
-  // Mark onboarding as seen
-  onboarding.finishOnboarding()
-  // Navigate to the page (signup)
-  goToPage(page)
-}
-
+      // Mark onboarding as seen
+      onboarding.finishOnboarding()
+      // Navigate to the page (signup)
+      goToPage(page)
+    }
 
     // User data
     const loginForm = ref({
@@ -757,7 +753,7 @@ const screen = computed(() => onboarding.currentScreen)
 
     // Update showNav when currentPage changes
     const updateShowNav = () => {
-      showNav.value = ['homepage', 'trips', 'notifications', 'profile', 'itinerary'].includes(currentPage.value)
+      showNav.value = ['homepage', 'trips', 'notifications', 'profile', 'itinerary', 'trip-details'].includes(currentPage.value)
       console.log('Show nav updated:', showNav.value, 'for page:', currentPage.value)
     }
 
@@ -888,6 +884,7 @@ const screen = computed(() => onboarding.currentScreen)
         'forgot-password': 'login',
         'destination-details': 'homepage',
         itinerary: 'homepage',
+        'trip-details': 'trips',
       }
 
       if (pageMap[currentPage.value]) {
@@ -1052,72 +1049,141 @@ const screen = computed(() => onboarding.currentScreen)
       }
     }
 
+    // FIXED: Open trip details - get fresh trip from store
     const openTripDetails = (trip) => {
-      console.log('Opening trip details:', trip)
-      selectedTrip.value = trip
+      console.log('📂 Opening trip details for trip:', trip)
+
+      if (trip?.id) {
+        // Always get fresh trip from store
+        const freshTrip = tripsStore.getTripById(trip.id)
+
+        if (freshTrip) {
+          selectedTrip.value = freshTrip
+          console.log('✅ Loaded fresh trip from store:', freshTrip)
+
+          // Debug: Show itinerary data
+          if (freshTrip.itinerary?.activities) {
+            console.log('📅 Itinerary activities:', freshTrip.itinerary.activities)
+          }
+
+          if (freshTrip.packlist?.categories) {
+            console.log('🎒 Packlist categories:', freshTrip.packlist.categories)
+          }
+
+          goToPage('trip-details')
+        } else {
+          console.error('❌ Trip not found in store with ID:', trip.id)
+          alert('Trip not found')
+        }
+      } else {
+        console.error('❌ Invalid trip object:', trip)
+      }
+    }
+
+    // FIXED: Handle edit itinerary
+    const handleEditItinerary = (trip) => {
+      console.log('✏️ Editing itinerary for trip:', trip)
+
+      if (trip?.id) {
+        // Store the trip being edited
+        selectedTrip.value = trip
+
+        // Set the trip as editing in store
+        tripsStore.setEditingTrip(trip.id)
+        console.log('📝 Set editing trip ID:', trip.id)
+
+        // Navigate to itinerary page
+        goToPage('itinerary')
+      } else {
+        console.error('❌ Cannot edit itinerary: No trip ID')
+      }
+    }
+
+    // FIXED: Handle trip saved from itinerary page
+    const handleTripSaved = (tripData) => {
+      console.log('💾 Trip saved with data:', tripData)
+
+      // Get the editing trip ID from store
+      const editingTripId = tripsStore.editingTripId
+
+      if (editingTripId) {
+        console.log('🔄 Updating trip in store with ID:', editingTripId)
+
+        // Update the trip in store
+        const success = tripsStore.updateTripItinerary(editingTripId, tripData)
+
+        if (success) {
+          console.log('✅ Trip updated successfully in store')
+
+          // Clear editing state
+          tripsStore.clearEditingTrip()
+
+          // Refresh the selected trip
+          const updatedTrip = tripsStore.getTripById(editingTripId)
+          if (updatedTrip) {
+            selectedTrip.value = updatedTrip
+          }
+        } else {
+          console.error('❌ Failed to update trip in store')
+        }
+      } else {
+        console.log('📝 No editing trip ID found, trip might be new')
+      }
+
+      // Go back to trip details
       goToPage('trip-details')
     }
 
-    const handleEditTrip = (trip) => {
-      console.log('Editing trip:', trip)
-
-      // Store the trip being edited
-      selectedTrip.value = trip
-
-      // Set the trip data for the itinerary page
-      if (trip) {
-        selectedDestinationName.value = trip.destinationName
-        selectedDestinationId.value = trip.destinationId
-
-        // Store in localStorage so ItineraryPage can access it
-        localStorage.setItem('editingTripId', trip.id.toString())
-      }
-
-      // Navigate to itinerary page
-      goToPage('itinerary')
-    }
-
-    const handleTripSaved = (tripData) => {
-      console.log('Trip saved with data:', tripData)
-
-      // Get the trip ID we're editing
-      const editingTripId = localStorage.getItem('editingTripId')
-
-      if (editingTripId) {
-        // Update existing trip
-        const tripId = parseInt(editingTripId)
-        tripsStore.updateTripDetails(
-          tripId,
-          { activities: tripData.activities },
-          { categories: tripData.packlist }
-        )
-
-        // Clear the editing flag
-        localStorage.removeItem('editingTripId')
-
-        console.log('✅ Trip updated in store')
-      }
-    }
-
+    // FIXED: Handle back from itinerary page
     const goToItineraryBack = () => {
-      const editingTripId = localStorage.getItem('editingTripId')
+      console.log('🔙 Going back from itinerary page')
+
+      const editingTripId = tripsStore.editingTripId
 
       if (editingTripId) {
-        // If we were editing a trip, go back to trip details
-        const tripId = parseInt(editingTripId)
-        const trip = tripsStore.getTripById(tripId)
+        console.log('📋 Editing trip ID found:', editingTripId)
+
+        // Get the trip from store
+        const trip = tripsStore.getTripById(editingTripId)
 
         if (trip) {
           selectedTrip.value = trip
+          console.log('✅ Loaded trip for details:', trip)
           goToPage('trip-details')
         } else {
+          console.error('❌ Trip not found, going to trips page')
           goToPage('trips')
         }
 
-        // Clear the editing flag
-        localStorage.removeItem('editingTripId')
+        // Clear editing state
+        tripsStore.clearEditingTrip()
       } else {
-        // Otherwise go back to homepage
+        console.log('📝 No editing trip, going to trips page')
+        goToPage('trips')
+      }
+    }
+
+    // NEW: Handle back from trip details
+    const handleTripDetailsBack = () => {
+      console.log('🔙 Going back from trip details')
+      goToPage('trips')
+    }
+
+    // NEW: Go to itinerary from payment success
+    const goToItineraryFromSuccess = () => {
+      console.log('🎯 Going to itinerary from payment success')
+
+      // Get the most recent trip (last one in upcoming trips)
+      if (tripsStore.upcomingTrips.length > 0) {
+        const latestTrip = tripsStore.upcomingTrips[tripsStore.upcomingTrips.length - 1]
+        selectedTrip.value = latestTrip
+
+        // Set as editing
+        tripsStore.setEditingTrip(latestTrip.id)
+
+        goToPage('itinerary')
+      } else {
+        console.error('❌ No trips found')
         goToPage('homepage')
       }
     }
@@ -1202,6 +1268,7 @@ const screen = computed(() => onboarding.currentScreen)
         bookingDates: booking.value.dates,
         totalPrice: totalPrice.value,
       })
+
       // Generate receipt number
       const receiptNumber = generateReceiptNumber()
 
@@ -1278,6 +1345,9 @@ const screen = computed(() => onboarding.currentScreen)
       if (newTrip) {
         console.log('✅ Trip successfully added:', newTrip)
         console.log('📋 Current trips in store:', tripsStore.upcomingTrips)
+
+        // Store the new trip for potential itinerary editing
+        selectedTrip.value = newTrip
       } else {
         console.error('❌ Failed to add trip to store')
       }
@@ -1406,8 +1476,10 @@ const screen = computed(() => onboarding.currentScreen)
       forceLogin,
       selectedTrip,
       openTripDetails,
-      handleEditTrip,
+      handleEditItinerary,
       goToItineraryBack,
+      handleTripDetailsBack,
+      goToItineraryFromSuccess,
     }
   },
 }

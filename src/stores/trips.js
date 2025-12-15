@@ -45,7 +45,6 @@ export const useTripsStore = defineStore('trips', () => {
 
   // Getter for upcoming trips
   const getUpcomingTrips = computed(() => {
-    console.log('📄 Getting upcoming trips:', upcomingTrips.value)
     return upcomingTrips.value
   })
 
@@ -63,30 +62,60 @@ export const useTripsStore = defineStore('trips', () => {
     return destination ? destination.image : '/images/default-trip.jpg'
   }
 
-  // Get trip by ID (for viewing details)
+  // Get trip by ID (for viewing details) - FIXED VERSION
   const getTripById = (tripId) => {
-    const upcoming = upcomingTrips.value.find(trip => trip.id === tripId)
-    if (upcoming) return upcoming
+    // Convert tripId to number if it's a string
+    const numericTripId = typeof tripId === 'string' ? parseInt(tripId, 10) : tripId
 
-    const past = pastTrips.value.find(trip => trip.id === tripId)
-    return past
+    if (isNaN(numericTripId)) {
+      console.error('❌ Invalid trip ID:', tripId)
+      return null
+    }
+
+    // Try to find in upcoming trips
+    const upcoming = upcomingTrips.value.find(trip => trip.id === numericTripId)
+
+    if (upcoming) {
+      console.log('✅ Found trip in upcoming:', { id: upcoming.id, name: upcoming.destinationName })
+      return upcoming
+    }
+
+    // Try to find in past trips
+    const past = pastTrips.value.find(trip => trip.id === numericTripId)
+
+    if (past) {
+      console.log('✅ Found trip in past:', { id: past.id, name: past.destinationName })
+      return past
+    }
+
+    console.log('❌ Trip not found with ID:', numericTripId)
+    console.log('📊 Upcoming trip IDs:', upcomingTrips.value.map(t => t.id))
+    console.log('📊 Past trip IDs:', pastTrips.value.map(t => t.id))
+    return null
   }
 
   // Set current editing trip
   const setEditingTrip = (tripId) => {
+    console.log('✏️ Setting editing trip ID:', tripId)
     editingTripId.value = tripId
     localStorage.setItem('editingTripId', tripId.toString())
   }
 
   // Clear editing trip
   const clearEditingTrip = () => {
+    console.log('🗑️ Clearing editing trip')
     editingTripId.value = null
     localStorage.removeItem('editingTripId')
   }
 
   // Get current editing trip
   const getEditingTrip = computed(() => {
-    return editingTripId.value ? getTripById(editingTripId.value) : null
+    if (editingTripId.value) {
+      const trip = getTripById(editingTripId.value)
+      console.log('📋 Current editing trip:', trip)
+      return trip
+    }
+    return null
   })
 
   // Add a COMPLETED trip (after booking/payment)
@@ -108,7 +137,7 @@ export const useTripsStore = defineStore('trips', () => {
 
     // Create a new trip object
     const newTrip = {
-      id: Date.now(),
+      id: Date.now(), // Use timestamp as unique ID
       destinationId: destinationId,
       destinationName: destinationName || destination.name,
       bookingDate: new Date().toISOString(),
@@ -125,7 +154,8 @@ export const useTripsStore = defineStore('trips', () => {
       },
       destinationImage: destination.image,
       itinerary: {
-        activities: []
+        activities: [],
+        notes: ''
       },
       packlist: {
         categories: []
@@ -147,29 +177,55 @@ export const useTripsStore = defineStore('trips', () => {
     return newTrip
   }
 
-  // Update trip itinerary and packlist
+  // Update trip itinerary and packlist - FIXED VERSION
   const updateTripItinerary = (tripId, itineraryData) => {
-    const trip = getTripById(tripId)
+    console.log('🔄 Updating trip itinerary for ID:', tripId)
+    console.log('📝 Itinerary data:', itineraryData)
+
+    const numericTripId = typeof tripId === 'string' ? parseInt(tripId, 10) : tripId
+    const trip = getTripById(numericTripId)
 
     if (!trip) {
-      console.error('Trip not found:', tripId)
+      console.error('❌ Trip not found for update:', numericTripId)
+      console.log('📊 Available trips:', upcomingTrips.value)
       return false
     }
+
+    console.log('✅ Found trip to update:', { id: trip.id, name: trip.destinationName })
+
+    // Ensure trip has proper structure
+    if (!trip.itinerary) trip.itinerary = { activities: [], notes: '' }
+    if (!trip.packlist) trip.packlist = { categories: [] }
 
     // Update itinerary activities
     if (itineraryData.activities) {
       trip.itinerary.activities = [...itineraryData.activities]
+      console.log('📅 Updated activities:', trip.itinerary.activities)
+    } else {
+      console.log('⚠️ No activities data provided')
     }
 
     // Update packlist categories
     if (itineraryData.packlist) {
       trip.packlist.categories = [...itineraryData.packlist]
+      console.log('🎒 Updated packlist categories:', trip.packlist.categories)
+    } else {
+      console.log('⚠️ No packlist data provided')
     }
+
+    // Mark trip as updated
+    trip.lastUpdated = new Date().toISOString()
 
     // Save to localStorage
     saveToLocalStorage()
 
-    console.log('✅ Trip itinerary updated:', trip)
+    console.log('✅ Trip itinerary updated successfully:', {
+      id: trip.id,
+      destination: trip.destinationName,
+      activitiesCount: trip.itinerary?.activities?.length || 0,
+      categoriesCount: trip.packlist?.categories?.length || 0
+    })
+
     return true
   }
 
@@ -178,49 +234,107 @@ export const useTripsStore = defineStore('trips', () => {
     const tripsData = {
       upcomingTrips: upcomingTrips.value,
       pastTrips: pastTrips.value,
-      editingTripId: editingTripId.value
+      editingTripId: editingTripId.value,
+      lastSaved: new Date().toISOString()
     }
     localStorage.setItem('userTrips', JSON.stringify(tripsData))
-    console.log('💾 Trips saved to localStorage:', tripsData)
+    console.log('💾 Trips saved to localStorage at:', tripsData.lastSaved)
   }
 
-  // Load trips from localStorage
+  // Load trips from localStorage - FIXED VERSION
   const loadFromLocalStorage = () => {
     const savedTrips = localStorage.getItem('userTrips')
 
     if (savedTrips) {
       try {
         const tripsData = JSON.parse(savedTrips)
-        upcomingTrips.value = tripsData.upcomingTrips || []
-        pastTrips.value = tripsData.pastTrips || []
+
+        // Ensure proper data structure for each trip
+        upcomingTrips.value = (tripsData.upcomingTrips || []).map(trip => {
+          return {
+            ...trip,
+            itinerary: trip.itinerary || { activities: [], notes: '' },
+            packlist: trip.packlist || { categories: [] }
+          }
+        })
+
+        pastTrips.value = (tripsData.pastTrips || []).map(trip => {
+          return {
+            ...trip,
+            itinerary: trip.itinerary || { activities: [], notes: '' },
+            packlist: trip.packlist || { categories: [] }
+          }
+        })
+
         editingTripId.value = tripsData.editingTripId || null
-        console.log('🔥 Loaded trips from localStorage:', tripsData)
+
+        console.log('🔥 Loaded trips from localStorage:', {
+          upcomingCount: upcomingTrips.value.length,
+          pastCount: pastTrips.value.length,
+          editingTripId: editingTripId.value
+        })
+
       } catch (error) {
-        console.error('Error loading trips from localStorage:', error)
+        console.error('❌ Error loading trips from localStorage:', error)
+        // Initialize with empty arrays on error
+        upcomingTrips.value = []
+        pastTrips.value = []
+        editingTripId.value = null
       }
     } else {
-      console.log('🔭 No trips found in localStorage')
+      console.log('🔭 No trips found in localStorage, initializing empty arrays')
+      upcomingTrips.value = []
+      pastTrips.value = []
+      editingTripId.value = null
     }
+  }
+
+  // Get all trips (for debugging)
+  const getAllTrips = computed(() => {
+    return [...upcomingTrips.value, ...pastTrips.value]
+  })
+
+  // Debug function to print all trips
+  const debugPrintAllTrips = () => {
+    console.log('=== ALL TRIPS DEBUG INFO ===')
+    console.log('Upcoming trips:', upcomingTrips.value)
+    console.log('Past trips:', pastTrips.value)
+    console.log('Editing trip ID:', editingTripId.value)
+
+    upcomingTrips.value.forEach((trip, index) => {
+      console.log(`Upcoming Trip ${index + 1}:`, {
+        id: trip.id,
+        name: trip.destinationName,
+        activities: trip.itinerary?.activities?.length || 0,
+        categories: trip.packlist?.categories?.length || 0
+      })
+    })
+
+    console.log('=== END DEBUG INFO ===')
   }
 
   // Cancel a trip
   const cancelTrip = (tripId) => {
-    upcomingTrips.value = upcomingTrips.value.filter(trip => trip.id !== tripId)
+    const numericTripId = typeof tripId === 'string' ? parseInt(tripId, 10) : tripId
+    upcomingTrips.value = upcomingTrips.value.filter(trip => trip.id !== numericTripId)
     saveToLocalStorage()
+    console.log('❌ Trip cancelled:', numericTripId)
   }
 
   // Complete a trip (move from upcoming to past)
   const completeTrip = (tripId) => {
-    const tripIndex = upcomingTrips.value.findIndex(trip => trip.id === tripId)
+    const numericTripId = typeof tripId === 'string' ? parseInt(tripId, 10) : tripId
+    const tripIndex = upcomingTrips.value.findIndex(trip => trip.id === numericTripId)
 
     if (tripIndex !== -1) {
       const completedTrip = upcomingTrips.value[tripIndex]
       completedTrip.status = 'Completed'
-      completedTrip.bookingDate = new Date().toISOString()
+      completedTrip.completedDate = new Date().toISOString()
 
       pastTrips.value.push(completedTrip)
       upcomingTrips.value.splice(tripIndex, 1)
       saveToLocalStorage()
+      console.log('✅ Trip completed:', numericTripId)
     }
   }
 
@@ -231,6 +345,12 @@ export const useTripsStore = defineStore('trips', () => {
     editingTripId.value = null
     localStorage.removeItem('userTrips')
     console.log('🗑️ All trips cleared')
+  }
+
+  // Force refresh from localStorage
+  const refreshFromStorage = () => {
+    loadFromLocalStorage()
+    console.log('🔄 Force refreshed trips from storage')
   }
 
   // Initialize from localStorage
@@ -255,6 +375,9 @@ export const useTripsStore = defineStore('trips', () => {
     cancelTrip,
     completeTrip,
     saveToLocalStorage,
-    clearTrips
+    clearTrips,
+    getAllTrips,
+    debugPrintAllTrips,
+    refreshFromStorage
   }
 })

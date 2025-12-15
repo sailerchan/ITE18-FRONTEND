@@ -85,7 +85,7 @@
 </template>
 
 <script>
-import {computed,  watch } from 'vue'
+import { computed, watch, ref, onMounted } from 'vue'
 import { useTripsStore } from '../stores/trips'
 
 export default {
@@ -99,31 +99,69 @@ export default {
   emits: ['go-back', 'edit-itinerary'],
   setup(props, { emit }) {
     const tripsStore = useTripsStore()
+    const localTrip = ref(props.trip)
+    const tripId = computed(() => props.trip?.id || localTrip.value?.id)
 
-    // Computed properties for display
-    const tripDestination = computed(() => props.trip?.destinationName || 'Unknown Destination')
+    // Watch for prop changes
+    watch(() => props.trip, (newTrip) => {
+      console.log('🔄 Trip prop updated:', newTrip)
+      if (newTrip?.id) {
+        // Get fresh data from store
+        const freshTrip = tripsStore.getTripById(newTrip.id)
+        if (freshTrip) {
+          localTrip.value = freshTrip
+          console.log('✅ Loaded fresh trip from store:', freshTrip)
+        } else {
+          localTrip.value = newTrip
+        }
+      } else {
+        localTrip.value = newTrip
+      }
+    }, { immediate: true, deep: true })
 
-    const tripDates = computed(() => props.trip?.dates || 'No dates selected')
+    // Also watch for store updates
+    onMounted(() => {
+      // Check if we need to load from store
+      if (tripId.value) {
+        const freshTrip = tripsStore.getTripById(tripId.value)
+        if (freshTrip && freshTrip !== localTrip.value) {
+          localTrip.value = freshTrip
+          console.log('📥 Loaded trip from store on mount:', freshTrip)
+        }
+      }
+
+      // Debug: Print all trips
+      console.log('🔍 All trips in store:', tripsStore.getAllTrips)
+    })
+
+    // Computed properties
+    const tripDestination = computed(() =>
+      localTrip.value?.destinationName || 'Unknown Destination'
+    )
+
+    const tripDates = computed(() =>
+      localTrip.value?.dates || 'No dates selected'
+    )
 
     const accommodationTitle = computed(() =>
-      props.trip?.accommodation?.title || 'No accommodation booked'
+      localTrip.value?.accommodation?.title || 'No accommodation booked'
     )
 
     const accommodationLocation = computed(() =>
-      props.trip?.accommodation?.location || ''
+      localTrip.value?.accommodation?.location || ''
     )
 
     const receiptNumber = computed(() =>
-      props.trip?.receiptNumber || 'N/A'
+      localTrip.value?.receiptNumber || 'N/A'
     )
 
     const paymentMethod = computed(() =>
-      props.trip?.paymentMethod || 'N/A'
+      localTrip.value?.paymentMethod || 'N/A'
     )
 
     const bookingDate = computed(() => {
-      if (!props.trip?.bookingDate) return 'N/A'
-      const date = new Date(props.trip.bookingDate)
+      if (!localTrip.value?.bookingDate) return 'N/A'
+      const date = new Date(localTrip.value.bookingDate)
       return date.toLocaleDateString('en-US', {
         month: 'short',
         day: 'numeric',
@@ -132,43 +170,66 @@ export default {
     })
 
     // Itinerary data
-    const activities = computed(() =>
-      props.trip?.itinerary?.activities || []
-    )
+    const activities = computed(() => {
+      if (localTrip.value?.itinerary?.activities) {
+        return localTrip.value.itinerary.activities
+      } else if (localTrip.value?.activities) {
+        return localTrip.value.activities
+      } else {
+        return []
+      }
+    })
 
-    const hasItinerary = computed(() =>
-      activities.value.length > 0
-    )
+    const hasItinerary = computed(() => {
+      return activities.value.length > 0
+    })
 
     const groupedActivities = computed(() => {
       const grouped = {}
+
+      // Group activities by day
       activities.value.forEach(activity => {
-        if (!grouped[activity.day]) {
-          grouped[activity.day] = []
+        if (activity && typeof activity.day === 'number') {
+          const day = activity.day
+          if (!grouped[day]) {
+            grouped[day] = []
+          }
+          grouped[day].push(activity)
         }
-        grouped[activity.day].push(activity)
       })
-      return grouped
+
+      // Sort activities within each day by time
+      Object.keys(grouped).forEach(day => {
+        grouped[day].sort((a, b) => {
+          const timeOrder = { morning: 1, afternoon: 2, evening: 3 }
+          return (timeOrder[a.time] || 4) - (timeOrder[b.time] || 4)
+        })
+      })
+
+      // Sort days numerically
+      const sortedKeys = Object.keys(grouped).sort((a, b) => parseInt(a) - parseInt(b))
+      const sortedGrouped = {}
+      sortedKeys.forEach(key => {
+        sortedGrouped[key] = grouped[key]
+      })
+
+      return sortedGrouped
     })
 
     // Packlist data
-    const packlistCategories = computed(() =>
-      props.trip?.packlist?.categories || []
-    )
+    const packlistCategories = computed(() => {
+      if (localTrip.value?.packlist?.categories) {
+        return localTrip.value.packlist.categories
+      } else if (localTrip.value?.categories) {
+        return localTrip.value.categories
+      } else {
+        return []
+      }
+    })
 
-    const hasPacklist = computed(() =>
-      packlistCategories.value.length > 0
-    )
-
-    // Watch for trip changes to update display
-    watch(() => props.trip, (newTrip) => {
-      console.log('Trip data updated in details page:', newTrip)
-      // Force update by accessing the computed properties
-      tripDestination.value
-      tripDates.value
-      activities.value
-      packlistCategories.value
-    }, { deep: true })
+    const hasPacklist = computed(() => {
+      return packlistCategories.value.length > 0
+    })
 
     // Methods
     const formatTime = (time) => {
@@ -186,22 +247,45 @@ export default {
         const item = category.items.find(i => i.id === itemId)
         if (item) {
           item.checked = !item.checked
-          // Save immediately to store
-          tripsStore.updateTripItinerary(props.trip.id, {
-            activities: activities.value,
-            packlist: packlistCategories.value
-          })
+
+          // Save to store
+          if (localTrip.value?.id) {
+            tripsStore.updateTripItinerary(localTrip.value.id, {
+              activities: activities.value,
+              packlist: packlistCategories.value
+            })
+
+            // Refresh from store
+            const updatedTrip = tripsStore.getTripById(localTrip.value.id)
+            if (updatedTrip) {
+              localTrip.value = updatedTrip
+            }
+          }
         }
       }
     }
 
     const goToItinerary = () => {
-      console.log('Going to itinerary for trip:', props.trip)
+      if (localTrip.value?.id) {
+        console.log('📍 Going to itinerary for trip ID:', localTrip.value.id)
+        // Set the trip as editing in store
+        tripsStore.setEditingTrip(localTrip.value.id)
 
-      // Set the trip as editing in store
-      tripsStore.setEditingTrip(props.trip.id)
+        emit('edit-itinerary', localTrip.value)
+      } else {
+        console.error('❌ Cannot go to itinerary: No trip ID')
+      }
+    }
 
-      emit('edit-itinerary', props.trip)
+    // Force refresh function
+    const forceRefreshTrip = () => {
+      if (tripId.value) {
+        const freshTrip = tripsStore.getTripById(tripId.value)
+        if (freshTrip) {
+          localTrip.value = freshTrip
+          console.log('🔄 Force refreshed trip:', freshTrip)
+        }
+      }
     }
 
     return {
@@ -219,7 +303,8 @@ export default {
       hasPacklist,
       formatTime,
       togglePacklistItem,
-      goToItinerary
+      goToItinerary,
+      forceRefreshTrip
     }
   }
 }

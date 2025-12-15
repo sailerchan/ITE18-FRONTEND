@@ -1,7 +1,7 @@
 <template>
   <div class="container">
     <div class="change-password-inner">
-      <!-- I. Header Section -->
+      <!-- I. Header Section - UPDATED TO MATCH PERSONAL INFO PAGE -->
       <div class="header-section">
         <div class="nav-bar">
           <button class="back-button" @click="goBack">
@@ -323,7 +323,7 @@ export default {
   padding-bottom: 90px; /* Added padding for fixed nav - SAME AS HOMEPAGE */
 }
 
-/* I. Header Section - MOVED TO THE TOP */
+/* I. Header Section - UPDATED TO MATCH PERSONAL INFO PAGE */
 .header-section {
   background: #0c3437;
   border-radius: 0 0 25px 25px;
@@ -334,7 +334,7 @@ export default {
   z-index: 10;
   margin: 0;
   width: 100%;
-  min-height: 120px; /* Added for consistent height */
+  min-height: 160px; /* CHANGED: Increased from 120px to 160px to match Personal Info page */
   display: flex;
   flex-direction: column;
   justify-content: center; /* Centers content vertically */
@@ -343,7 +343,7 @@ export default {
 .nav-bar {
   display: flex;
   align-items: center;
-  margin-bottom: 0;
+  margin-bottom: 20px; /* ADDED: Added margin-bottom to match Personal Info page spacing */
 }
 
 .back-button {
@@ -545,7 +545,7 @@ export default {
   .header-section {
     padding: 20px 16px 20px; /* Reduced from 40px 16px 20px */
     border-radius: 0 0 20px 20px;
-    min-height: 100px; /* Adjusted for smaller screens */
+    min-height: 140px; /* ADJUSTED: Changed from 100px to 140px */
   }
 
   .screen-title {
@@ -590,7 +590,7 @@ export default {
   .header-section {
     padding: 22px 20px 22px; /* Reduced from 45px 20px 25px */
     border-radius: 0 0 22px 22px;
-    min-height: 110px;
+    min-height: 150px; /* ADJUSTED: Changed from 110px to 150px */
   }
 
   .change-password-inner {
@@ -607,7 +607,7 @@ export default {
   .header-section {
     padding: 25px 20px 25px; /* Reduced from 45px 20px 25px */
     border-radius: 0 0 24px 24px;
-    min-height: 120px;
+    min-height: 160px; /* ADJUSTED: Changed from 120px to 160px */
   }
 
   .change-password-inner {
@@ -624,7 +624,7 @@ export default {
   .header-section {
     padding: 25px 24px 25px; /* Reduced from 45px 24px 25px */
     border-radius: 0 0 25px 25px;
-    min-height: 120px;
+    min-height: 160px; /* ADJUSTED: Changed from 120px to 160px */
   }
 
   .change-password-inner {
@@ -656,7 +656,7 @@ export default {
   .header-section {
     border-radius: 24px 24px 0 0;
     padding: 25px 32px 25px; /* Reduced from 50px 32px 30px */
-    min-height: 120px;
+    min-height: 160px; /* ADJUSTED: Changed from 120px to 160px */
   }
 
   .main-content {
@@ -698,7 +698,7 @@ export default {
   .header-section {
     border-radius: 24px 24px 0 0;
     padding: 25px 36px 25px; /* Reduced from 50px 36px 30px */
-    min-height: 120px;
+    min-height: 160px; /* ADJUSTED: Changed from 120px to 160px */
   }
 
   .main-content {
@@ -740,7 +740,7 @@ export default {
   .header-section {
     border-radius: 24px 24px 0 0;
     padding: 25px 40px 25px; /* Reduced from 50px 40px 30px */
-    min-height: 120px;
+    min-height: 160px; /* ADJUSTED: Changed from 120px to 160px */
   }
 
   .main-content {
@@ -766,7 +766,7 @@ export default {
 @media (max-height: 600px) and (orientation: landscape) {
   .header-section {
     padding: 20px 20px 15px; /* Reduced from 30px 20px 15px */
-    min-height: 100px; /* Added min-height */
+    min-height: 140px; /* ADJUSTED: Changed from 100px to 140px */
     border-radius: 0 0 20px 20px;
   }
 
@@ -798,7 +798,7 @@ export default {
 @media (max-height: 500px) {
   .header-section {
     padding: 15px 16px 12px; /* Reduced from 25px 16px 12px */
-    min-height: 90px; /* Added min-height */
+    min-height: 120px; /* ADJUSTED: Changed from 90px to 120px */
     border-radius: 0 0 16px 16px;
   }
 
