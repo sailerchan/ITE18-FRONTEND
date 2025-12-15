@@ -9,113 +9,48 @@
         <h1 class="page-title">Trips</h1>
       </header>
 
-      <!-- Tab Navigation -->
-      <div class="trip-tabs">
-        <button
-          class="tab-button"
-          @click="setActiveTab('upcoming')"
-          :class="{ active: activeTab === 'upcoming' }"
-        >
-          Upcoming
-        </button>
-        <button
-          class="tab-button"
-          @click="setActiveTab('past')"
-          :class="{ active: activeTab === 'past' }"
-        >
-          Past
-        </button>
-      </div>
-
       <!-- Main Content -->
       <main class="main-content">
-        <!-- UPCOMING -->
-        <div v-if="activeTab === 'upcoming'" class="tab-content">
-          <div v-if="upcomingTrips.length === 0" class="no-trips-message">
-            <div class="empty-icon">
-              <i class="fas fa-suitcase-rolling"></i>
-            </div>
-            <h2>No Upcoming Trips</h2>
-            <p>Your upcoming trips will appear here</p>
+        <div v-if="allTrips.length === 0" class="no-trips-message">
+          <div class="empty-icon">
+            <i class="fas fa-suitcase-rolling"></i>
           </div>
-
-          <div v-else class="trips-list">
-            <div
-              v-for="trip in upcomingTrips"
-              :key="trip.id"
-              class="trip-row"
-            >
-              <!-- left: destination thumbnail (instead of umbrella icon) -->
-              <div class="trip-thumb">
-                <img
-                  :src="getTripImage(trip)"
-                  :alt="trip.destinationName"
-                  @error="handleImageError"
-                >
-              </div>
-
-              <!-- center: text -->
-              <div class="trip-info">
-                <div class="trip-title">{{ trip.destinationName }}</div>
-                <div class="trip-dates" v-if="trip.dates">
-                  {{ trip.dates }}
-                </div>
-                <button
-                  class="view-details-link"
-                  @click.stop="viewTripDetails(trip)"
-                >
-                  View Details
-                </button>
-              </div>
-
-              <!-- right: checkbox placeholder -->
-              <div class="trip-checkbox">
-                <input type="checkbox" />
-              </div>
-            </div>
-          </div>
+          <h2>No Trips</h2>
+          <p>Your trips will appear here</p>
         </div>
 
-        <!-- PAST -->
-        <div v-if="activeTab === 'past'" class="tab-content">
-          <div v-if="pastTrips.length === 0" class="no-trips-message">
-            <div class="empty-icon">
-              <i class="fas fa-history"></i>
+        <div v-else class="trips-list">
+          <div
+            v-for="trip in allTrips"
+            :key="trip.id"
+            class="trip-row"
+          >
+            <!-- left: destination thumbnail -->
+            <div class="trip-thumb">
+              <img
+                :src="getTripImage(trip)"
+                :alt="trip.destinationName"
+                @error="handleImageError"
+              >
             </div>
-            <h2>No Past Trips</h2>
-            <p>Your completed trips will appear here</p>
-          </div>
 
-          <div v-else class="trips-list">
-            <div
-              v-for="trip in pastTrips"
-              :key="trip.id"
-              class="trip-row"
-            >
-              <div class="trip-thumb">
-                <img
-                  :src="getTripImage(trip)"
-                  :alt="trip.destinationName"
-                  @error="handleImageError"
-                >
+            <!-- center: text -->
+            <div class="trip-info">
+              <div class="trip-title">{{ trip.destinationName }}</div>
+              <div class="trip-dates" v-if="trip.dates">
+                {{ trip.dates }}
               </div>
+              <button
+                class="view-details-link"
+                @click.stop="viewTripDetails(trip)"
+              >
+                View Details
+              </button>
+            </div>
 
-              <div class="trip-info">
-                <div class="trip-title">{{ trip.destinationName }}</div>
-                <div class="trip-dates" v-if="trip.dates">
-                  {{ trip.dates }}
-                </div>
-                <button
-                  class="view-details-link"
-                  @click.stop="viewTripDetails(trip)"
-                >
-                  View Details
-                </button>
-              </div>
-
-              <div class="trip-checkbox">
-                <input type="checkbox" />
-              </div>
+            <!-- right: checkbox placeholder -->
+            <div class="trip-checkbox">
+              <input type="checkbox" />
             </div>
           </div>
         </div>
@@ -161,6 +96,7 @@ export default {
 
     const upcomingTrips = computed(() => tripsStore.getUpcomingTrips)
     const pastTrips = computed(() => tripsStore.getPastTrips)
+    const allTrips = computed(() => [...upcomingTrips.value, ...pastTrips.value])
 
     onMounted(() => {
       tripsStore.loadFromLocalStorage()
@@ -191,13 +127,9 @@ export default {
       event.target.src = '/images/destinations/siargao.jpg'
     }
 
-    const setActiveTab = (tab) => {
-      activeTab.value = tab
+    const viewTripDetails = (trip) => {
+      emit('open-details', trip)
     }
-
-    const viewTripDetails = (trip) => {  // ← Function name
-  emit('open-details', trip)
-}
 
     const cancelTrip = (tripId) => {
       if (confirm('Are you sure you want to cancel this trip? This action cannot be undone.')) {
@@ -213,7 +145,7 @@ export default {
       activeTab,
       upcomingTrips,
       pastTrips,
-      setActiveTab,
+      allTrips,
       getTripImage,
       handleImageError,
       viewTripDetails,
@@ -244,7 +176,6 @@ export default {
   margin: 0;
   width: 100vw;
   overflow-x: hidden;
-  
 }
 
 .trips-inner {
@@ -302,54 +233,12 @@ export default {
   margin-left: 8px;
 }
 
-/* ===== TABS ===== */
-.trip-tabs {
-  display: flex;
-  align-items: center;
-  margin: 0 50px;
-  border-bottom: 1px solid #e5e7eb;
-  font-size: 14px;
-  font-family: 'Poppins', sans-serif;
-  padding-top: 20px;
-  flex: 1;
-}
-
-.tab-button {
-  background: none;
-  border: none;
-  padding: 14px 0;
-  margin-right: 32px;
-  font-weight: 500;
-  color: #d1d5db;
-  cursor: pointer;
-  position: relative;
-  -webkit-tap-highlight-color: transparent;
-}
-
-.tab-button.active {
-  color: var(--teal-1);
-}
-
-.tab-button.active::after {
-  content: '';
-  position: absolute;
-  left: 0;
-  right: 0;
-  bottom: -1px;
-  height: 2px;
-  background-color: var(--teal-1);
-}
-
 /* ===== MAIN CONTENT ===== */
 .main-content {
   flex: 1;
   display: flex;
   flex-direction: column;
   padding: 0 24px;
-}
-
-.tab-content {
-  flex: 1;
 }
 
 .no-trips-message {
@@ -496,16 +385,6 @@ export default {
     padding: 20px 16px 10px;
   }
 
-  .trip-tabs {
-    margin: 0 16px;
-  }
-
-  .tab-button {
-    padding: 12px 0;
-    margin-right: 24px;
-    font-size: 13px;
-  }
-
   .main-content {
     padding: 0 16px;
   }
@@ -548,10 +427,6 @@ export default {
     padding: 32px 32px 16px;
   }
 
-  .trip-tabs {
-    margin: 0 32px;
-  }
-
   .main-content {
     padding: 0 32px;
   }
@@ -582,10 +457,6 @@ export default {
 
   .page-header {
     padding: 36px 36px 18px;
-  }
-
-  .trip-tabs {
-    margin: 0 36px;
   }
 
   .main-content {
@@ -620,10 +491,6 @@ export default {
     padding: 40px 40px 20px;
   }
 
-  .trip-tabs {
-    margin: 0 40px;
-  }
-
   .main-content {
     padding: 0 40px;
   }
@@ -639,10 +506,6 @@ export default {
 @media (max-height: 600px) and (orientation: landscape) {
   .page-header {
     padding: 16px 16px 8px;
-  }
-
-  .trip-tabs {
-    margin: 0 16px;
   }
 
   .main-content {
@@ -665,15 +528,6 @@ export default {
 @media (max-height: 500px) {
   .page-header {
     padding: 12px 12px 6px;
-  }
-
-  .trip-tabs {
-    margin: 0 12px;
-  }
-
-  .tab-button {
-    padding: 10px 0;
-    font-size: 13px;
   }
 
   .main-content {

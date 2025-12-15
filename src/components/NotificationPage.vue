@@ -59,8 +59,8 @@ export default {
 /* CSS Variables - SAME AS HOMEPAGE */
 :root {
   --muted: #6c757d;
-  --dark: #1a1a1a;
-  --teal-1: #1f4f5a;
+  --dark: #111827;
+  --teal-1: #0c3437;
   --teal-2: #1f7a8c;
   --card-shadow: 0 4px 16px rgba(0, 0, 0, 0.08);
   --hover-shadow: 0 8px 24px rgba(0, 0, 0, 0.12);
@@ -97,18 +97,19 @@ export default {
   padding-bottom: 90px; /* Added padding for fixed nav - SAME AS HOMEPAGE */
 }
 
-/* Header Styles */
+/* ===== HEADER ===== */
 .page-header {
   display: flex;
   align-items: center;
-  padding: 36px 24px 20px;
+  padding: 24px 20px 12px;
   background: white;
+  border-bottom: 1px solid #e5e7eb;
 }
 
 .back-button {
   background: none;
   border: none;
-  font-size: 20px;
+  font-size: 18px;
   color: var(--dark);
   padding: 8px;
   cursor: pointer;
@@ -116,8 +117,8 @@ export default {
   align-items: center;
   justify-content: center;
   -webkit-tap-highlight-color: transparent;
-  width: 48px;
-  height: 48px;
+  width: 40px;
+  height: 40px;
   border-radius: 12px;
   transition: all 0.2s ease;
 }
@@ -127,12 +128,11 @@ export default {
 }
 
 .page-title {
-  font-size: 20px;
+  font-size: 18px;
   font-weight: 600;
   color: var(--dark);
   margin: 0;
-  margin-left: 15px;
-  flex: 1;
+  margin-left: 8px;
 }
 
 /* Main Content Styles */
@@ -195,19 +195,19 @@ export default {
 /* Notification Message Styles */
 .notification-message {
   text-align: center;
-  max-width: 320px;
+  max-width: 280px;
 }
 
 .notification-message h2 {
-  font-size: 20px;
+  font-size: 18px;
   font-weight: 600;
-  margin: 0 0 16px;
+  margin: 0 0 8px;
   color: var(--dark);
   line-height: 1.3;
 }
 
 .notification-message p {
-  font-size: 15px;
+  font-size: 14px;
   margin: 0;
   line-height: 1.5;
   color: var(--muted);
@@ -215,52 +215,56 @@ export default {
 
 /* Bottom nav - EXACT SAME AS HOMEPAGE */
 .bottom-nav {
-    position: fixed;
-    bottom: 0;
-    left: 0;
-    right: 0;
-    background: white;
-    border-top: 1px solid #e9ecef;
-    padding: 16px 24px;
-    display: flex;
-    justify-content: center;
-    z-index: 1000;
-}
-.nav-items-container {
-    display: flex;
-    justify-content: space-around;
-    width: 100%;
-    max-width: 420px;
-}
-.nav-item {
-    border: 0;
-    background: transparent;
-    font-size: 20px;
-    color: #adb5bd;
-    width: 48px;
-    height: 48px;
-    border-radius: 12px;
-    cursor: pointer;
-    display: flex;
-    align-items: center;
+  position: fixed;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  background: white;
+  border-top: 1px solid #e9ecef;
+  padding: 16px 24px;
+  display: flex;
   justify-content: center;
-    transition: all 0.2s ease;
-    -webkit-tap-highlight-color: transparent;
+  z-index: 1000;
 }
+
+.nav-items-container {
+  display: flex;
+  justify-content: space-around;
+  width: 100%;
+  max-width: 420px;
+}
+
+.nav-item {
+  border: 0;
+  background: transparent;
+  font-size: 20px;
+  color: #adb5bd;
+  width: 48px;
+  height: 48px;
+  border-radius: 12px;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: all 0.2s ease;
+  -webkit-tap-highlight-color: transparent;
+}
+
 .nav-item.active {
   color: var(--teal-1);
   background: rgba(56,97,102,0.1);
 }
+
 .nav-item:hover {
   background: rgba(0,0,0,0.03);
 }
 
-/* ================= RESPONSIVE BREAKPOINTS - SAME AS HOMEPAGE ================= */
+/* ================= RESPONSIVE BREAKPOINTS ================= */
 
 /* Extra Small Phones (under 320px) */
 @media (max-width: 320px) {
   .page-header {
-    padding: 24px 16px 16px;
+    padding: 20px 16px 10px;
   }
 
   .main-content {
@@ -275,16 +279,16 @@ export default {
   }
 
   .notification-message {
-    max-width: 280px;
+    max-width: 260px;
   }
 
   .notification-message h2 {
-    font-size: 18px;
-    margin-bottom: 14px;
+    font-size: 16px;
+    margin-bottom: 6px;
   }
 
   .notification-message p {
-    font-size: 14px;
+    font-size: 13px;
   }
 
   .notification-inner {
@@ -299,7 +303,7 @@ export default {
 /* Small Phones (321px - 374px) */
 @media (min-width: 321px) and (max-width: 374px) {
   .page-header {
-    padding: 28px 18px 18px;
+    padding: 22px 18px 10px;
   }
 
   .main-content {
@@ -311,6 +315,10 @@ export default {
     height: 170px;
   }
 
+  .notification-message {
+    max-width: 270px;
+  }
+
   .notification-inner {
     padding-bottom: 85px;
   }
@@ -319,7 +327,7 @@ export default {
 /* Medium Phones (375px - 414px) - Standard modern phones */
 @media (min-width: 375px) and (max-width: 414px) {
   .page-header {
-    padding: 32px 20px 20px;
+    padding: 24px 20px 12px;
   }
 
   .main-content {
@@ -331,6 +339,10 @@ export default {
     height: 180px;
   }
 
+  .notification-message {
+    max-width: 280px;
+  }
+
   .notification-inner {
     padding-bottom: 90px;
   }
@@ -339,7 +351,7 @@ export default {
 /* Large Phones (415px - 767px) - Large phones like iPhone Plus/Pro Max */
 @media (min-width: 415px) and (max-width: 767px) {
   .page-header {
-    padding: 36px 24px 24px;
+    padding: 24px 24px 12px;
   }
 
   .main-content {
@@ -349,6 +361,18 @@ export default {
   .notification-image {
     width: 200px;
     height: 200px;
+  }
+
+  .notification-message {
+    max-width: 300px;
+  }
+
+  .notification-message h2 {
+    font-size: 18px;
+  }
+
+  .notification-message p {
+    font-size: 14px;
   }
 
   .notification-inner {
@@ -374,7 +398,7 @@ export default {
   }
 
   .page-header {
-    padding: 40px 32px 28px;
+    padding: 32px 32px 16px;
   }
 
   .main-content {
@@ -389,15 +413,16 @@ export default {
   }
 
   .notification-message {
-    max-width: 360px;
+    max-width: 320px;
   }
 
   .notification-message h2 {
-    font-size: 22px;
+    font-size: 20px;
+    margin-bottom: 10px;
   }
 
   .notification-message p {
-    font-size: 16px;
+    font-size: 15px;
   }
 
   .bottom-nav {
@@ -426,7 +451,7 @@ export default {
   }
 
   .page-header {
-    padding: 44px 36px 32px;
+    padding: 36px 36px 18px;
   }
 
   .main-content {
@@ -436,6 +461,10 @@ export default {
   .notification-image {
     width: 200px;
     height: 200px;
+  }
+
+  .notification-message {
+    max-width: 320px;
   }
 
   .bottom-nav {
@@ -464,7 +493,7 @@ export default {
   }
 
   .page-header {
-    padding: 48px 40px 36px;
+    padding: 40px 40px 20px;
   }
 
   .main-content {
@@ -474,6 +503,10 @@ export default {
   .notification-image {
     width: 200px;
     height: 200px;
+  }
+
+  .notification-message {
+    max-width: 320px;
   }
 
   .bottom-nav {
@@ -487,7 +520,7 @@ export default {
 /* Landscape Mobile */
 @media (max-height: 600px) and (orientation: landscape) {
   .page-header {
-    padding: 20px 16px 12px;
+    padding: 16px 16px 8px;
   }
 
   .main-content {
@@ -506,16 +539,16 @@ export default {
   }
 
   .notification-message {
-    max-width: 280px;
+    max-width: 260px;
   }
 
   .notification-message h2 {
-    font-size: 18px;
-    margin-bottom: 12px;
+    font-size: 16px;
+    margin-bottom: 6px;
   }
 
   .notification-message p {
-    font-size: 14px;
+    font-size: 13px;
   }
 
   .notification-inner {
@@ -530,7 +563,7 @@ export default {
 /* Very short screens */
 @media (max-height: 500px) {
   .page-header {
-    padding: 16px 12px 8px;
+    padding: 12px 12px 6px;
   }
 
   .main-content {
@@ -549,16 +582,16 @@ export default {
   }
 
   .notification-message {
-    max-width: 260px;
+    max-width: 240px;
   }
 
   .notification-message h2 {
-    font-size: 16px;
-    margin-bottom: 10px;
+    font-size: 15px;
+    margin-bottom: 6px;
   }
 
   .notification-message p {
-    font-size: 13px;
+    font-size: 12px;
   }
 
   .notification-inner {

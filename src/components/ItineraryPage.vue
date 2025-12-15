@@ -1,13 +1,15 @@
 <template>
   <div class="itinerary-page">
+    <!-- Header with Back Button -->
+    <header class="page-header">
+      <button class="back-button" @click="goBack">
+        <i class="fas fa-arrow-left"></i>
+      </button>
+      <h1 class="page-title">Itinerary</h1>
+    </header>
+
     <!-- Dark Header Card -->
     <div class="trip-header">
-      <!-- Navigation -->
-      <div class="nav">
-        <button class="back-arrow" @click="goBack"><i class="fas fa-arrow-left"></i></button>
-        <div class="nav-title">Itinerary</div>
-      </div>
-
       <!-- Trip Details -->
       <h1 class="trip-title">{{ tripTitle }}</h1>
 
@@ -636,6 +638,44 @@ export default {
   padding-bottom: 150px;
 }
 
+/* ===== HEADER ===== */
+.page-header {
+  display: flex;
+  align-items: center;
+  padding: 24px 20px 12px;
+  background: white;
+  border-bottom: 1px solid #e5e7eb;
+}
+
+.back-button {
+  background: none;
+  border: none;
+  font-size: 18px;
+  color: #111827;
+  padding: 8px;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  -webkit-tap-highlight-color: transparent;
+  width: 40px;
+  height: 40px;
+  border-radius: 12px;
+  transition: all 0.2s ease;
+}
+
+.back-button:hover {
+  background: rgba(0,0,0,0.03);
+}
+
+.page-title {
+  font-size: 18px;
+  font-weight: 600;
+  color: #111827;
+  margin: 0;
+  margin-left: 8px;
+}
+
 /* Dark Header Card */
 .trip-header {
   background-color: #0c3437;
@@ -646,40 +686,6 @@ export default {
   width: 100vw;
   max-width: 100%;
   box-sizing: border-box;
-}
-
-/* Navigation */
-.nav {
-  display: flex;
-  align-items: center;
-  margin-bottom: 20px;
-}
-
-.back-arrow {
-  font-size: 24px;
-  color: white;
-  margin-right: 16px;
-  text-decoration: none;
-  width: 40px;
-  height: 40px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  border-radius: 12px;
-  transition: background-color 0.2s;
-  background: none;
-  border: none;
-  cursor: pointer;
-}
-
-.back-arrow:hover {
-  background-color: rgba(255, 255, 255, 0.1);
-}
-
-.nav-title {
-  font-size: 20px;
-  font-weight: 600;
-  color: white;
 }
 
 /* Trip Details */
@@ -1399,6 +1405,14 @@ export default {
 
 /* Mobile optimizations */
 @media (max-width: 479px) {
+  .page-header {
+    padding: 20px 16px 10px;
+  }
+
+  .page-title {
+    font-size: 16px;
+  }
+
   .modal-overlay {
     padding: 16px;
   }
@@ -1455,6 +1469,10 @@ export default {
 
 /* Landscape mobile */
 @media (max-width: 767px) and (orientation: landscape) {
+  .page-header {
+    padding: 16px 12px 8px;
+  }
+
   .modal-content {
     padding: 20px 16px;
     max-height: 90vh;
@@ -1503,19 +1521,6 @@ body.modal-open {
   .trip-header {
     padding: 16px;
     border-radius: 0 0 20px 20px;
-  }
-
-  .nav {
-    margin-bottom: 16px;
-  }
-
-  .back-arrow {
-    width: 36px;
-    height: 36px;
-  }
-
-  .nav-title {
-    font-size: 18px;
   }
 
   .trip-title {
@@ -1616,6 +1621,10 @@ body.modal-open {
     width: 100%;
   }
 
+  .page-header {
+    padding: 24px 40px 12px;
+  }
+
   .trip-header {
     border-radius: 0 0 24px 24px;
     padding: 24px 40px;
@@ -1657,6 +1666,10 @@ body.modal-open {
 @media (min-width: 1024px) {
   .itinerary-page {
     max-width: 900px;
+  }
+
+  .page-header {
+    padding: 24px 48px 12px;
   }
 
   .trip-header {
@@ -1720,7 +1733,7 @@ body.modal-open {
 
 /* Touch device optimizations */
 @media (hover: none) and (pointer: coarse) {
-  .back-arrow,
+  .back-button,
   .day-tab,
   .add-button,
   .save-button,
@@ -1733,7 +1746,7 @@ body.modal-open {
     min-width: 44px;
   }
 
-  .back-arrow,
+  .back-button,
   .custom-checkbox,
   .delete-category,
   .delete-item,
@@ -1764,13 +1777,13 @@ body.modal-open {
     padding-bottom: 16px;
   }
 
+  .page-header {
+    padding: 12px 8px 6px;
+  }
+
   .trip-header {
     padding: 12px 16px;
     border-radius: 0 0 16px 16px;
-  }
-
-  .nav {
-    margin-bottom: 12px;
   }
 
   .trip-title {
@@ -1827,23 +1840,38 @@ body.modal-open {
     padding-bottom: max(20px, env(safe-area-inset-bottom));
   }
 
-  .trip-header {
+  .page-header {
     padding-top: max(20px, env(safe-area-inset-top));
     padding-left: max(20px, env(safe-area-inset-left));
     padding-right: max(20px, env(safe-area-inset-right));
   }
 
+  .trip-header {
+    padding-left: max(20px, env(safe-area-inset-left));
+    padding-right: max(20px, env(safe-area-inset-right));
+  }
+
   @media (max-width: 479px) {
-    .trip-header {
+    .page-header {
       padding-top: max(16px, env(safe-area-inset-top));
+      padding-left: max(16px, env(safe-area-inset-left));
+      padding-right: max(16px, env(safe-area-inset-right));
+    }
+
+    .trip-header {
       padding-left: max(16px, env(safe-area-inset-left));
       padding-right: max(16px, env(safe-area-inset-right));
     }
   }
 
   @media (max-width: 767px) and (orientation: landscape) {
-    .trip-header {
+    .page-header {
       padding-top: max(12px, env(safe-area-inset-top));
+      padding-left: max(12px, env(safe-area-inset-left));
+      padding-right: max(12px, env(safe-area-inset-right));
+    }
+
+    .trip-header {
       padding-left: max(12px, env(safe-area-inset-left));
       padding-right: max(12px, env(safe-area-inset-right));
     }

@@ -1,11 +1,13 @@
 <template>
   <div class="container">
     <div class="accommodation-inner">
-      <!-- Header -->
-      <div class="accommodation-header">
-        <div class="accommodation-back-arrow" @click="$emit('go-to-page', 'datepicker')"><i class="fas fa-arrow-left"></i></div>
-        <h1>Select accommodation</h1>
-      </div>
+      <!-- Header with Back Button -->
+      <header class="page-header">
+        <button class="back-button" @click="$emit('go-to-page', 'datepicker')">
+          <i class="fas fa-arrow-left"></i>
+        </button>
+        <h1 class="page-title">Select accommodation</h1>
+      </header>
 
       <!-- Section Title -->
       <h2 class="accommodation-section-title">Popular places to stay in</h2>
@@ -127,44 +129,44 @@ export default {
   flex-direction: column;
 }
 
-/* Header - same styling as login page */
-.accommodation-header {
-  background: #ffffff;
-  padding: 0 0 20px 0;
-  border-bottom: 1px solid #e8ecef;
-  position: relative;
-  margin-bottom: 20px;
-}
-
-.accommodation-back-arrow {
-  position: absolute;
-  left: 0;
-  top: 50%;
-  transform: translateY(-50%);
-  font-size: 20px;
-  cursor: pointer;
-  color: #333;
-  width: 30px;
-  height:20px;
+/* ===== HEADER ===== */
+.page-header {
   display: flex;
   align-items: center;
-  justify-content: left;
+  padding: 0 0 20px 0;
+  background: white;
+  border-bottom: 1px solid #e5e7eb;
+  margin-bottom: 20px;
+  width: 100%;
+}
+
+.back-button {
+  background: none;
+  border: none;
+  font-size: 18px;
+  color: #111827;
+  padding: 8px;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
   -webkit-tap-highlight-color: transparent;
+  width: 40px;
+  height: 40px;
+  border-radius: 12px;
+  transition: all 0.2s ease;
 }
 
-.accommodation-back-arrow:hover {
-  background-color: #f5f5f5;
+.back-button:hover {
+  background: rgba(0,0,0,0.03);
 }
 
-.accommodation-header h1 {
-  font-size: 24px;
+.page-title {
+  font-size: 18px;
   font-weight: 600;
-  color: #333;
-  text-align: left;
-  margin-top: 10px;
-  margin-left: 0;
-  padding: 0 50px;
-  padding-top: 4px;
+  color: #111827;
+  margin: 0;
+  margin-left: 8px;
 }
 
 /* Section Titles - maintaining original design */
@@ -322,12 +324,13 @@ export default {
     padding: 20px 16px;
   }
 
+  .page-header {
+    padding: 0 0 15px 0;
+    margin-bottom: 15px;
+  }
 
-
-  .accommodation-back-arrow {
-    width: 24px;
-    height: 24px;
-    font-size: 18px;
+  .page-title {
+    font-size: 16px;
   }
 
   .accommodation-section-title {
@@ -479,6 +482,14 @@ export default {
     box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
   }
 
+  .page-header {
+    padding: 0 0 24px 0;
+    margin-bottom: 24px;
+  }
+
+  .page-title {
+    font-size: 20px;
+  }
 
   .accommodation-section-title {
     font-size: 20px;
@@ -532,6 +543,14 @@ export default {
     box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
   }
 
+  .page-header {
+    padding: 0 0 28px 0;
+    margin-bottom: 28px;
+  }
+
+  .page-title {
+    font-size: 22px;
+  }
 
   .accommodation-section-title {
     font-size: 22px;
@@ -602,9 +621,13 @@ export default {
     box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
   }
 
-  .accommodation-header h1 {
-    font-size: 30px;
-    padding: 0 80px;
+  .page-header {
+    padding: 0 0 36px 0;
+    margin-bottom: 36px;
+  }
+
+  .page-title {
+    font-size: 24px;
   }
 
   .accommodation-section-title {
@@ -671,7 +694,7 @@ export default {
     padding: 20px 16px;
   }
 
-  .accommodation-header {
+  .page-header {
     padding: 0 0 12px 0;
     margin-bottom: 12px;
   }

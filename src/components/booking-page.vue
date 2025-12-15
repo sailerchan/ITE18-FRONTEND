@@ -41,12 +41,13 @@
 
       <div v-if="currentBookingView === 'confirmation'">
         <div class="header-container">
-          <div class="confirmation-header">
+          <!-- Header with Back Button -->
+          <header class="page-header">
             <button class="back-button" @click="$emit('show-listing-view')">
               <i class="fas fa-arrow-left"></i>
             </button>
-            <div class="confirmation-title">Confirm Booking</div>
-          </div>
+            <h1 class="page-title">Confirm Booking</h1>
+          </header>
 
           <div class="booking-card">
             <div class="confirmation-image" :style="{ backgroundImage: 'url(' + currentConfirmationImage + ')' }"></div>
@@ -201,6 +202,44 @@ export default {
   background: #ffffff;
   padding-bottom: 20px;
 }
+/* ===== HEADER ===== */
+.page-header {
+  display: flex;
+  align-items: center;
+  padding: 24px 16px 12px;
+  background: white;
+  border-bottom: 1px solid #e5e7eb;
+}
+
+.back-button {
+  background: none;
+  border: none;
+  font-size: 18px;
+  color: #111827;
+  padding: 8px;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  -webkit-tap-highlight-color: transparent;
+  width: 40px;
+  height: 40px;
+  border-radius: 12px;
+  transition: all 0.2s ease;
+}
+
+.back-button:hover {
+  background: rgba(0,0,0,0.03);
+}
+
+.page-title {
+  font-size: 18px;
+  font-weight: 600;
+  color: #111827;
+  margin: 0;
+  margin-left: 8px;
+}
+
 /* Header image */
 .image-header {
     height: 70vh;
@@ -357,42 +396,6 @@ export default {
 }
 
 /* Confirmation section */
-.confirmation-header {
-    display: flex;
-  align-items: center;
-  padding: 16px;
-  background: transparent;
-}
-
-.back-button {
-    background: none;
-  border: none;
-  font-size: 18px;
-  margin-right: 12px;
-  cursor: pointer;
-  color: #333;
-  width: 44px;
-  height: 44px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  border-radius: 12px;
-  transition: background-color 0.2s;
-  -webkit-tap-highlight-color: transparent;
-}
-
-.back-button:hover {
-     background-color: rgba(0, 0, 0, 0.05);
-}
-
-.confirmation-title {
-    font-size: 20px;
-  font-weight: 700;
-  text-align: left;
-  flex: 1;
-  margin: 0;
-  color: #1a1a1a;
-}
 .booking-card{
   background: white;
   border-radius: 20px;
@@ -582,6 +585,14 @@ export default {
         border-radius: 20px 20px 0 0;
     }
 
+    .page-header {
+        padding: 20px 12px 10px;
+    }
+
+    .page-title {
+        font-size: 16px;
+    }
+
     .image-header {
         height: 45vh;
     }
@@ -628,7 +639,6 @@ export default {
         padding: 14px;
     }
 
-    .confirmation-header,
     .booking-summary,
     .payment-section {
         padding: 12px;
@@ -639,6 +649,10 @@ export default {
 @media (min-width: 375px) and (max-width: 414px) {
     .booking-inner {
         border-radius: 24px 24px 0 0;
+    }
+
+    .page-header {
+        padding: 24px 16px 12px;
     }
 }
 
@@ -702,6 +716,10 @@ export default {
 
 /* Landscape Mobile */
 @media (max-height: 600px) and (orientation: landscape) {
+    .page-header {
+        padding: 16px 12px 8px;
+    }
+
     .image-header {
         height: 35vh;
     }
@@ -710,7 +728,6 @@ export default {
         padding: 20px 16px 16px;
     }
 
-    .confirmation-header,
     .booking-summary,
     .payment-section {
         padding: 12px;
@@ -723,6 +740,14 @@ export default {
 
 /* Very short screens */
 @media (max-height: 500px) {
+    .page-header {
+        padding: 12px 8px 6px;
+    }
+
+    .page-title {
+        font-size: 16px;
+    }
+
     .image-header {
         height: 30vh;
     }
@@ -731,7 +756,6 @@ export default {
         padding: 16px 12px 12px;
     }
 
-    .confirmation-header,
     .booking-summary,
     .payment-section {
         padding: 10px;

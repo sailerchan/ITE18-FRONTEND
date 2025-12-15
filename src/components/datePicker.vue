@@ -1,47 +1,48 @@
 <template>
   <div class="container">
     <div class="date-picker-inner">
-      <!-- Header -->
-      <div class="date-header">
-        <div class="back-arrow" @click="$emit('go-to-page', 'destination-details')"><i class="fas fa-arrow-left"></i></div>
-        <h1 class="header-title">Pick date</h1>
-      </div>
+      <!-- Header with Back Button -->
+      <header class="page-header">
+        <button class="back-button" @click="$emit('go-to-page', 'destination-details')">
+          <i class="fas fa-arrow-left"></i>
+        </button>
+        <h1 class="page-title">Pick date</h1>
+      </header>
 
       <!-- Manual Date Inputs -->
-<div class="manual-inputs">
-  <div class="input-group">
-    <label class="input-label">From Date</label>
-    <div class="input-wrapper">
-      <input
-        type="text"
-        v-model="manualStartDate"
-        placeholder="MM/DD/YYYY"
-        @input="handleManualStartDateChange"
-        @blur="validateStartDateFormat"
-        class="date-input-field"
-        maxlength="10"
-      >
-      <i class="fas fa-calendar-alt input-icon"></i>
-    </div>
-  </div>
+      <div class="manual-inputs">
+        <div class="input-group">
+          <label class="input-label">From Date</label>
+          <div class="input-wrapper">
+            <input
+              type="text"
+              v-model="manualStartDate"
+              placeholder="MM/DD/YYYY"
+              @input="handleManualStartDateChange"
+              @blur="validateStartDateFormat"
+              class="date-input-field"
+              maxlength="10"
+            >
+            <i class="fas fa-calendar-alt input-icon"></i>
+          </div>
+        </div>
 
-  <div class="input-group">
-    <label class="input-label">To Date</label>
-    <div class="input-wrapper">
-      <input
-        type="text"
-        v-model="manualEndDate"
-        placeholder="MM/DD/YYYY"
-        @input="handleManualEndDateChange"
-        @blur="validateEndDateFormat"
-        class="date-input-field"
-        maxlength="10"
-      >
-      <i class="fas fa-calendar-alt input-icon"></i>
-    </div>
-  </div>
-</div>
-
+        <div class="input-group">
+          <label class="input-label">To Date</label>
+          <div class="input-wrapper">
+            <input
+              type="text"
+              v-model="manualEndDate"
+              placeholder="MM/DD/YYYY"
+              @input="handleManualEndDateChange"
+              @blur="validateEndDateFormat"
+              class="date-input-field"
+              maxlength="10"
+            >
+            <i class="fas fa-calendar-alt input-icon"></i>
+          </div>
+        </div>
+      </div>
 
       <!-- Calendar -->
       <div class="calendar-container">
@@ -49,7 +50,6 @@
           <div class="nav-arrow" @click="handlePrevMonth" :class="{ disabled: isCurrentMonth }">‹</div>
           <div class="month-year">{{ currentMonthYear }}</div>
           <div class="nav-arrow" @click="handleNextMonth" :class="{ disabled: isMaxMonth }">›</div>
-
         </div>
 
         <div class="day-headers">
@@ -101,11 +101,11 @@ export default {
       required: true
     },
     selectedStart: {
-      type: Date,  // Changed to Date object instead of Number
+      type: Date,
       default: null
     },
     selectedEnd: {
-      type: Date,  // Changed to Date object instead of Number
+      type: Date,
       default: null
     },
     currentMonthYear: {
@@ -126,7 +126,7 @@ export default {
     },
     maxMonthsAhead: {
       type: Number,
-      default: 3  // Allow selection up to 3 months ahead
+      default: 3
     }
   },
   emits: [
@@ -142,7 +142,7 @@ export default {
       manualStartDate: '',
       manualEndDate: '',
       today: new Date(),
-      selectingStartDate: true  // Track whether we're selecting start or end
+      selectingStartDate: true
     }
   },
   computed: {
@@ -194,7 +194,6 @@ export default {
 
         if (month >= 1 && month <= 12 && day >= 1 && day <= 31 && year >= 1000) {
           const date = new Date(year, month - 1, day);
-          // Verify the date is valid (handles invalid dates like 02/30/2025)
           if (date.getMonth() === month - 1 && date.getDate() === day) {
             return date;
           }
@@ -292,7 +291,6 @@ export default {
         classes.push('past-date');
       }
 
-      // Compare full dates for range selection
       if (this.selectedStart && this.isSameDate(currentViewDate, this.selectedStart)) {
         classes.push('range-start');
       } else if (this.selectedEnd && this.isSameDate(currentViewDate, this.selectedEnd)) {
@@ -394,8 +392,6 @@ export default {
 }
 </script>
 
-
-
 <style scoped>
 /* Reset and Base Styles */
 * {
@@ -437,43 +433,44 @@ html, body {
   box-sizing: border-box;
 }
 
-/* Header */
-.date-header {
-  background: #ffffff;
+/* ===== HEADER ===== */
+.page-header {
+  display: flex;
+  align-items: center;
   padding: 0 0 20px 0;
-  border-bottom: 1px solid #e8ecef;
-  position: relative;
+  background: white;
+  border-bottom: 1px solid #e5e7eb;
   margin-bottom: 20px;
   width: 100%;
 }
 
-.back-arrow {
-  position: absolute;
-  left: 0;
-  top: 50%;
-  transform: translateY(-50%);
-  font-size: 24px;
+.back-button {
+  background: none;
+  border: none;
+  font-size: 18px;
+  color: #111827;
+  padding: 8px;
   cursor: pointer;
-  color: #333;
-  width: 30px;
-  height: 30px;
   display: flex;
   align-items: center;
   justify-content: center;
   -webkit-tap-highlight-color: transparent;
+  width: 40px;
+  height: 40px;
+  border-radius: 12px;
+  transition: all 0.2s ease;
 }
 
-.header-title {
+.back-button:hover {
+  background: rgba(0,0,0,0.03);
+}
+
+.page-title {
   font-size: 18px;
   font-weight: 600;
-  color: #333;
-  text-align: left;
+  color: #111827;
   margin: 0;
-  padding-left: 40px;
-  width: 100%;
-  line-height: 1.3;
-  word-break: break-word;
-  overflow-wrap: break-word;
+  margin-left: 8px;
 }
 
 /* Manual Inputs */
@@ -533,7 +530,6 @@ html, body {
   color: #0c3437;
   font-size: 16px;
 }
-
 
 /* Calendar Container */
 .calendar-container {
@@ -628,7 +624,6 @@ html, body {
 }
 
 .date-cell {
-
   display: flex;
   align-items: center;
   justify-content: center;
@@ -693,8 +688,6 @@ html, body {
   border-radius: 8px;
 }
 
-
-
 /* Action Buttons */
 .action-buttons {
   display: flex;
@@ -754,16 +747,13 @@ html, body {
     padding: 16px 12px;
   }
 
-  .header-title {
-    font-size: 15px;
-    padding-left: 32px;
-    line-height: 1.2;
+  .page-header {
+    padding: 0 0 15px 0;
+    margin-bottom: 15px;
   }
 
-  .back-arrow {
-    font-size: 20px;
-    width: 28px;
-    height: 28px;
+  .page-title {
+    font-size: 16px;
   }
 
   .manual-inputs {
@@ -773,16 +763,6 @@ html, body {
 
   .input-group {
     width: 100%;
-  }
-
-  .date-range-display {
-    flex-direction: column;
-    align-items: flex-start;
-    gap: 12px;
-  }
-
-  .date-display-separator {
-    display: none;
   }
 
   .calendar-container {
@@ -818,23 +798,13 @@ html, body {
     padding: 18px 14px;
   }
 
-  .header-title {
-    font-size: 16px;
-    padding-left: 36px;
-  }
-
-  .back-arrow {
-    font-size: 22px;
-    width: 30px;
-    height: 30px;
+  .page-header {
+    padding: 0 0 18px 0;
+    margin-bottom: 18px;
   }
 
   .manual-inputs {
     gap: 12px;
-  }
-
-  .date-range-display {
-    padding: 12px;
   }
 
   .calendar-container {
@@ -844,7 +814,6 @@ html, body {
     padding:0 8px;
   }
   .date-pill {
-
     font-size: 13px;
   }
 
@@ -860,8 +829,9 @@ html, body {
     padding: 20px 16px;
   }
 
-  .header-title {
-    font-size: 17px;
+  .page-header {
+    padding: 0 0 20px 0;
+    margin-bottom: 20px;
   }
 
   .calendar-container {
@@ -881,8 +851,9 @@ html, body {
     padding: 22px 18px;
   }
 
-  .header-title {
-    font-size: 18px;
+  .page-header {
+    padding: 0 0 22px 0;
+    margin-bottom: 22px;
   }
 
   .manual-inputs {
@@ -915,15 +886,13 @@ html, body {
     box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
   }
 
-  .header-title {
-    font-size: 20px;
-    padding-left: 45px;
+  .page-header {
+    padding: 0 0 24px 0;
+    margin-bottom: 24px;
   }
 
-  .back-arrow {
-    font-size: 26px;
-    width: 35px;
-    height: 35px;
+  .page-title {
+    font-size: 20px;
   }
 
   .manual-inputs {
@@ -946,18 +915,6 @@ html, body {
     max-width: 50px;
     max-height: 50px;
     font-size: 16px;
-  }
-
-  .date-range-display {
-    padding: 18px;
-  }
-
-  .date-summary {
-    padding: 24px;
-  }
-
-  .summary-details {
-    gap: 20px;
   }
 
   .action-buttons {
@@ -983,15 +940,13 @@ html, body {
     box-shadow: 0 12px 48px rgba(0, 0, 0, 0.1);
   }
 
-  .header-title {
-    font-size: 22px;
-    padding-left: 50px;
+  .page-header {
+    padding: 0 0 28px 0;
+    margin-bottom: 28px;
   }
 
-  .back-arrow {
-    font-size: 28px;
-    width: 40px;
-    height: 40px;
+  .page-title {
+    font-size: 22px;
   }
 
   .manual-inputs {
@@ -1010,18 +965,6 @@ html, body {
     max-width: 56px;
     max-height: 56px;
     font-size: 17px;
-  }
-
-  .date-range-display {
-    padding: 20px;
-  }
-
-  .date-summary {
-    padding: 28px;
-  }
-
-  .summary-details {
-    gap: 25px;
   }
 
   .action-buttons {
@@ -1046,7 +989,12 @@ html, body {
     padding: 44px 40px;
   }
 
-  .header-title {
+  .page-header {
+    padding: 0 0 32px 0;
+    margin-bottom: 32px;
+  }
+
+  .page-title {
     font-size: 24px;
   }
 
@@ -1077,15 +1025,13 @@ html, body {
     border-radius: 28px;
   }
 
-  .header-title {
-    font-size: 26px;
-    padding-left: 55px;
+  .page-header {
+    padding: 0 0 36px 0;
+    margin-bottom: 36px;
   }
 
-  .back-arrow {
-    font-size: 30px;
-    width: 45px;
-    height: 45px;
+  .page-title {
+    font-size: 26px;
   }
 
   .manual-inputs {
@@ -1124,7 +1070,12 @@ html, body {
     padding: 56px 48px;
   }
 
-  .header-title {
+  .page-header {
+    padding: 0 0 40px 0;
+    margin-bottom: 40px;
+  }
+
+  .page-title {
     font-size: 28px;
   }
 
@@ -1145,7 +1096,7 @@ html, body {
     padding: 16px 12px;
   }
 
-  .date-header {
+  .page-header {
     margin-bottom: 15px;
     padding-bottom: 15px;
   }
@@ -1156,11 +1107,6 @@ html, body {
 
   .calendar-container {
     padding: 16px 12px;
-    margin-bottom: 20px;
-  }
-
-  .date-inputs,
-  .date-summary {
     margin-bottom: 20px;
   }
 
@@ -1175,7 +1121,7 @@ html, body {
     padding: 12px 10px;
   }
 
-  .date-header {
+  .page-header {
     margin-bottom: 12px;
     padding-bottom: 12px;
   }
@@ -1189,11 +1135,6 @@ html, body {
     margin-bottom: 15px;
   }
 
-  .date-inputs,
-  .date-summary {
-    margin-bottom: 15px;
-  }
-
   .action-buttons {
     padding-top: 10px;
   }
@@ -1201,7 +1142,7 @@ html, body {
 
 /* Touch device optimizations */
 @media (hover: none) and (pointer: coarse) {
-  .back-arrow,
+  .back-button,
   .nav-arrow,
   .date-pill,
   .btn {
@@ -1209,7 +1150,7 @@ html, body {
     min-width: 44px;
   }
 
-  .back-arrow,
+  .back-button,
   .nav-arrow {
     display: flex;
     align-items: center;
@@ -1250,7 +1191,7 @@ html, body, .container, .date-picker-inner {
 
 /* Ensure calendar fits on smallest screens */
 @media (max-width: 320px) {
-date-grid {
+  .date-grid {
     gap: 4px;
     padding: 0;
   }
