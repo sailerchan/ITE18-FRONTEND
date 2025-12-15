@@ -99,8 +99,9 @@
           </div>
         </div>
 
-        <!-- IV. Session Management and Promotion -->
+        <!-- IV. Session Management -->
         <div class="section">
+          <h3 class="section-title">Session</h3>
           <div class="settings-list">
             <div class="setting-item logout" @click="handleLogout">
               <div class="icon-wrapper">
@@ -116,8 +117,10 @@
               </svg>
             </div>
           </div>
+        </div>
 
-          <!-- Premium Feature Banner with Linear Gradient -->
+        <!-- V. Promotion Banner -->
+        <div class="section">
           <div class="promotion-banner">
             <p class="promotion-text">
               Unlock all features and get access to real time<br>
@@ -127,7 +130,7 @@
         </div>
       </div>
 
-      <!-- V. Navigation Bar - SAME AS HOMEPAGE -->
+      <!-- VI. Navigation Bar - SAME AS HOMEPAGE -->
       <nav class="bottom-nav">
         <div class="nav-items-container">
           <button class="nav-item" :class="{ active: activeNav === 'home' }" @click="goToPage('homepage')">
@@ -216,6 +219,12 @@ export default {
   --hover-shadow: 0 8px 24px rgba(0, 0, 0, 0.12);
 }
 
+/* Base styles */
+* {
+  max-width: 100%;
+  box-sizing: border-box;
+}
+
 /* Exact same container as homepage */
 .container {
   min-height: 100vh;
@@ -232,11 +241,11 @@ export default {
 /* Same card styling as homepage */
 .profile-inner {
   background: #ffffff;
-  border-radius: 24px 24px 0 0;
+  border-radius: 0;
   padding: 0;
   margin-top: 0;
   position: relative;
-  box-shadow: 0 -8px 32px rgba(0, 0, 0, 0.1);
+  box-shadow: none;
   flex: 1;
   width: 100%;
   box-sizing: border-box;
@@ -247,23 +256,27 @@ export default {
   padding-bottom: 90px; /* Added padding for fixed nav - SAME AS HOMEPAGE */
 }
 
-/* I. Header and User Identity Section */
+/* I. Header and User Identity Section - FIXED TO BE AT THE TOP */
 .profile-header {
   background: #0C3437;
-  border-radius: 0 0 25px 25px;
-  padding: 45px 20px 25px;
+  border-radius: 0 0 25px 25px; /* RESTORED rounded bottom corners */
+  padding: 25px 20px 25px; /* Reduced top padding from 45px to 25px */
   color: white;
   text-align: center;
   position: relative;
   z-index: 10;
   margin: 0;
   width: 100%;
+  min-height: 160px; /* Added to ensure consistent height */
+  display: flex;
+  flex-direction: column;
+  justify-content: center; /* Centers content vertically */
 }
 
 .screen-title {
   font-size: 18px;
   font-weight: 700;
-  margin-bottom: 25px;
+  margin-bottom: 20px; /* Reduced from 25px */
   letter-spacing: 0.5px;
 }
 
@@ -310,20 +323,23 @@ export default {
 
 /* II. Account Settings List & III. General Information */
 .main-content {
-  padding: 25px 15px 15px;
+  padding: 20px 15px 15px; /* Reduced top padding from 25px to 20px */
   background: white;
-  margin-top: -10px;
-  border-radius: 25px 25px 0 0;
+  margin-top: -10px; /* RESTORED negative margin to overlap the rounded corner */
+  border-radius: 25px 25px 0 0; /* RESTORED rounded top corners */
   position: relative;
   z-index: 1;
   flex: 1;
   width: 100%;
   display: flex;
   flex-direction: column;
+  box-sizing: border-box;
+  max-width: 100%;
 }
 
 .section {
   margin-bottom: 20px;
+  width: 100%;
 }
 
 .section-title {
@@ -339,6 +355,7 @@ export default {
   border-radius: 10px;
   overflow: hidden;
   border: 1.5px solid #e1e5e9;
+  width: 100%;
 }
 
 .setting-item {
@@ -350,6 +367,8 @@ export default {
   cursor: pointer;
   position: relative;
   -webkit-tap-highlight-color: transparent;
+  width: 100%;
+  box-sizing: border-box;
 }
 
 .setting-item:hover {
@@ -379,6 +398,7 @@ export default {
   font-size: 15px;
   color: #333;
   font-weight: 500;
+  word-wrap: break-word;
 }
 
 .chevron {
@@ -401,28 +421,13 @@ export default {
   background: linear-gradient(135deg, #0C3437 0%, #208991 17%, #186A70 35%, #18777E 66%, #208991 82%, #0C3437 100%);
   border-radius: 10px;
   padding: 16px 20px;
-  margin-top: 15px;
+  margin: 0;
   text-align: center;
   border: 1.5px solid #e1e5e9;
   position: relative;
   overflow: hidden;
-}
-
-.promotion-banner::before {
-  content: '';
-  position: absolute;
-  top: 0;
-  left: 0;
-  right: 0;
-  bottom: 0;
-  background: linear-gradient(135deg,
-    rgba(12, 52, 55, 0.9) 0%,
-    rgba(32, 137, 145, 0.9) 17%,
-    rgba(24, 106, 112, 0.9) 35%,
-    rgba(24, 119, 126, 0.9) 66%,
-    rgba(32, 137, 145, 0.9) 82%,
-    rgba(12, 52, 55, 0.9) 100%);
-  z-index: 1;
+  width: 100%;
+  box-sizing: border-box;
 }
 
 .promotion-text {
@@ -436,41 +441,43 @@ export default {
   text-shadow: 0 1px 2px rgba(0, 0, 0, 0.5);
   white-space: normal;
   text-align: center;
+  word-wrap: break-word;
+  overflow-wrap: break-word;
 }
 
 /* Bottom nav - EXACT SAME AS HOMEPAGE */
 .bottom-nav {
-    position: fixed;
-    bottom: 0;
-    left: 0;
-    right: 0;
-    background: white;
-    border-top: 1px solid #e9ecef;
-    padding: 16px 24px;
-    display: flex;
-    justify-content: center;
-    z-index: 1000;
+  position: fixed;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  background: white;
+  border-top: 1px solid #e9ecef;
+  padding: 16px 24px;
+  display: flex;
+  justify-content: center;
+  z-index: 1000;
 }
 .nav-items-container {
-    display: flex;
-    justify-content: space-around;
-    width: 100%;
-    max-width: 420px;
+  display: flex;
+  justify-content: space-around;
+  width: 100%;
+  max-width: 420px;
 }
 .nav-item {
-    border: 0;
-    background: transparent;
-    font-size: 20px;
-    color: #adb5bd;
-    width: 48px;
-    height: 48px;
-    border-radius: 12px;
-    cursor: pointer;
-    display: flex;
-    align-items: center;
+  border: 0;
+  background: transparent;
+  font-size: 20px;
+  color: #adb5bd;
+  width: 48px;
+  height: 48px;
+  border-radius: 12px;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
   justify-content: center;
-    transition: all 0.2s ease;
-    -webkit-tap-highlight-color: transparent;
+  transition: all 0.2s ease;
+  -webkit-tap-highlight-color: transparent;
 }
 .nav-item.active {
   color: var(--teal-1);
@@ -483,13 +490,13 @@ export default {
 /* Extra Small Phones (under 320px) */
 @media (max-width: 320px) {
   .profile-header {
-    padding: 40px 16px 20px;
-    border-radius: 0 0 20px 20px;
+    padding: 20px 16px 20px;
+    border-radius: 0 0 20px 20px; /* RESTORED rounded bottom */
   }
 
   .screen-title {
     font-size: 16px;
-    margin-bottom: 20px;
+    margin-bottom: 15px;
   }
 
   .avatar-image {
@@ -507,8 +514,9 @@ export default {
   }
 
   .main-content {
-    padding: 20px 12px 12px;
-    border-radius: 20px 20px 0 0;
+    padding: 16px 12px 12px;
+    border-radius: 20px 20px 0 0; /* RESTORED rounded top */
+    margin-top: -8px; /* Adjusted for smaller radius */
   }
 
   .setting-item {
@@ -525,6 +533,7 @@ export default {
 
   .promotion-banner {
     padding: 14px 16px;
+    margin: 0;
   }
 
   .promotion-text {
@@ -544,33 +553,52 @@ export default {
 /* Small Phones (321px - 374px) */
 @media (min-width: 321px) and (max-width: 374px) {
   .profile-header {
-    padding: 45px 20px 25px;
+    padding: 22px 20px 22px;
+    border-radius: 0 0 22px 22px; /* Added rounded corners */
   }
 
   .profile-inner {
     padding-bottom: 85px;
+  }
+
+  .main-content {
+    margin-top: -8px; /* Adjusted for proper overlap */
   }
 }
 
 /* Medium Phones (375px - 414px) */
 @media (min-width: 375px) and (max-width: 414px) {
   .profile-header {
-    padding: 45px 20px 25px;
+    padding: 25px 20px 25px;
+    border-radius: 0 0 24px 24px; /* Added rounded corners */
   }
 
   .profile-inner {
     padding-bottom: 90px;
+  }
+
+  .main-content {
+    margin-top: -10px;
   }
 }
 
 /* Large Phones (415px - 767px) */
 @media (min-width: 415px) and (max-width: 767px) {
   .profile-header {
-    padding: 45px 24px 25px;
+    padding: 25px 24px 25px;
+    border-radius: 0 0 25px 25px;
   }
 
   .profile-inner {
     padding-bottom: 95px;
+  }
+
+  .main-content {
+    margin-top: -10px;
+  }
+
+  .promotion-banner {
+    padding: 16px 20px;
   }
 }
 
@@ -593,16 +621,18 @@ export default {
 
   .profile-header {
     border-radius: 24px 24px 0 0;
-    padding: 50px 32px 30px;
+    padding: 25px 32px 25px;
   }
 
   .main-content {
     border-radius: 0 0 24px 24px;
-    padding: 30px 24px 20px;
+    padding: 25px 24px 20px;
+    margin-top: 0; /* No negative margin needed on tablets */
   }
 
   .promotion-banner {
     padding: 18px 24px;
+    margin: 0;
   }
 
   .promotion-text {
@@ -637,16 +667,18 @@ export default {
 
   .profile-header {
     border-radius: 24px 24px 0 0;
-    padding: 50px 36px 30px;
+    padding: 25px 36px 25px;
   }
 
   .main-content {
     border-radius: 0 0 24px 24px;
-    padding: 30px 28px 20px;
+    padding: 25px 28px 20px;
+    margin-top: 0;
   }
 
   .promotion-banner {
     padding: 18px 24px;
+    margin: 0;
   }
 
   .promotion-text {
@@ -681,16 +713,18 @@ export default {
 
   .profile-header {
     border-radius: 24px 24px 0 0;
-    padding: 50px 40px 30px;
+    padding: 25px 40px 25px;
   }
 
   .main-content {
     border-radius: 0 0 24px 24px;
-    padding: 30px 32px 20px;
+    padding: 25px 32px 20px;
+    margin-top: 0;
   }
 
   .promotion-banner {
     padding: 18px 24px;
+    margin: 0;
   }
 
   .promotion-text {
@@ -709,7 +743,9 @@ export default {
 /* Landscape Mobile */
 @media (max-height: 600px) and (orientation: landscape) {
   .profile-header {
-    padding: 30px 20px 15px;
+    padding: 20px 20px 15px;
+    min-height: 140px;
+    border-radius: 0 0 20px 20px;
   }
 
   .avatar-image {
@@ -727,7 +763,9 @@ export default {
   }
 
   .main-content {
-    padding: 20px 12px 10px;
+    padding: 16px 12px 10px;
+    border-radius: 20px 20px 0 0;
+    margin-top: -8px;
   }
 
   .setting-item {
@@ -736,6 +774,7 @@ export default {
 
   .promotion-banner {
     padding: 12px 16px;
+    margin: 0;
   }
 
   .promotion-text {
@@ -755,7 +794,9 @@ export default {
 /* Very short screens */
 @media (max-height: 500px) {
   .profile-header {
-    padding: 25px 16px 12px;
+    padding: 15px 16px 12px;
+    min-height: 120px;
+    border-radius: 0 0 16px 16px;
   }
 
   .avatar-image {
@@ -769,7 +810,9 @@ export default {
   }
 
   .main-content {
-    padding: 16px 10px 8px;
+    padding: 12px 10px 8px;
+    border-radius: 16px 16px 0 0;
+    margin-top: -6px;
   }
 
   .setting-item {
@@ -782,6 +825,7 @@ export default {
 
   .promotion-banner {
     padding: 10px 12px;
+    margin: 0;
   }
 
   .promotion-text {
@@ -814,7 +858,7 @@ export default {
   }
 
   .profile-inner {
-    border-radius: 24px 24px 0 0;
+    border-radius: 0;
   }
 
   .bottom-nav {
@@ -833,5 +877,10 @@ export default {
   input, textarea {
     font-size: 16px !important;
   }
+}
+
+/* Ensure no horizontal scroll */
+body, html {
+  overflow-x: hidden;
 }
 </style>

@@ -25,14 +25,15 @@
   v-else-if="currentPage === 'signup'"
   :signup-form="signupForm"
   :is-signup-form-valid="isSignupFormValid"
-  @update:firstName="signupForm.firstName = $event"
-  @update:lastName="signupForm.lastName = $event"
-  @update:email="signupForm.email = $event"
-  @update:password="signupForm.password = $event"
-  @update:confirmPassword="signupForm.confirmPassword = $event"
+  @update:firstName="updateSignupField('firstName', $event)"
+  @update:lastName="updateSignupField('lastName', $event)"
+  @update:email="updateSignupField('email', $event)"
+  @update:password="updateSignupField('password', $event)"
+  @update:confirmPassword="updateSignupField('confirmPassword', $event)"
   @validate-password="validatePassword"
   @validate-confirm-password="validateConfirmPassword"
   @handle-signup="handleSignup"
+  @social-login="socialLogin"
   @go-to-page="goToPage"
 />
 
@@ -766,6 +767,10 @@ const screen = computed(() => onboarding.currentScreen)
     })
 
     // Methods
+    const updateSignupField = (field, value) => {
+      signupForm.value[field] = value
+    }
+
     const validatePassword = () => {
       const password = signupForm.value.password
 
@@ -1348,6 +1353,7 @@ const screen = computed(() => onboarding.currentScreen)
       receiptData,
       currentDestination,
       activeDestinationTab,
+      updateSignupField,
       validatePassword,
       validateConfirmPassword,
       handleLogin,

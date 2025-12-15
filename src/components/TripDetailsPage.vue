@@ -49,6 +49,13 @@
           </div>
 
           <p v-else class="card-text empty-state">No itinerary added yet</p>
+
+          <!-- Direct edit link/button -->
+          <div class="edit-itinerary-link">
+            <button class="edit-link-btn" @click="goToItinerary">
+              <i class="fas fa-edit"></i> Edit Itinerary
+            </button>
+          </div>
         </section>
 
         <!-- Packlist card -->
@@ -73,19 +80,12 @@
           <p v-else class="card-text empty-state">No packlist added yet</p>
         </section>
       </main>
-
-      <!-- Bottom Edit button -->
-      <div class="edit-bar">
-        <button class="edit-button" @click="handleEditTrip">
-          Edit Itinerary
-        </button>
-      </div>
     </div>
   </div>
 </template>
 
 <script>
-import { ref, computed, onMounted } from 'vue'
+import {computed,  watch } from 'vue'
 import { useTripsStore } from '../stores/trips'
 
 export default {
@@ -96,7 +96,7 @@ export default {
       required: true
     }
   },
-  emits: ['go-back', 'edit-trip'],
+  emits: ['go-back', 'edit-itinerary'],
   setup(props, { emit }) {
     const tripsStore = useTripsStore()
 
@@ -160,6 +160,16 @@ export default {
       packlistCategories.value.length > 0
     )
 
+    // Watch for trip changes to update display
+    watch(() => props.trip, (newTrip) => {
+      console.log('Trip data updated in details page:', newTrip)
+      // Force update by accessing the computed properties
+      tripDestination.value
+      tripDates.value
+      activities.value
+      packlistCategories.value
+    }, { deep: true })
+
     // Methods
     const formatTime = (time) => {
       const timeMap = {
@@ -176,19 +186,22 @@ export default {
         const item = category.items.find(i => i.id === itemId)
         if (item) {
           item.checked = !item.checked
-          // Save to store
-          tripsStore.saveToLocalStorage()
+          // Save immediately to store
+          tripsStore.updateTripItinerary(props.trip.id, {
+            activities: activities.value,
+            packlist: packlistCategories.value
+          })
         }
       }
     }
 
-    const handleEditTrip = () => {
-      console.log('Editing trip:', props.trip)
-      // Store the trip ID in localStorage so ItineraryPage knows which trip to edit
-      if (props.trip?.id) {
-        localStorage.setItem('editingTripId', props.trip.id.toString())
-      }
-      emit('edit-trip', props.trip)
+    const goToItinerary = () => {
+      console.log('Going to itinerary for trip:', props.trip)
+
+      // Set the trip as editing in store
+      tripsStore.setEditingTrip(props.trip.id)
+
+      emit('edit-itinerary', props.trip)
     }
 
     return {
@@ -206,7 +219,7 @@ export default {
       hasPacklist,
       formatTime,
       togglePacklistItem,
-      handleEditTrip
+      goToItinerary
     }
   }
 }
@@ -303,6 +316,7 @@ export default {
   flex-direction: column;
   gap: 12px;
   bottom: 2px;
+  padding-bottom: 40px;
 }
 
 .details-card {
@@ -410,22 +424,36 @@ export default {
   margin-bottom: 4px;
 }
 
-.edit-bar {
-  padding: 16px;
-  background: #0c3437;
-  margin: 20px;
-  border-radius: 50px;
+/* Edit Itinerary Link Styles */
+.edit-itinerary-link {
+  margin-top: 20px;
+  padding-top: 16px;
+  border-top: 1px dashed #e5e7eb;
+  text-align: center;
 }
 
-.edit-button {
-  width: 100%;
-  background: var(--teal-1);
-  color: #ffffff;
-  border: none;
-  font-size: 16px;
+.edit-link-btn {
+  background: transparent;
+  border: 1px solid var(--teal-1);
+  color: var(--teal-1);
+  padding: 8px 16px;
+  border-radius: 8px;
+  font-size: 14px;
   font-weight: 500;
   cursor: pointer;
-  font-family: 'Poppins', sans-serif;
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  transition: all 0.2s;
+}
+
+.edit-link-btn:hover {
+  background: var(--teal-1);
+  color: white;
+}
+
+.edit-link-btn i {
+  font-size: 12px;
 }
 
 @media (min-width: 768px) {
@@ -441,4 +469,4 @@ export default {
     overflow: hidden;
   }
 }
-</style> 
+</style>

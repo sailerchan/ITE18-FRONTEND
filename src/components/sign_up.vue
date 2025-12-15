@@ -8,7 +8,7 @@
       <div class="welcome-text">Create an Account</div>
       <h2 class="card-title">Join now and start planning your trip.</h2>
 
-      <form @submit.prevent="$emit('handle-signup')">
+      <form @submit.prevent="handleSignupSubmit">
         <!-- First Name and Last Name in a row -->
         <div class="name-row">
           <div class="form-group floating-group">
@@ -133,8 +133,33 @@ export default {
     'validate-password',
     'validate-confirm-password',
     'handle-signup',
-    'go-to-page'
-  ]
+    'go-to-page',
+    'social-login'
+  ],
+  methods: {
+    handleFocus(event) {
+      event.target.parentElement.classList.add('focused')
+    },
+
+    handleBlur(event) {
+      event.target.parentElement.classList.remove('focused')
+    },
+
+    handleBlurAndValidatePassword(event) {
+      this.handleBlur(event)
+      this.$emit('validate-password')
+    },
+
+    handleBlurAndValidateConfirmPassword(event) {
+      this.handleBlur(event)
+      this.$emit('validate-confirm-password')
+    },
+
+    handleSignupSubmit() {
+      // Emit the handle-signup event which will trigger the App.vue's handleSignup method
+      this.$emit('handle-signup')
+    }
+  }
 }
 </script>
 
@@ -151,7 +176,6 @@ export default {
   width: 100vw;
   overflow-x: hidden;
   overflow-y: hidden;
-
 }
 
 .hero-banner {

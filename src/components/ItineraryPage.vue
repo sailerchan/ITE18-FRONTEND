@@ -159,7 +159,7 @@
 
     <!-- Save Button -->
     <div class="button-container">
-      <button class="save-button" @click="saveTrip">Save Trip</button>
+      <button class="save-button" @click="saveTrip">Save & Return</button>
     </div>
 
     <!-- Time Selection Modal -->
@@ -235,6 +235,8 @@
 </template>
 
 <script>
+import { useTripsStore } from '../stores/trips'
+
 export default {
   name: 'ItineraryPage',
   data() {
@@ -262,7 +264,8 @@ export default {
       showLeaveModal: false,
       showTimeModal: false,
       currentActivity: null,
-      selectedTime: 'morning'
+      selectedTime: 'morning',
+      currentTripId: null
     }
   },
   computed: {
@@ -287,9 +290,7 @@ export default {
     }
   },
   mounted() {
-    this.loadBookingData()
-    this.loadTripDates()
-    this.loadDraft()
+    this.loadTripData()
     if (this.categories.length === 0) {
       this.addCategory()
     }
@@ -298,23 +299,55 @@ export default {
     if (this.autoSaveTimer) {
       clearTimeout(this.autoSaveTimer)
     }
-  // NEW: Check if we're editing an existing trip
-  const editingTripId = localStorage.getItem('editingTripId')
-
-  if (editingTripId) {
-    // Load existing trip data
-    this.loadExistingTripData(parseInt(editingTripId))
-  } else {
-    // Load draft if creating new trip
-    this.loadDraft()
-  }
-
-  if (this.categories.length === 0) {
-    this.addCategory()
-  }
-},
-
+  },
   methods: {
+    loadTripData() {
+      const tripsStore = useTripsStore()
+
+      // Get the editing trip ID from store
+      this.currentTripId = tripsStore.editingTripId
+
+      if (this.currentTripId) {
+        // Load existing trip data
+        this.loadExistingTripData(this.currentTripId)
+      } else {
+        // Load from booking data (for new trips)
+        this.loadBookingData()
+        this.loadDraft()
+      }
+    },
+
+    loadExistingTripData(tripId) {
+      const tripsStore = useTripsStore()
+      const trip = tripsStore.getTripById(tripId)
+
+      if (trip) {
+        console.log('📖 Loading existing trip data:', trip)
+
+        // Load trip details
+        this.tripTitle = `Trip to ${trip.destinationName}`
+        this.tripDates = trip.dates
+        this.accommodationName = trip.accommodation?.title || 'Accommodation'
+        this.totalPrice = trip.totalPrice
+
+        // Load itinerary activities
+        if (trip.itinerary?.activities && trip.itinerary.activities.length > 0) {
+          this.activities = JSON.parse(JSON.stringify(trip.itinerary.activities))
+          this.nextActivityId = Math.max(...this.activities.map(a => a.id), 0) + 1
+        }
+
+        // Load packlist
+        if (trip.packlist?.categories && trip.packlist.categories.length > 0) {
+          this.categories = JSON.parse(JSON.stringify(trip.packlist.categories))
+          this.nextCategoryId = Math.max(...this.categories.map(c => c.id), 0) + 1
+          const allItemIds = this.categories.flatMap(c => c.items.map(i => i.id))
+          this.nextItemId = Math.max(...allItemIds, 0) + 1
+        }
+
+        this.hasUnsavedChanges = false
+      }
+    },
+
     loadBookingData() {
       const bookingData = localStorage.getItem('lastBooking')
       if (bookingData) {
@@ -347,20 +380,6 @@ export default {
           }
         } catch (error) {
           console.error('Error parsing booking data:', error)
-        }
-      }
-    },
-
-    loadTripDates() {
-      const savedDates = localStorage.getItem('tripDates')
-      if (savedDates) {
-        try {
-          const tripData = JSON.parse(savedDates)
-          const startDate = tripData.startDate
-          const endDate = tripData.endDate
-          this.tripDates = `${startDate.monthName} ${startDate.day} - ${endDate.monthName} ${endDate.day}, ${startDate.year}`
-        } catch (error) {
-          console.error('Error parsing saved dates:', error)
         }
       }
     },
@@ -401,25 +420,33 @@ export default {
       }
 
       this.autoSaveTimer = setTimeout(() => {
-        this.saveDraft()
-      }, 2000)
+        this.autoSaveToTrip()
+      }, 1000) // Auto-save after 1 second of inactivity
     },
 
-    saveDraft() {
-      const draftActivities = {
-        activities: this.activities,
-        nextActivityId: this.nextActivityId
-      }
+    autoSaveToTrip() {
+      if (!this.currentTripId) return
 
-      const draftPacklist = {
-        categories: this.categories,
-        nextCategoryId: this.nextCategoryId,
-        nextItemId: this.nextItemId
-      }
+      const validActivities = this.activities.filter(activity =>
+        activity.notes.trim() !== ''
+      )
 
-      localStorage.setItem('itineraryDraft_activities', JSON.stringify(draftActivities))
-      localStorage.setItem('itineraryDraft_packlist', JSON.stringify(draftPacklist))
-      console.log('Draft auto-saved')
+      const validCategories = this.categories.filter(category =>
+        category.title.trim() !== '' || category.items.length > 0
+      )
+
+      const tripsStore = useTripsStore()
+
+      // Update the trip in store
+      const success = tripsStore.updateTripItinerary(this.currentTripId, {
+        activities: validActivities,
+        packlist: validCategories
+      })
+
+      if (success) {
+        console.log('✅ Auto-saved trip changes')
+        this.hasUnsavedChanges = false
+      }
     },
 
     setActiveDay(dayId) {
@@ -438,12 +465,14 @@ export default {
         notes: ''
       }
       this.activities.push(newActivity)
+      this.scheduleAutoSave()
     },
 
     updateActivity(activity) {
       const index = this.activities.findIndex(a => a.id === activity.id)
       if (index !== -1) {
         this.activities.splice(index, 1, { ...activity })
+        this.scheduleAutoSave()
       }
     },
 
@@ -451,6 +480,7 @@ export default {
       const index = this.categories.findIndex(c => c.id === category.id)
       if (index !== -1) {
         this.categories.splice(index, 1, { ...category })
+        this.scheduleAutoSave()
       }
     },
 
@@ -461,11 +491,13 @@ export default {
         items: []
       }
       this.categories.push(newCategory)
+      this.scheduleAutoSave()
     },
 
     deleteCategory(categoryId) {
       if (confirm('Delete this category and all its items?')) {
         this.categories = this.categories.filter(cat => cat.id !== categoryId)
+        this.scheduleAutoSave()
       }
     },
 
@@ -540,78 +572,47 @@ export default {
     },
 
     saveTrip() {
-      const validActivities = this.activities.filter(activity =>
-        activity.notes.trim() !== ''
-      )
+      // Force auto-save before leaving
+      this.autoSaveToTrip()
 
-      const validCategories = this.categories.filter(category =>
-        category.title.trim() !== '' || category.items.length > 0
-      )
+      // Show success message
+      alert('Trip changes have been saved!')
 
-      console.log('Activities to save:', validActivities)
-      console.log('Packlist to save:', validCategories)
+      // Clear editing trip and go back
+      const tripsStore = useTripsStore()
+      tripsStore.clearEditingTrip()
 
-      localStorage.setItem('itineraryActivities', JSON.stringify(validActivities))
-      localStorage.setItem('itineraryPacklist', JSON.stringify(validCategories))
-
-      localStorage.removeItem('itineraryDraft_activities')
-      localStorage.removeItem('itineraryDraft_packlist')
-
-      this.hasUnsavedChanges = false
-
-      alert('Trip saved successfully!')
-
-      this.$emit('trip-saved', {
-        activities: validActivities,
-        packlist: validCategories
-      })
+      this.$emit('go-back')
     },
 
     goBack() {
       if (this.hasUnsavedChanges) {
         this.showLeaveModal = true
       } else {
-        this.$emit('go-back')
+        this.cleanupAndLeave()
       }
     },
 
     confirmLeave() {
       this.showLeaveModal = false
-      this.$emit('go-back')
+      this.cleanupAndLeave()
     },
 
-    loadExistingTripData(tripId) {
-    const tripsStore = useTripsStore()
-    const trip = tripsStore.getTripById(tripId)
+    cleanupAndLeave() {
+      // Auto-save before leaving
+      this.autoSaveToTrip()
 
-    if (trip) {
-      console.log('📖 Loading existing trip data:', trip)
+      // Clear editing trip from store
+      const tripsStore = useTripsStore()
+      tripsStore.clearEditingTrip()
 
-      // Load trip details
-      this.tripTitle = `Trip to ${trip.destinationName}`
-      this.tripDates = trip.dates
-      this.accommodationName = trip.accommodation?.title || 'Accommodation'
-      this.totalPrice = trip.totalPrice
+      // Clear draft data
+      localStorage.removeItem('itineraryDraft_activities')
+      localStorage.removeItem('itineraryDraft_packlist')
 
-      // Load itinerary activities
-      if (trip.itinerary?.activities && trip.itinerary.activities.length > 0) {
-        this.activities = [...trip.itinerary.activities]
-        this.nextActivityId = Math.max(...this.activities.map(a => a.id)) + 1
-      }
-
-      // Load packlist
-      if (trip.packlist?.categories && trip.packlist.categories.length > 0) {
-        this.categories = [...trip.packlist.categories]
-        this.nextCategoryId = Math.max(...this.categories.map(c => c.id)) + 1
-        this.nextItemId = Math.max(...this.categories.flatMap(c => c.items.map(i => i.id))) + 1
-      }
-
-      this.hasUnsavedChanges = false
+      this.$emit('go-back')
     }
   }
-
-  }
-
 }
 </script>
 

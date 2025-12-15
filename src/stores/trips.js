@@ -40,6 +40,9 @@ export const useTripsStore = defineStore('trips', () => {
   // Past trips array
   const pastTrips = ref([])
 
+  // Current editing trip ID
+  const editingTripId = ref(null)
+
   // Getter for upcoming trips
   const getUpcomingTrips = computed(() => {
     console.log('📄 Getting upcoming trips:', upcomingTrips.value)
@@ -64,10 +67,27 @@ export const useTripsStore = defineStore('trips', () => {
   const getTripById = (tripId) => {
     const upcoming = upcomingTrips.value.find(trip => trip.id === tripId)
     if (upcoming) return upcoming
-    
+
     const past = pastTrips.value.find(trip => trip.id === tripId)
     return past
   }
+
+  // Set current editing trip
+  const setEditingTrip = (tripId) => {
+    editingTripId.value = tripId
+    localStorage.setItem('editingTripId', tripId.toString())
+  }
+
+  // Clear editing trip
+  const clearEditingTrip = () => {
+    editingTripId.value = null
+    localStorage.removeItem('editingTripId')
+  }
+
+  // Get current editing trip
+  const getEditingTrip = computed(() => {
+    return editingTripId.value ? getTripById(editingTripId.value) : null
+  })
 
   // Add a COMPLETED trip (after booking/payment)
   const addCompletedTrip = (bookingData) => {
@@ -104,7 +124,6 @@ export const useTripsStore = defineStore('trips', () => {
         image: destination.image
       },
       destinationImage: destination.image,
-      // NEW: Itinerary and Packlist fields
       itinerary: {
         activities: []
       },
@@ -129,32 +148,28 @@ export const useTripsStore = defineStore('trips', () => {
   }
 
   // Update trip itinerary and packlist
-  const updateTripDetails = (tripId, itineraryData, packlistData) => {
+  const updateTripItinerary = (tripId, itineraryData) => {
     const trip = getTripById(tripId)
-    
+
     if (!trip) {
       console.error('Trip not found:', tripId)
       return false
     }
 
-    // Update itinerary
-    if (itineraryData) {
-      trip.itinerary = {
-        activities: itineraryData.activities || []
-      }
+    // Update itinerary activities
+    if (itineraryData.activities) {
+      trip.itinerary.activities = [...itineraryData.activities]
     }
 
-    // Update packlist
-    if (packlistData) {
-      trip.packlist = {
-        categories: packlistData.categories || []
-      }
+    // Update packlist categories
+    if (itineraryData.packlist) {
+      trip.packlist.categories = [...itineraryData.packlist]
     }
 
     // Save to localStorage
     saveToLocalStorage()
 
-    console.log('✅ Trip details updated:', trip)
+    console.log('✅ Trip itinerary updated:', trip)
     return true
   }
 
@@ -162,7 +177,8 @@ export const useTripsStore = defineStore('trips', () => {
   const saveToLocalStorage = () => {
     const tripsData = {
       upcomingTrips: upcomingTrips.value,
-      pastTrips: pastTrips.value
+      pastTrips: pastTrips.value,
+      editingTripId: editingTripId.value
     }
     localStorage.setItem('userTrips', JSON.stringify(tripsData))
     console.log('💾 Trips saved to localStorage:', tripsData)
@@ -177,6 +193,7 @@ export const useTripsStore = defineStore('trips', () => {
         const tripsData = JSON.parse(savedTrips)
         upcomingTrips.value = tripsData.upcomingTrips || []
         pastTrips.value = tripsData.pastTrips || []
+        editingTripId.value = tripsData.editingTripId || null
         console.log('🔥 Loaded trips from localStorage:', tripsData)
       } catch (error) {
         console.error('Error loading trips from localStorage:', error)
@@ -211,6 +228,7 @@ export const useTripsStore = defineStore('trips', () => {
   const clearTrips = () => {
     upcomingTrips.value = []
     pastTrips.value = []
+    editingTripId.value = null
     localStorage.removeItem('userTrips')
     console.log('🗑️ All trips cleared')
   }
@@ -222,13 +240,17 @@ export const useTripsStore = defineStore('trips', () => {
     destinations,
     upcomingTrips,
     pastTrips,
+    editingTripId,
     getUpcomingTrips,
     getPastTrips,
     getDestinationById,
     getDestinationImage,
     getTripById,
+    setEditingTrip,
+    clearEditingTrip,
+    getEditingTrip,
     addCompletedTrip,
-    updateTripDetails,
+    updateTripItinerary,
     loadFromLocalStorage,
     cancelTrip,
     completeTrip,

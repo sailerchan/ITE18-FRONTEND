@@ -185,11 +185,11 @@ export default {
 /* Same card styling as homepage */
 .personal-info-inner {
   background: #ffffff;
-  border-radius: 24px 24px 0 0;
+  border-radius: 0;
   padding: 0;
   margin-top: 0;
   position: relative;
-  box-shadow: 0 -8px 32px rgba(0, 0, 0, 0.1);
+  box-shadow: none;
   flex: 1;
   width: 100%;
   box-sizing: border-box;
@@ -200,23 +200,27 @@ export default {
   padding-bottom: 90px; /* Added padding for fixed nav - SAME AS HOMEPAGE */
 }
 
-/* I. Header Section */
+/* I. Header Section - MOVED TO THE TOP */
 .header-section {
   background: #0C3437;
   border-radius: 0 0 25px 25px;
-  padding: 45px 20px 25px;
+  padding: 25px 20px 25px; /* Reduced from 45px 20px 25px */
   color: white;
   text-align: center;
   position: relative;
   z-index: 10;
   margin: 0;
   width: 100%;
+  min-height: 160px; /* Added for consistent height */
+  display: flex;
+  flex-direction: column;
+  justify-content: center; /* Centers content vertically */
 }
 
 .nav-bar {
   display: flex;
   align-items: center;
-  margin-bottom: 25px;
+  margin-bottom: 20px; /* Reduced from 25px */
 }
 
 .back-button {
@@ -298,9 +302,9 @@ export default {
 
 /* II. Main Content Area */
 .main-content {
-  padding: 25px 15px 15px;
+  padding: 20px 15px 15px; /* Reduced top padding from 25px */
   background: white;
-  margin-top: -10px;
+  margin-top: -10px; /* Keep negative margin for rounded corner overlap */
   border-radius: 25px 25px 0 0;
   position: relative;
   z-index: 1;
@@ -514,7 +518,7 @@ export default {
 /* Extra Small Phones (under 320px) */
 @media (max-width: 320px) {
   .header-section {
-    padding: 40px 16px 20px;
+    padding: 20px 16px 20px; /* Reduced from 40px 16px 20px */
     border-radius: 0 0 20px 20px;
   }
 
@@ -528,8 +532,9 @@ export default {
   }
 
   .main-content {
-    padding: 20px 12px 12px;
+    padding: 16px 12px 12px; /* Reduced from 20px 12px 12px */
     border-radius: 20px 20px 0 0;
+    margin-top: -8px; /* Adjusted for smaller radius */
   }
 
   .input-text {
@@ -562,33 +567,48 @@ export default {
 /* Small Phones (321px - 374px) */
 @media (min-width: 321px) and (max-width: 374px) {
   .header-section {
-    padding: 45px 20px 25px;
+    padding: 22px 20px 22px; /* Reduced from 45px 20px 25px */
+    border-radius: 0 0 22px 22px;
   }
 
   .personal-info-inner {
     padding-bottom: 85px;
+  }
+
+  .main-content {
+    margin-top: -8px;
   }
 }
 
 /* Medium Phones (375px - 414px) */
 @media (min-width: 375px) and (max-width: 414px) {
   .header-section {
-    padding: 45px 20px 25px;
+    padding: 25px 20px 25px; /* Reduced from 45px 20px 25px */
+    border-radius: 0 0 24px 24px;
   }
 
   .personal-info-inner {
     padding-bottom: 90px;
+  }
+
+  .main-content {
+    margin-top: -10px;
   }
 }
 
 /* Large Phones (415px - 767px) */
 @media (min-width: 415px) and (max-width: 767px) {
   .header-section {
-    padding: 45px 24px 25px;
+    padding: 25px 24px 25px; /* Reduced from 45px 24px 25px */
+    border-radius: 0 0 25px 25px;
   }
 
   .personal-info-inner {
     padding-bottom: 95px;
+  }
+
+  .main-content {
+    margin-top: -10px;
   }
 }
 
@@ -611,12 +631,13 @@ export default {
 
   .header-section {
     border-radius: 24px 24px 0 0;
-    padding: 50px 32px 30px;
+    padding: 25px 32px 25px; /* Reduced from 50px 32px 30px */
   }
 
   .main-content {
     border-radius: 0 0 24px 24px;
-    padding: 30px 24px 20px;
+    padding: 25px 24px 20px; /* Reduced from 30px 24px 20px */
+    margin-top: 0; /* No negative margin on tablets */
   }
 
   .promotion-banner {
@@ -655,12 +676,13 @@ export default {
 
   .header-section {
     border-radius: 24px 24px 0 0;
-    padding: 50px 36px 30px;
+    padding: 25px 36px 25px; /* Reduced from 50px 36px 30px */
   }
 
   .main-content {
     border-radius: 0 0 24px 24px;
-    padding: 30px 28px 20px;
+    padding: 25px 28px 20px; /* Reduced from 30px 28px 20px */
+    margin-top: 0;
   }
 
   .promotion-banner {
@@ -699,12 +721,13 @@ export default {
 
   .header-section {
     border-radius: 24px 24px 0 0;
-    padding: 50px 40px 30px;
+    padding: 25px 40px 25px; /* Reduced from 50px 40px 30px */
   }
 
   .main-content {
     border-radius: 0 0 24px 24px;
-    padding: 30px 32px 20px;
+    padding: 25px 32px 20px; /* Reduced from 30px 32px 20px */
+    margin-top: 0;
   }
 
   .promotion-banner {
@@ -727,7 +750,9 @@ export default {
 /* Landscape Mobile */
 @media (max-height: 600px) and (orientation: landscape) {
   .header-section {
-    padding: 30px 20px 15px;
+    padding: 20px 20px 15px; /* Reduced from 30px 20px 15px */
+    min-height: 140px; /* Added min-height */
+    border-radius: 0 0 20px 20px;
   }
 
   .avatar-image {
@@ -736,7 +761,9 @@ export default {
   }
 
   .main-content {
-    padding: 20px 12px 10px;
+    padding: 16px 12px 10px; /* Reduced from 20px 12px 10px */
+    border-radius: 20px 20px 0 0;
+    margin-top: -8px;
   }
 
   .input-text {
@@ -764,7 +791,9 @@ export default {
 /* Very short screens */
 @media (max-height: 500px) {
   .header-section {
-    padding: 25px 16px 12px;
+    padding: 15px 16px 12px; /* Reduced from 25px 16px 12px */
+    min-height: 120px; /* Added min-height */
+    border-radius: 0 0 16px 16px;
   }
 
   .avatar-image {
@@ -773,7 +802,9 @@ export default {
   }
 
   .main-content {
-    padding: 16px 10px 8px;
+    padding: 12px 10px 8px; /* Reduced from 16px 10px 8px */
+    border-radius: 16px 16px 0 0;
+    margin-top: -6px;
   }
 
   .input-text {
@@ -814,7 +845,7 @@ export default {
   }
 
   .personal-info-inner {
-    border-radius: 24px 24px 0 0;
+    border-radius: 0;
   }
 
   .bottom-nav {
@@ -833,5 +864,10 @@ export default {
   input, textarea {
     font-size: 16px !important;
   }
+}
+
+/* Ensure no horizontal scroll */
+body, html {
+  overflow-x: hidden;
 }
 </style>
