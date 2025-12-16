@@ -33,7 +33,7 @@
                    required>
             <label for="password" class="floating-label">Password</label>
           </div>
-          <a href="#" class="forgot-password" @click="$emit('go-to-page', 'forgot-password')">Forgot Password?</a>
+          <a href="#" class="forgot-password" @click="$emit('go-to-page', 'forgot-password')"><u>Forgot Password?</u></a>
         </div>
 
         <button type="submit" class="sign-in-btn">Log In</button>
@@ -55,7 +55,7 @@
       </div>
 
       <div class="sign-up-section">
-        New here? <a href="#" class="sign-up-link" @click="$emit('go-to-page', 'signup')">Sign Up</a> to begin your journey!
+        New here? <a href="#" class="sign-up-link" @click="$emit('go-to-page', 'signup')"><u>Sign Up</u></a> to begin your journey!
       </div>
     </div>
   </div>
@@ -239,7 +239,8 @@ export default {
   margin-top: 10px;
   cursor: pointer;
   transition: background-color 0.3s;
-  -webkit-tap-highlight-color: transparent; /* Remove tap highlight */
+  -webkit-tap-highlight-color: transparent;
+  font-family:'Poppins', sans-serif;
 }
 
 .sign-in-btn:hover {

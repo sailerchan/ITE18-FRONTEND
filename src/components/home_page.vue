@@ -24,8 +24,6 @@
       <section class="hero-section">
         <div class="hero-card">
           <img :src="featuredDestination.image" :alt="featuredDestination.name" class="hero-img">
-
-          <div class="hero-rating"><i class="fas fa-star"></i> {{ featuredDestination.rating }}</div>
           <div class="hero-gradient"></div>
           <div class="hero-text">
             <h3>{{ featuredDestination.name }}</h3>
@@ -167,8 +165,8 @@ export default {
 }
 
 .user-name {
-  font-size: 26px;
-  font-weight: 800;
+  font-size: 20px;
+  font-weight: 500;
   color: var(--dark);
   margin-bottom: 10px;
 }
@@ -229,6 +227,7 @@ export default {
   flex: 1;
   color: #adb5bd;
   font-size: 12px;
+  font-family: 'Poppins', sans-serif;
 }
 
 .search-input input {
@@ -236,8 +235,9 @@ export default {
   outline: 0;
   background: transparent;
   width: 100%;
-  font-size: 12px;
+  font-size: 10px;
   color: #495057;
+  font-family: 'Poppins', sans-serif;
 }
 
 .search-input input::placeholder {
@@ -260,7 +260,7 @@ export default {
   width: 90%;
   margin: auto;
   height: 350px;
-  border-radius: 30px;
+  border-radius: 20px;
   overflow: hidden;
   position: relative;
   background: #e9ecef;
@@ -327,17 +327,17 @@ export default {
 
 .hero-text {
   position: absolute;
-  left: 20px;
+  left: 15px;
   bottom: 20px;
-  color: #fff;
-  right: 20px;
+  right: 15px;
 }
 
 .hero-text h3 {
   margin: 0;
-  font-size: 22px;
-  font-weight: 800;
-  margin-bottom: 8px;
+  font-size: 30px;
+  font-weight: 700;
+  margin-bottom: px;
+  color: #ffffff;
 }
 
 .hero-text p {

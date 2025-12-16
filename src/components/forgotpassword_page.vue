@@ -207,7 +207,8 @@ export default {
   margin-top: 10px;
   cursor: pointer;
   transition: background-color 0.3s;
-  -webkit-tap-highlight-color: transparent; /* Remove tap highlight */
+  -webkit-tap-highlight-color: transparent;
+  font-family:'Poppins', sans-serif;
 }
 
 .sign-in-btn:hover:not(:disabled) {

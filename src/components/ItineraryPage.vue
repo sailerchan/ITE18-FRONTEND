@@ -729,7 +729,7 @@ export default {
 .trip-details {
   display: flex;
   flex-direction: column;
-  gap: 12px;
+  gap: 2px;
 }
 
 .detail-row {
@@ -762,7 +762,7 @@ export default {
   scrollbar-width: none;
   -ms-overflow-style: none;
   padding: 0 0 16px 0;
-  margin: 0 0 24px 0;
+  margin: 24px 0 10px 10px;
   position: relative;
 }
 
@@ -923,7 +923,7 @@ export default {
   background-color: #0c3437;
   color: white;
   border: none;
-  border-radius: 12px;
+  border-radius: 100px;
   padding: 16px;
   font-size: 16px;
   font-weight: 600;
@@ -1208,7 +1208,7 @@ export default {
   background-color: #0c3437;
   color: white;
   border: none;
-  border-radius: 12px;
+  border-radius: 100px;
   padding: 16px;
   font-size: 16px;
   font-weight: 600;

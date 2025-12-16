@@ -47,11 +47,6 @@
                 View Details
               </button>
             </div>
-
-            <!-- right: checkbox placeholder -->
-            <div class="trip-checkbox">
-              <input type="checkbox" />
-            </div>
           </div>
         </div>
       </main>

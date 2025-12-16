@@ -44,7 +44,7 @@ export default {
 }
 
 .explore-screen {
-  background: white;
+  background: linear-gradient(180deg, #F7F5ED 0%, #075258 100%);
   color: black;
 }
 
@@ -57,7 +57,7 @@ export default {
 
 .text-block {
   margin-top: 75px;
-  padding-left:30px;
+  padding-left:80px;
 }
 
 .title {
@@ -77,7 +77,7 @@ export default {
 
 .illustration {
   margin-top: 30px;
-  width: 100dvw;
+  width: 130dvw;
   object-fit: contain;
   align-items: center;
 }
@@ -85,10 +85,10 @@ export default {
 .primary-btn {
 
 width: 100%;
-padding: 14px 80px;
+padding: 14px 90px;
 border-radius: 50px;
 border: none;
-background: #0c3437;
+background: #d3d4d429;
 color: white;
 font-size: 16px;
 font-weight: 600;
