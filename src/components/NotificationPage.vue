@@ -13,7 +13,7 @@
       <main class="main-content">
         <div class="notification-graphic">
           <div class="image-container">
-            <img src="/images/no_notif.png" alt="No Notifications" class="notification-image">
+            <img src="/images/no_notif.jpg" alt="No Notifications" class="notification-image">
             <div class="image-overlay"></div>
           </div>
         </div>

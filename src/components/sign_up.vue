@@ -112,6 +112,8 @@
 </template>
 
 <script>
+import { useUserStore } from '@/stores/user'
+
 export default {
   name: 'sign_up',
   props: {
@@ -136,6 +138,13 @@ export default {
     'go-to-page',
     'social-login'
   ],
+  setup() {
+    const userStore = useUserStore()
+
+    return {
+      userStore
+    }
+  },
   methods: {
     handleFocus(event) {
       event.target.parentElement.classList.add('focused')
@@ -156,12 +165,20 @@ export default {
     },
 
     handleSignupSubmit() {
-      // Emit the handle-signup event which will trigger the App.vue's handleSignup method
+      // Save signup data to Pinia store
+      this.userStore.updateFromSignup({
+        firstName: this.signupForm.firstName,
+        lastName: this.signupForm.lastName,
+        email: this.signupForm.email
+      })
+
+      // Emit the handle-signup event
       this.$emit('handle-signup')
     }
   }
 }
 </script>
+
 
 <style scoped>
 /* Base styles matching your login page design */

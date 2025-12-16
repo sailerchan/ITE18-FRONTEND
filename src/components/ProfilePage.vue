@@ -23,10 +23,7 @@
           <div class="settings-list">
             <div class="setting-item" @click="handlePersonalInfo">
               <div class="icon-wrapper">
-                <svg width="24" height="24" viewBox="0 0 24 24" fill="none">
-                  <circle cx="12" cy="8" r="4" stroke="#333" stroke-width="2"/>
-                  <path d="M5 20v-2a7 7 0 0 1 14 0v2" stroke="#333" stroke-width="2"/>
-                </svg>
+                <i class="fa-solid fa-pen-to-square"></i>
               </div>
               <span class="setting-text">Personal Information</span>
               <svg width="16" height="16" viewBox="0 0 24 24" fill="none" class="chevron">
@@ -36,13 +33,7 @@
 
             <div class="setting-item" @click="handleChangePassword">
               <div class="icon-wrapper">
-                <svg width="24" height="24" viewBox="0 0 24 24" fill="none">
-                  <!-- Shield -->
-                  <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z" fill="#333" stroke="#333" stroke-width="1"/>
-                  <!-- Padlock -->
-                  <rect x="9" y="11" width="6" height="7" rx="1" fill="white" stroke="white" stroke-width="0.5"/>
-                  <path d="M11 11V9a1 1 0 0 1 2 0v2" stroke="white" stroke-width="1"/>
-                </svg>
+                <i class="fa-solid fa-lock"></i>
               </div>
               <span class="setting-text">Change Password</span>
               <svg width="16" height="16" viewBox="0 0 24 24" fill="none" class="chevron">
@@ -157,11 +148,11 @@ export default {
   props: {
     userName: {
       type: String,
-      default: 'Juan Dela Cruz'
+      default: ''
     },
     currentLocation: {
       type: String,
-      default: 'Butuan City, Philippines'
+      default: ''
     }
   },
   data() {
@@ -275,8 +266,8 @@ export default {
 
 .screen-title {
   font-size: 18px;
-  font-weight: 700;
-  margin-bottom: 20px; /* Reduced from 25px */
+  font-weight: 600;
+  margin-bottom: 20px;
   letter-spacing: 0.5px;
 }
 
@@ -309,7 +300,7 @@ export default {
 
 .user-name {
   font-size: 20px;
-  font-weight: 700;
+  font-weight: 400;
   margin: 0 0 6px 0;
   letter-spacing: 0.3px;
 }

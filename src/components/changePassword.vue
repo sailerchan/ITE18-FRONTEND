@@ -5,16 +5,7 @@
       <div class="header-section">
         <div class="nav-bar">
           <button class="back-button" @click="goBack">
-            <svg width="24" height="24" viewBox="0 0 24 24" fill="none">
-              <path d="M19 12H5" stroke="white" stroke-width="2" stroke-linecap="round" />
-              <path
-                d="M12 19l-7-7 7-7"
-                stroke="white"
-                stroke-width="2"
-                stroke-linecap="round"
-                stroke-linejoin="round"
-              />
-            </svg>
+             <i class="fas fa-arrow-left"></i>
           </button>
           <h1 class="screen-title">Change Password</h1>
         </div>
@@ -182,35 +173,6 @@
         </div>
       </div>
 
-      <!-- III. Navigation Bar - SAME AS HOMEPAGE -->
-      <nav class="bottom-nav">
-        <div class="nav-items-container">
-          <button
-            class="nav-item"
-            :class="{ active: activeNav === 'home' }"
-            @click="goToPage('homepage')"
-          >
-            <i class="fas fa-home"></i>
-          </button>
-          <button
-            class="nav-item"
-            :class="{ active: activeNav === 'trips' }"
-            @click="goToPage('trips')"
-          >
-            <i class="fas fa-route"></i>
-          </button>
-          <button
-            class="nav-item"
-            :class="{ active: activeNav === 'notifications' }"
-            @click="goToPage('notifications')"
-          >
-            <i class="fas fa-bell"></i>
-          </button>
-          <button class="nav-item active">
-            <i class="fas fa-user"></i>
-          </button>
-        </div>
-      </nav>
     </div>
   </div>
 </template>
@@ -325,13 +287,13 @@ export default {
 
 /* I. Header Section - UPDATED TO MATCH PERSONAL INFO PAGE */
 .header-section {
-  background: #0c3437;
-  border-radius: 0 0 25px 25px;
+  background: #ffffff;
+  border-radius: 0 0 100px 100px;
   padding: 25px 20px 25px; /* Reduced from 45px 20px 25px */
-  color: white;
+  color: rgb(0, 0, 0);
   text-align: center;
   position: relative;
-  z-index: 10;
+  z-index: 20;
   margin: 0;
   width: 100%;
   min-height: 160px; /* CHANGED: Increased from 120px to 160px to match Personal Info page */
@@ -343,22 +305,25 @@ export default {
 .nav-bar {
   display: flex;
   align-items: center;
-  margin-bottom: 20px; /* ADDED: Added margin-bottom to match Personal Info page spacing */
+  margin-bottom: 20px;
 }
 
 .back-button {
   background: none;
   border: none;
+  font-size: 18px;
+  color: var(--dark);
   padding: 8px;
   cursor: pointer;
   display: flex;
   align-items: center;
   justify-content: center;
   -webkit-tap-highlight-color: transparent;
-  width: 48px;
-  height: 48px;
+  width: 40px;
+  height: 40px;
   border-radius: 12px;
   transition: all 0.2s ease;
+
 }
 
 .back-button:hover {
@@ -377,9 +342,8 @@ export default {
 /* II. Main Content Area */
 .main-content {
   padding: 20px 15px 15px; /* Reduced from 25px 15px 15px */
-  background: white;
-  margin-top: -10px; /* Keep negative margin for rounded corner overlap */
-  border-radius: 25px 25px 0 0;
+  background: rgb(255, 255, 255);
+  margin-top:;
   position: relative;
   z-index: 1;
   flex: 1;

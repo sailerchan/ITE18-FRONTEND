@@ -5,10 +5,7 @@
       <div class="header-section">
         <div class="nav-bar">
           <button class="back-button" @click="goBack">
-            <svg width="24" height="24" viewBox="0 0 24 24" fill="none">
-              <path d="M19 12H5" stroke="white" stroke-width="2" stroke-linecap="round"/>
-              <path d="M12 19l-7-7 7-7" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
-            </svg>
+            <i class="fas fa-arrow-left"></i>
           </button>
           <h1 class="screen-title">Personal Information</h1>
         </div>
@@ -16,9 +13,9 @@
         <div class="avatar-section">
           <div class="avatar-container">
             <div class="avatar-image">
-              <img src="/images/profilepicture.png" alt="Profile Picture" class="profile-picture">
+              <img :src="userProfile.avatar || '/images/profilepicture.png'" alt="Profile Picture" class="profile-picture">
             </div>
-            <button class="edit-photo">Edit Photo</button>
+            <button class="edit-photo" @click="handleEditPhoto">Edit Photo</button>
           </div>
         </div>
       </div>
@@ -30,7 +27,12 @@
           <div class="input-group">
             <label class="input-label">First Name</label>
             <div class="input-field">
-              <input type="text" value="Juan" class="input-text" readonly>
+              <input
+                type="text"
+                v-model="userProfile.firstName"
+                class="input-text"
+                placeholder="Enter your first name"
+              >
             </div>
           </div>
 
@@ -38,7 +40,12 @@
           <div class="input-group">
             <label class="input-label">Last Name</label>
             <div class="input-field">
-              <input type="text" value="Dela Cruz" class="input-text" readonly>
+              <input
+                type="text"
+                v-model="userProfile.lastName"
+                class="input-text"
+                placeholder="Enter your last name"
+              >
             </div>
           </div>
 
@@ -46,7 +53,13 @@
           <div class="input-group">
             <label class="input-label">Email</label>
             <div class="input-field">
-              <input type="email" value="juandelacruz@ite18.com" class="input-text" readonly>
+              <input
+                type="email"
+                v-model="userProfile.email"
+                class="input-text"
+                placeholder="Enter your email"
+                :readonly="emailReadonly"
+              >
             </div>
           </div>
 
@@ -54,7 +67,12 @@
           <div class="input-group">
             <label class="input-label">Location</label>
             <div class="input-field">
-              <input type="text" value="Butuan City, Agusan del Sur" class="input-text" readonly>
+              <input
+                type="text"
+                v-model="userProfile.location"
+                class="input-text"
+                placeholder="Enter your location"
+              >
             </div>
           </div>
 
@@ -98,68 +116,86 @@
           <p class="promotion-text">Unlock all features and get access to real time<br>updates to make smart travel even easier!</p>
         </div>
       </div>
-
-      <!-- IV. Navigation Bar - SAME AS HOMEPAGE -->
-      <nav class="bottom-nav">
-        <div class="nav-items-container">
-          <button class="nav-item" :class="{ active: activeNav === 'home' }" @click="goToPage('homepage')">
-            <i class="fas fa-home"></i>
-          </button>
-          <button class="nav-item" :class="{ active: activeNav === 'trips' }" @click="goToPage('trips')">
-            <i class="fas fa-route"></i>
-          </button>
-          <button class="nav-item" :class="{ active: activeNav === 'notifications' }" @click="goToPage('notifications')">
-            <i class="fas fa-bell"></i>
-          </button>
-          <button class="nav-item active">
-            <i class="fas fa-user"></i>
-          </button>
-        </div>
-      </nav>
     </div>
   </div>
 </template>
 
 <script>
+import { computed, onMounted } from 'vue'
+import { useUserStore } from '@/stores/user'
+import { storeToRefs } from 'pinia'
+
 export default {
   name: 'PersonalInformation',
-  data() {
-    return {
-      activeNav: 'profile'
-    }
-  },
   emits: ['go-back', 'save-changes', 'connect-facebook', 'delete-account', 'go-to-page'],
-  methods: {
-    goBack() {
-      this.$emit('go-back')
-    },
 
-    goToPage(page) {
-      this.activeNav = page === 'homepage' ? 'home' :
-                      page === 'trips' ? 'trips' :
-                      page === 'notifications' ? 'notifications' : 'profile';
-      this.$emit('go-to-page', page)
-    },
+  setup(props, { emit }) {
+    const userStore = useUserStore()
 
-    handleSave() {
-      this.$emit('save-changes')
-    },
+    // Use storeToRefs to keep reactivity
+    const { userProfile } = storeToRefs(userStore)
 
-    connectFacebook() {
-      this.$emit('connect-facebook')
-    },
+    const emailReadonly = computed(() => true) // Email shouldn't be editable after signup
 
-    deleteAccount() {
-      if (confirm('Are you sure you want to delete your account? This action cannot be undone.')) {
-        this.$emit('delete-account')
+    onMounted(() => {
+      // Load profile from localStorage when component mounts
+      userStore.loadFromLocalStorage()
+    })
+
+    const goBack = () => {
+      emit('go-back')
+    }
+
+    const goToPage = (page) => {
+      emit('go-to-page', page)
+    }
+
+    const handleSave = () => {
+      // Validate required fields
+      if (!userProfile.value.firstName || !userProfile.value.email) {
+        alert('Please fill in at least your first name and email')
+        return
       }
+
+      // Save to Pinia store (which also saves to localStorage)
+      userStore.saveToLocalStorage()
+      emit('save-changes', userProfile.value)
+      alert('Profile saved successfully!')
+    }
+
+    const handleEditPhoto = () => {
+      console.log('Edit photo clicked')
+      alert('Photo upload feature coming soon!')
+    }
+
+    const connectFacebook = () => {
+      emit('connect-facebook')
+    }
+
+    const deleteAccount = () => {
+      if (confirm('Are you sure you want to delete your account? This action cannot be undone.')) {
+        userStore.clearUserProfile()
+        emit('delete-account')
+      }
+    }
+
+    return {
+      userProfile,
+      emailReadonly,
+      goBack,
+      goToPage,
+      handleSave,
+      handleEditPhoto,
+      connectFacebook,
+      deleteAccount
     }
   }
 }
 </script>
 
+
+
 <style scoped>
-/* CSS Variables - SAME AS HOMEPAGE */
 :root {
   --muted: #6c757d;
   --dark: #1a1a1a;
@@ -168,8 +204,6 @@ export default {
   --card-shadow: 0 4px 16px rgba(0, 0, 0, 0.08);
   --hover-shadow: 0 8px 24px rgba(0, 0, 0, 0.12);
 }
-
-/* Exact same container as homepage */
 .container {
   min-height: 100vh;
   min-height: 100dvh;
@@ -202,7 +236,7 @@ export default {
 
 /* I. Header Section - MOVED TO THE TOP */
 .header-section {
-  background: #0C3437;
+  background: #ffffff;
   border-radius: 0 0 25px 25px;
   padding: 25px 20px 25px; /* Reduced from 45px 20px 25px */
   color: white;
@@ -214,7 +248,8 @@ export default {
   min-height: 160px; /* Added for consistent height */
   display: flex;
   flex-direction: column;
-  justify-content: center; /* Centers content vertically */
+  justify-content: center;
+
 }
 
 .nav-bar {
@@ -224,16 +259,18 @@ export default {
 }
 
 .back-button {
-  background: none;
+ background: none;
   border: none;
+  font-size: 18px;
+  color: black;
   padding: 8px;
   cursor: pointer;
   display: flex;
   align-items: center;
   justify-content: center;
   -webkit-tap-highlight-color: transparent;
-  width: 48px;
-  height: 48px;
+  width: 40px;
+  height: 40px;
   border-radius: 12px;
   transition: all 0.2s ease;
 }
@@ -249,6 +286,7 @@ export default {
   flex: 1;
   text-align: center;
   margin-right: 40px;
+  color: black;
 }
 
 .avatar-section {
@@ -280,13 +318,13 @@ export default {
   width: 100%;
   height: 100%;
   object-fit: cover;
-  border-radius: 50%;
+  border-radius: 20px;
 }
 
 .edit-photo {
   background: none;
   border: none;
-  color: white;
+  color: rgb(0, 0, 0);
   font-size: 13px;
   font-weight: 500;
   cursor: pointer;
@@ -294,6 +332,7 @@ export default {
   -webkit-tap-highlight-color: transparent;
   border-radius: 6px;
   transition: all 0.2s ease;
+  font-family:'Poppins', sans-serif;
 }
 
 .edit-photo:hover {
@@ -337,6 +376,7 @@ export default {
   padding: 0 16px;
   background: white;
   transition: all 0.2s ease;
+
 }
 
 .input-field:focus-within {
@@ -352,6 +392,7 @@ export default {
   font-size: 15px;
   color: #999;
   background: transparent;
+  font-family:'Poppins', sans-serif;
 }
 
 .input-text:focus {
@@ -362,7 +403,7 @@ export default {
   width: 100%;
   background: #0C3437;
   border: none;
-  border-radius: 12px;
+  border-radius: 50px;
   padding: 14px;
   color: white;
   font-size: 16px;
@@ -372,6 +413,7 @@ export default {
   margin-bottom: 25px;
   transition: all 0.2s ease;
   -webkit-tap-highlight-color: transparent;
+  font-family:'Poppins', sans-serif;
 }
 
 .save-button:hover {

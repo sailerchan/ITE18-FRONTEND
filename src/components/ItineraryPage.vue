@@ -711,7 +711,7 @@ export default {
 }
 
 .nav-title {
-  font-size: 20px;
+  font-size: 18px;
   font-weight: 600;
   color: white;
 }
@@ -729,7 +729,7 @@ export default {
 .trip-details {
   display: flex;
   flex-direction: column;
-  gap: 2px;
+  gap: 0px;
 }
 
 .detail-row {
@@ -843,17 +843,17 @@ export default {
   display: flex;
   align-items: center;
   gap: 8px;
-  padding: 10px 16px;
+  padding: 14px 16px;
   background: #f8f9fa;
   border: 1px solid #e0e0e0;
   border-radius: 8px;
-  font-size: 14px;
+  font-size: 16px;
   font-weight: 500;
   color: #0c3437;
   cursor: pointer;
   transition: all 0.2s;
-  width: auto;
-  min-width: 150px;
+  width: 100%;
+  font-family:'Poppins', sans-serif;
 }
 
 .time-select-btn:hover {
@@ -932,6 +932,7 @@ export default {
   box-shadow: 0 4px 8px rgba(31, 79, 90, 0.2);
   display: block;
   box-sizing: border-box;
+  font-family:'Poppins', sans-serif;
 }
 
 .add-button:hover {
@@ -1040,6 +1041,8 @@ export default {
   padding: 4px 0;
   min-width: 0;
   box-sizing: border-box;
+
+  font-family:'Poppins', sans-serif;
 }
 
 .category-title::placeholder {
@@ -1075,6 +1078,7 @@ export default {
   padding: 8px 0;
   border-bottom: 1px solid #f0f0f0;
   box-sizing: border-box;
+  font-family:'Poppins', sans-serif;
 }
 
 .packlist-input::placeholder {
@@ -1153,6 +1157,7 @@ export default {
   overflow-wrap: break-word;
   font-size: 14px;
   min-width: 0;
+  font-family:'Poppins', sans-serif;
 }
 
 .packlist-text.checked {
@@ -1196,6 +1201,7 @@ export default {
   justify-content: center;
   gap: 8px;
   box-sizing: border-box;
+  font-family:'Poppins', sans-serif;
 }
 
 .add-category-btn:hover {
@@ -1217,6 +1223,7 @@ export default {
   box-shadow: 0 4px 8px rgba(31, 79, 90, 0.2);
   display: block;
   box-sizing: border-box;
+  font-family:'Poppins', sans-serif;
 }
 
 .save-button:hover {

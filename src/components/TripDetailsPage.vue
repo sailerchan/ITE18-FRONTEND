@@ -7,7 +7,6 @@
           <i class="fas fa-arrow-left"></i>
         </button>
         <div class="details-header-text">
-          <span class="details-label">Details</span>
           <h1 class="trip-title">
             Trip to<br>
             <span class="trip-destination">{{ tripDestination }}</span>
@@ -50,12 +49,6 @@
 
           <p v-else class="card-text empty-state">No itinerary added yet</p>
 
-          <!-- Direct edit link/button -->
-          <div class="edit-itinerary-link">
-            <button class="edit-link-btn" @click="goToItinerary">
-              <i class="fas fa-edit"></i> Edit Itinerary
-            </button>
-          </div>
         </section>
 
         <!-- Packlist card -->
@@ -79,6 +72,12 @@
 
           <p v-else class="card-text empty-state">No packlist added yet</p>
         </section>
+
+                  <div class="edit-itinerary-link">
+            <button class="edit-link-btn" @click="goToItinerary">
+              <i class="fas fa-edit"></i> Edit Itinerary
+            </button>
+          </div>
       </main>
     </div>
   </div>
@@ -366,16 +365,14 @@ export default {
   margin-left: 0;
 }
 
-.details-label {
-  font-size: 16px;
-}
+
 
 .trip-title {
-  margin: 4px 0 0;
-  font-size: 18px;
+  margin: 4px 7px 0;
+  font-size: 20px;
   font-weight: 600;
   line-height: 1.3;
-  padding-top: 30px;
+  padding-top: 40px;
   margin-left: -30px;
 }
 
@@ -385,13 +382,14 @@ export default {
 
 .details-dates {
   margin-left: 8px;
-  padding-top: 80px;
+  padding-top: 100px;
 }
 
 .dates-text {
   font-size: 12px;
   opacity: 0.9;
   font-weight: 200;
+
 }
 
 .details-main {
@@ -519,9 +517,9 @@ export default {
 
 .edit-link-btn {
   background: transparent;
-  border: 1px solid var(--teal-1);
-  color: var(--teal-1);
-  padding: 8px 16px;
+  border: none;
+  color: #0c3437;
+  padding: 4px 50px;
   border-radius: 8px;
   font-size: 14px;
   font-weight: 500;
@@ -530,6 +528,7 @@ export default {
   align-items: center;
   gap: 8px;
   transition: all 0.2s;
+  font-family:'Poppins', sans-serif;
 }
 
 .edit-link-btn:hover {

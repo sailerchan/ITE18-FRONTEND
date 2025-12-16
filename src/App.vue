@@ -222,6 +222,8 @@
 import { ref, computed, watch, onMounted } from 'vue'
 import { useOnboardingStore } from './stores/onboarding'
 import { useTripsStore } from './stores/trips'
+import { useUserStore } from './stores/user'
+
 import OnboardingLogo from './components/onboarding/logo_opening.vue'
 import OnboardingExplore from './components/onboarding/onboardingscreen.vue'
 import BottomNav from './components/BottomNav.vue'
@@ -275,7 +277,7 @@ export default {
     // Initialize trips store
     const tripsStore = useTripsStore()
     const selectedTrip = ref(null)
-
+    const userStore = useUserStore()
     const onboarding = useOnboardingStore()
 
     onMounted(() => {
@@ -812,34 +814,41 @@ export default {
     }
 
     const handleSignup = () => {
-      validatePassword()
-      validateConfirmPassword()
+  validatePassword()
+  validateConfirmPassword()
 
-      if (!isSignupFormValid.value) {
-        alert('Please fix the form errors before submitting.')
-        return
-      }
+  if (!isSignupFormValid.value) {
+    alert('Please fix the form errors before submitting.')
+    return
+  }
 
-      console.log('Signup attempt with:', {
-        firstName: signupForm.value.firstName,
-        lastName: signupForm.value.lastName,
-        email: signupForm.value.email,
-        password: signupForm.value.password,
-      })
+  console.log('Signup attempt with:', {
+    firstName: signupForm.value.firstName,
+    lastName: signupForm.value.lastName,
+    email: signupForm.value.email,
+  })
 
-      if (signupForm.value.firstName) {
-        userName.value = signupForm.value.firstName
-      } else {
-        const nameFromEmail = getNameFromEmail(signupForm.value.email)
-        userName.value = nameFromEmail.charAt(0).toUpperCase() + nameFromEmail.slice(1)
-      }
+  // Save user data to Pinia store
+  userStore.updateFromSignup({
+    firstName: signupForm.value.firstName,
+    lastName: signupForm.value.lastName,
+    email: signupForm.value.email,
+  })
 
-      // Save to localStorage
-      localStorage.setItem('userName', userName.value)
-      localStorage.setItem('isAuthenticated', 'true')
+  // Set userName for display
+  if (signupForm.value.firstName) {
+    userName.value = signupForm.value.firstName
+  } else {
+    const nameFromEmail = getNameFromEmail(signupForm.value.email)
+    userName.value = nameFromEmail.charAt(0).toUpperCase() + nameFromEmail.slice(1)
+  }
 
-      goToPage('homepage')
-    }
+  // Save to localStorage (keeping your existing pattern)
+  localStorage.setItem('userName', userName.value)
+  localStorage.setItem('isAuthenticated', 'true')
+
+  goToPage('homepage')
+}
 
     const handleResetPassword = (email) => {
       console.log('Password reset requested for:', email)
@@ -974,35 +983,44 @@ export default {
       }
     }
 
-    const handleLogout = () => {
-      console.log('User logged out')
-      userName.value = ''
-      loginForm.value = { email: '', password: '' }
-      signupForm.value = {
-        firstName: '',
-        lastName: '',
-        email: '',
-        password: '',
-        confirmPassword: '',
-        passwordError: '',
-        confirmPasswordError: '',
-      }
-      currentDestination.value = null
-      selectedDestinationId.value = null
-      selectedDestinationName.value = ''
+  const handleLogout = () => {
+  console.log('User logged out')
 
-      // Clear localStorage
-      localStorage.removeItem('userName')
-      localStorage.removeItem('isAuthenticated')
+  // Clear user store
+  userStore.clearUserProfile()
 
-      goToPage('login')
-    }
+  userName.value = ''
+  loginForm.value = { email: '', password: '' }
+  signupForm.value = {
+    firstName: '',
+    lastName: '',
+    email: '',
+    password: '',
+    confirmPassword: '',
+    passwordError: '',
+    confirmPasswordError: '',
+  }
+  currentDestination.value = null
+  selectedDestinationId.value = null
+  selectedDestinationName.value = ''
 
-    const handleSaveChanges = () => {
-      console.log('Saving personal information changes')
-      alert('Personal information saved successfully!')
-      goToPage('profile')
-    }
+  // Clear localStorage
+  localStorage.removeItem('userName')
+  localStorage.removeItem('isAuthenticated')
+
+  goToPage('login')
+}
+
+
+    const handleSaveChanges = (profileData) => {
+  console.log('Saving personal information changes:', profileData)
+
+  // The PersonalInformation component already saves to store
+  // Just show success message
+  alert('Personal information saved successfully!')
+  goToPage('profile')
+}
+
 
     const handleConnectFacebook = () => {
       console.log('Connecting with Facebook')
@@ -1403,6 +1421,7 @@ export default {
 
     return {
       tripsStore,
+      userStore,
       onboarding,
       screen,
       currentPage,

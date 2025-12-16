@@ -118,11 +118,83 @@ export const useTripsStore = defineStore('trips', () => {
     return null
   })
 
+  // Parse end date from dates string (e.g., "Dec 20 - Dec 25, 2025")
+  const parseEndDate = (datesString) => {
+    if (!datesString || datesString === 'Select dates') return null
+
+    try {
+      // Try to extract the end date from the dates string
+      // Format: "Dec 20 - Dec 25, 2025" or "Dec 20-25, 2025"
+      const parts = datesString.split('-')
+      if (parts.length < 2) return null
+
+      const endPart = parts[1].trim() // "Dec 25, 2025"
+
+      // Parse the date string
+      const endDate = new Date(endPart)
+
+      // Validate the date
+      if (isNaN(endDate.getTime())) {
+        console.warn('⚠️ Could not parse end date from:', datesString)
+        return null
+      }
+
+      return endDate
+    } catch (error) {
+      console.error('❌ Error parsing end date:', error)
+      return null
+    }
+  }
+
+  // Check and update trip statuses (move past trips automatically)
+  const checkAndUpdateTripStatuses = () => {
+    const today = new Date()
+    today.setHours(0, 0, 0, 0) // Reset time to midnight for accurate date comparison
+
+    const tripsToMove = []
+
+    upcomingTrips.value.forEach((trip, index) => {
+      let tripEndDate = null
+
+      // First check if trip has explicit endDate property
+      if (trip.endDate) {
+        tripEndDate = new Date(trip.endDate)
+      }
+      // Otherwise, try to parse from dates string
+      else if (trip.dates) {
+        tripEndDate = parseEndDate(trip.dates)
+      }
+
+      if (tripEndDate) {
+        tripEndDate.setHours(0, 0, 0, 0)
+
+        // If trip end date has passed, mark for moving to past trips
+        if (tripEndDate < today) {
+          tripsToMove.push(index)
+        }
+      }
+    })
+
+    // Move trips from upcoming to past (reverse order to avoid index issues)
+    tripsToMove.reverse().forEach(index => {
+      const trip = upcomingTrips.value[index]
+      trip.status = 'Past'
+      trip.completedDate = new Date().toISOString()
+      pastTrips.value.unshift(trip) // Add to beginning of past trips
+      upcomingTrips.value.splice(index, 1)
+    })
+
+    if (tripsToMove.length > 0) {
+      saveToLocalStorage()
+      console.log(`✅ Moved ${tripsToMove.length} trip(s) to past trips`)
+    }
+  }
+
   // Add a COMPLETED trip (after booking/payment)
   const addCompletedTrip = (bookingData) => {
     console.log('🎨 addCompletedTrip called with:', bookingData)
 
-    const { destinationId, destinationName, dates, nights, totalPrice, paymentMethod, receiptNumber, property } = bookingData
+    const { destinationId, destinationName, dates, nights, totalPrice, paymentMethod, receiptNumber, property, endDate } = bookingData
 
     // Get destination from our data
     const destination = getDestinationById(destinationId)
@@ -143,6 +215,7 @@ export const useTripsStore = defineStore('trips', () => {
       bookingDate: new Date().toISOString(),
       status: 'Upcoming',
       dates: dates || 'Select dates',
+      endDate: endDate || null, // Store explicit end date if provided
       nights: nights || 0,
       totalPrice: totalPrice || '0.00',
       receiptNumber: receiptNumber || 'TRP-' + Date.now().toString().slice(-8),
@@ -274,6 +347,9 @@ export const useTripsStore = defineStore('trips', () => {
           editingTripId: editingTripId.value
         })
 
+        // After loading, check if any trips should be moved to past
+        checkAndUpdateTripStatuses()
+
       } catch (error) {
         console.error('❌ Error loading trips from localStorage:', error)
         // Initialize with empty arrays on error
@@ -378,6 +454,7 @@ export const useTripsStore = defineStore('trips', () => {
     clearTrips,
     getAllTrips,
     debugPrintAllTrips,
-    refreshFromStorage
+    refreshFromStorage,
+    checkAndUpdateTripStatuses // Export the new function
   }
 })
