@@ -93,21 +93,11 @@ const routes = [
   {
     path: '/gcash-detail',
     name: 'gcash-detail',
-    component: () => import('../components/booking/gcash_detail.vue'),
+    component: () => import('../components/booking/GcashPayment.vue'),
     meta: { requiresAuth: true, showNav: false } // No nav on this page
   },
-  {
-    path: '/gcash-confirm',
-    name: 'gcash-confirm',
-    component: () => import('../components/booking/GcashPaymentConfirm.vue'),
-    meta: { requiresAuth: true, showNav: false } // No nav on this page
-  },
-  {
-    path: '/payment-success',
-    name: 'payment-success',
-    component: () => import('../components/booking/paymentsuccess.vue'),
-    meta: { requiresAuth: true, showNav: false } // No nav on this page
-  },
+
+
   {
     path: '/itinerary',
     name: 'itinerary',

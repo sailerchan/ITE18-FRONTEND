@@ -1,37 +1,37 @@
 <template>
   <div id="app">
     <!-- Onboarding Screens -->
-    <OnboardingLogo v-if="screen === 'splash'" />
+    <OnboardingLogo v-if="onboardingStore.currentScreen === 'splash'" />
     <OnboardingExplore
-      v-else-if="screen === 'onboarding'"
+      v-else-if="onboardingStore.currentScreen === 'onboarding'"
       @go-to-page="handleOnboardingComplete"
     />
 
     <!-- Login Component -->
     <Login
-  v-else-if="currentPage === 'login'"
-  :login-form="loginForm"
-  @update:email="loginForm.email = $event"
-  @update:password="loginForm.password = $event"
-  @handle-login="handleLogin"
-  @social-login="socialLogin"
-  @go-to-page="goToPage"
-/>
+      v-else-if="currentPage === 'login'"
+      :login-form="userStore.loginForm"
+      @update:email="userStore.loginForm.email = $event"
+      @update:password="userStore.loginForm.password = $event"
+      @handle-login="handleLogin"
+      @social-login="handleSocialLogin"
+      @go-to-page="goToPage"
+    />
 
     <!-- Signup Component -->
     <Signup
       v-else-if="currentPage === 'signup'"
-      :signup-form="signupForm"
-      :is-signup-form-valid="isSignupFormValid"
-      @update:firstName="updateSignupField('firstName', $event)"
-      @update:lastName="updateSignupField('lastName', $event)"
-      @update:email="updateSignupField('email', $event)"
-      @update:password="updateSignupField('password', $event)"
-      @update:confirmPassword="updateSignupField('confirmPassword', $event)"
-      @validate-password="validatePassword"
-      @validate-confirm-password="validateConfirmPassword"
+      :signup-form="userStore.signupForm"
+      :is-signup-form-valid="userStore.isSignupFormValid"
+      @update:firstName="userStore.updateSignupField('firstName', $event)"
+      @update:lastName="userStore.updateSignupField('lastName', $event)"
+      @update:email="userStore.updateSignupField('email', $event)"
+      @update:password="userStore.updateSignupField('password', $event)"
+      @update:confirmPassword="userStore.updateSignupField('confirmPassword', $event)"
+      @validate-password="userStore.validatePassword"
+      @validate-confirm-password="userStore.validateConfirmPassword"
       @handle-signup="handleSignup"
-      @social-login="socialLogin"
+      @social-login="handleSocialLogin"
       @go-to-page="goToPage"
     />
 
@@ -39,7 +39,7 @@
     <ForgotPassword
       v-else-if="currentPage === 'forgot-password'"
       @reset-password="handleResetPassword"
-      @social-login="socialLogin"
+      @social-login="handleSocialLogin"
       @go-to-page="goToPage"
     />
 
@@ -71,7 +71,7 @@
     <TripDetailsPage
       v-else-if="currentPage === 'trip-details'"
       :trip="selectedTrip"
-      @go-back="handleTripDetailsBack"
+      @go-back="goToPage('trips')"
       @edit-itinerary="handleEditItinerary"
     />
 
@@ -132,7 +132,7 @@
       :calendar-days="bookingStore.calendarDays"
       @prev-month="bookingStore.prevMonth"
       @next-month="bookingStore.nextMonth"
-      @select-date="selectDate"
+      @select-date="bookingStore.selectDate"
       @go-to-accommodation="goToAccommodation"
       @go-to-page="goToPage"
     />
@@ -157,30 +157,21 @@
       :current-property-image="currentPropertyImage"
       :current-confirmation-image="currentConfirmationImage"
       :booking-dates-display="bookingStore.bookingDatesDisplay"
-      @show-confirmation-view="showConfirmationView"
-      @show-listing-view="showListingView"
+      @show-confirmation-view="currentBookingView = 'confirmation'"
+      @show-listing-view="currentBookingView = 'listing'"
       @handle-view-map="handleViewMap"
       @select-payment-method="bookingStore.selectPaymentMethod"
       @handle-next="handleNext"
       @go-to-page="goToPage"
     />
 
-    <!-- GCash Detail Component -->
-    <GcashDetail
+    <!-- GCash Payment Component (both steps) -->
+    <GcashPayment
       v-else-if="currentPage === 'gcash-detail'"
       :total-amount="parseFloat(bookingStore.totalPrice)"
       :selected-destination-name="bookingStore.selectedDestinationName"
-      :selected-accommodation="bookingStore.selectedProperty.title || 'Accommodation'"
+      :selected-accommodation="bookingStore.selectedProperty?.title || 'Accommodation'"
       @go-back="goToPage('booking')"
-      @payment-success="handleGcashPaymentSuccess"
-    />
-
-    <!-- GCash Payment Confirmation Component -->
-    <GcashPaymentConfirm
-      v-else-if="currentPage === 'gcash-confirm'"
-      :total-amount="parseFloat(bookingStore.totalPrice) + 50"
-      :selected-accommodation="bookingStore.selectedProperty.title || 'Paradiso Hostel'"
-      @go-back="goToPage('gcash-detail')"
       @payment-success="handlePaymentSuccess"
     />
 
@@ -195,7 +186,7 @@
     <!-- Payment Success Component -->
     <PaymentSuccess
       v-else-if="currentPage === 'payment-success'"
-      :receipt-data="receiptData"
+      :receipt-data="bookingStore.receiptData"
       @go-back="goToPreviousPage"
       @go-itinerary="goToItineraryFromSuccess"
     />
@@ -211,7 +202,7 @@
     <BottomNav
       v-if="showNav"
       :active-page="currentPage"
-      @navigate="handleNavClick"
+      @navigate="goToPage"
     />
   </div>
 </template>
@@ -242,8 +233,7 @@ import DatePicker from './components/booking/datePicker.vue'
 import Accommodation from './components/booking/accomodation_page.vue'
 import Booking from './components/booking/booking-page.vue'
 import MastercardDetails from './components/booking/mastercard_details.vue'
-import GcashDetail from './components/booking/gcash_detail.vue'
-import GcashPaymentConfirm from './components/booking/GcashPaymentConfirm.vue'
+import GcashPayment from './components/booking/GcashPayment.vue'
 import PaymentSuccess from './components/booking/paymentsuccess.vue'
 import ItineraryPage from './components/trips/ItineraryPage.vue'
 import TripDetailsPage from './components/trips/TripDetailsPage.vue'
@@ -269,14 +259,13 @@ export default {
     Accommodation,
     Booking,
     MastercardDetails,
-    GcashDetail,
-    GcashPaymentConfirm,
+    GcashPayment,
     PaymentSuccess,
     ItineraryPage
   },
 
   setup() {
-    // Initialize stores
+    // ========== STORES ==========
     const onboardingStore = useOnboardingStore()
     const tripsStore = useTripsStore()
     const userStore = useUserStore()
@@ -284,18 +273,7 @@ export default {
     const bookingStore = useBookingStore()
     const notificationsStore = useNotificationsStore()
 
-    // Initialize user data and trips from localStorage
-    onMounted(() => {
-      onboardingStore.init()
-      userStore.loadFromLocalStorage()
-      tripsStore.loadFromLocalStorage()
-      tripsStore.checkAndUpdateTripStatuses()
-    })
-
-    // Onboarding screen state
-    const screen = computed(() => onboardingStore.currentScreen)
-
-    // Navigation state
+    // ========== LOCAL STATE (Navigation Only) ==========
     const currentPage = ref('login')
     const currentBookingView = ref('listing')
     const showNav = ref(false)
@@ -303,137 +281,44 @@ export default {
     const currentDestination = ref(null)
     const selectedTrip = ref(null)
 
-    // Login and Signup forms
-    const loginForm = ref({
-      email: '',
-      password: ''
-    })
-
-    const signupForm = ref({
-      firstName: '',
-      lastName: '',
-      email: '',
-      password: '',
-      confirmPassword: '',
-      passwordError: '',
-      confirmPasswordError: ''
-    })
-
-    // Receipt data for payment success
-    const receiptData = ref({
-      amount: '2,250.00',
-      paymentMethod: 'GCash',
-      receiptNumber: '21345255633546',
-      dateTime: 'Nov. 24, 2015 18:39 PM'
-    })
-
-    // Computed properties
-    const isSignupFormValid = computed(() => {
-      return (
-        signupForm.value.firstName &&
-        signupForm.value.lastName &&
-        signupForm.value.email &&
-        signupForm.value.password &&
-        signupForm.value.confirmPassword &&
-        !signupForm.value.passwordError &&
-        !signupForm.value.confirmPasswordError
-      )
-    })
-
+    // ========== COMPUTED ==========
     const fromDateDisplay = computed(() => {
       if (!bookingStore.selectedStart) return 'Select start date'
-      const monthNamesShort = ['Jan.', 'Feb.', 'Mar.', 'Apr.', 'May', 'Jun.', 'Jul.', 'Aug.', 'Sep.', 'Oct.', 'Nov.', 'Dec.']
-      return `${monthNamesShort[bookingStore.selectedStart.getMonth()]} ${bookingStore.selectedStart.getDate()}, ${bookingStore.selectedStart.getFullYear()}`
+      const monthNames = ['Jan.', 'Feb.', 'Mar.', 'Apr.', 'May', 'Jun.', 'Jul.', 'Aug.', 'Sep.', 'Oct.', 'Nov.', 'Dec.']
+      const date = bookingStore.selectedStart
+      return `${monthNames[date.getMonth()]} ${date.getDate()}, ${date.getFullYear()}`
     })
 
     const toDateDisplay = computed(() => {
       if (!bookingStore.selectedEnd) return 'Select end date'
-      const monthNamesShort = ['Jan.', 'Feb.', 'Mar.', 'Apr.', 'May', 'Jun.', 'Jul.', 'Aug.', 'Sep.', 'Oct.', 'Nov.', 'Dec.']
-      return `${monthNamesShort[bookingStore.selectedEnd.getMonth()]} ${bookingStore.selectedEnd.getDate()}, ${bookingStore.selectedEnd.getFullYear()}`
+      const monthNames = ['Jan.', 'Feb.', 'Mar.', 'Apr.', 'May', 'Jun.', 'Jul.', 'Aug.', 'Sep.', 'Oct.', 'Nov.', 'Dec.']
+      const date = bookingStore.selectedEnd
+      return `${monthNames[date.getMonth()]} ${date.getDate()}, ${date.getFullYear()}`
     })
 
     const currentPropertyImage = computed(() => {
-      return bookingStore.selectedProperty.image || '/images/paradiso.1.avif'
+      return bookingStore.selectedProperty?.image || '/images/paradiso.1.avif'
     })
 
     const currentConfirmationImage = computed(() => {
-      return bookingStore.selectedProperty.confirmationImage || '/images/paradiso.1.avif'
+      return bookingStore.selectedProperty?.confirmationImage || '/images/paradiso.1.avif'
     })
 
-    // Update showNav when currentPage changes
+    // ========== INITIALIZE ==========
+    onMounted(() => {
+      onboardingStore.init()
+      userStore.loadFromLocalStorage()
+      tripsStore.loadFromLocalStorage()
+      notificationsStore.loadFromLocalStorage()
+      tripsStore.checkAndUpdateTripStatuses()
+    })
+
+    // ========== NAVIGATION ==========
     const updateShowNav = () => {
-      showNav.value = ['homepage', 'trips', 'notifications', 'profile', 'itinerary', 'trip-details'].includes(currentPage.value)
+      showNav.value = ['homepage', 'trips', 'notifications', 'profile', 'trip-details'].includes(currentPage.value)
     }
 
     watch(currentPage, updateShowNav)
-
-    // Method handlers
-    const handleOnboardingComplete = (page) => {
-      onboardingStore.finishOnboarding()
-      goToPage(page)
-    }
-
-    const updateSignupField = (field, value) => {
-      signupForm.value[field] = value
-    }
-
-    const validatePassword = () => {
-      const password = signupForm.value.password
-      if (password.length < 8) {
-        signupForm.value.passwordError = 'Password must be at least 8 characters long'
-      } else if (!/(?=.*[a-z])(?=.*[A-Z])/.test(password)) {
-        signupForm.value.passwordError = 'Password must contain both uppercase and lowercase letters'
-      } else if (!/(?=.*\d)/.test(password)) {
-        signupForm.value.passwordError = 'Password must contain at least one number'
-      } else {
-        signupForm.value.passwordError = ''
-      }
-      if (signupForm.value.confirmPassword) {
-        validateConfirmPassword()
-      }
-    }
-
-    const validateConfirmPassword = () => {
-      if (signupForm.value.password !== signupForm.value.confirmPassword) {
-        signupForm.value.confirmPasswordError = 'Passwords do not match'
-      } else {
-        signupForm.value.confirmPasswordError = ''
-      }
-    }
-
-    const handleLogin = () => {
-      userStore.login(loginForm.value.email)
-      goToPage('homepage')
-    }
-
-    const handleSignup = () => {
-      validatePassword()
-      validateConfirmPassword()
-      if (!isSignupFormValid.value) {
-        alert('Please fix the form errors before submitting.')
-        return
-      }
-
-      userStore.updateFromSignup({
-        firstName: signupForm.value.firstName,
-        lastName: signupForm.value.lastName,
-        email: signupForm.value.email
-      })
-
-      goToPage('homepage')
-    }
-
-    const handleResetPassword = (email) => {
-      console.log('Password reset requested for', email)
-      alert('Password reset instructions sent to ' + email)
-      goToPage('login')
-    }
-
-    const socialLogin = (provider) => {
-      console.log('Social login with ' + provider)
-      userStore.login('user@example.com')
-      goToPage('homepage')
-    }
 
     const goToPage = (page) => {
       currentPage.value = page
@@ -447,7 +332,6 @@ export default {
     const goToPreviousPage = () => {
       const pageMap = {
         'payment-success': 'booking',
-        'gcash-confirm': 'gcash-detail',
         'gcash-detail': 'booking',
         'mastercard-details': 'booking',
         'personal-information': 'profile',
@@ -457,37 +341,82 @@ export default {
         'itinerary': 'homepage',
         'trip-details': 'trips'
       }
-
-      if (pageMap[currentPage.value]) {
-        goToPage(pageMap[currentPage.value])
-      } else {
-        goToPage('homepage')
-      }
-    }
-
-    const handleNavClick = (page) => {
-      goToPage(page)
+      goToPage(pageMap[currentPage.value] || 'homepage')
     }
 
     const setActiveNav = (navItem) => {
-      if (navItem === 'trips') {
-        goToPage('trips')
-      } else if (navItem === 'notifications') {
-        goToPage('notifications')
-      } else if (navItem === 'home') {
+      const navMap = {
+        'trips': 'trips',
+        'notifications': 'notifications',
+        'home': 'homepage',
+        'profile': 'profile'
+      }
+      goToPage(navMap[navItem] || 'homepage')
+    }
+
+    // ========== ONBOARDING ==========
+    const handleOnboardingComplete = (page) => {
+      onboardingStore.finishOnboarding()
+      goToPage(page)
+    }
+
+    // ========== AUTH ==========
+    const handleLogin = () => {
+      userStore.login(userStore.loginForm.email)
+      goToPage('homepage')
+    }
+
+    const handleSignup = () => {
+      const success = userStore.signup()
+      if (success) {
         goToPage('homepage')
-      } else if (navItem === 'profile') {
-        goToPage('profile')
+      } else {
+        alert('Please fix the form errors before submitting.')
       }
     }
 
+    const handleSocialLogin = (provider) => {
+      console.log('Social login with ' + provider)
+      userStore.login('user@example.com')
+      goToPage('homepage')
+    }
+
+    const handleResetPassword = (email) => {
+      console.log('Password reset requested for', email)
+      alert('Password reset instructions sent to ' + email)
+      goToPage('login')
+    }
+
+    const handleLogout = () => {
+      userStore.logout()
+      currentDestination.value = null
+      goToPage('login')
+    }
+
+    // ========== PROFILE ==========
+    const handleSaveChanges = (profileData) => {
+      userStore.updateProfile(profileData)
+      alert('Personal information saved successfully!')
+      goToPage('profile')
+    }
+
+    const handleConnectFacebook = () => {
+      alert('Facebook connection would be implemented here')
+    }
+
+    const handleDeleteAccount = () => {
+      alert('Account deletion would be implemented here')
+      goToPage('login')
+    }
+
+    // ========== DESTINATIONS ==========
     const viewDestination = (id) => {
       activeDestinationTab.value = 'details'
-      bookingStore.setDestination(id, destinationsStore.getDestinationById(id)?.name || 'Destination')
-
       const destination = destinationsStore.getDestinationById(id)
+
       if (destination) {
         currentDestination.value = destination
+        bookingStore.setDestination(id, destination.name)
         goToPage('destination-details')
       }
     }
@@ -507,44 +436,12 @@ export default {
     }
 
     const toggleReviewHelpful = (reviewId) => {
-      console.log('Toggling helpful for review', reviewId)
-    }
-
-    const handleLogout = () => {
-      userStore.logout()
-      loginForm.value = { email: '', password: '' }
-      signupForm.value = {
-        firstName: '',
-        lastName: '',
-        email: '',
-        password: '',
-        confirmPassword: '',
-        passwordError: '',
-        confirmPasswordError: ''
+      if (currentDestination.value) {
+        destinationsStore.toggleReviewHelpful(currentDestination.value.id, reviewId)
       }
-      currentDestination.value = null
-      goToPage('login')
     }
 
-    const handleSaveChanges = (profileData) => {
-      userStore.updateProfile(profileData)
-      alert('Personal information saved successfully!')
-      goToPage('profile')
-    }
-
-    const handleConnectFacebook = () => {
-      alert('Facebook connection would be implemented here')
-    }
-
-    const handleDeleteAccount = () => {
-      alert('Account deletion would be implemented here')
-      goToPage('login')
-    }
-
-    const selectDate = (date) => {
-      bookingStore.selectDate(date)
-    }
-
+    // ========== BOOKING ==========
     const goToAccommodation = () => {
       if (bookingStore.selectedStart && bookingStore.selectedEnd) {
         bookingStore.calculateNights()
@@ -557,14 +454,6 @@ export default {
     const viewBooking = (propertyId) => {
       bookingStore.selectProperty(propertyId)
       goToPage('booking')
-    }
-
-    const showConfirmationView = () => {
-      currentBookingView.value = 'confirmation'
-    }
-
-    const showListingView = () => {
-      currentBookingView.value = 'listing'
     }
 
     const handleViewMap = () => {
@@ -584,50 +473,23 @@ export default {
       }
     }
 
-    const handleGcashPaymentSuccess = (paymentData) => {
-      goToPage('gcash-confirm')
-    }
-
     const handlePaymentSuccess = (paymentData) => {
-      const receiptNumber = Math.floor(100000000000000 + Math.random() * 900000000000000).toString()
-
-      receiptData.value = {
-        amount: paymentData?.amount ? paymentData.amount.toFixed(2) : bookingStore.totalPrice,
-        paymentMethod: paymentData?.paymentMethod || bookingStore.selectedPayment?.name || 'GCash',
-        receiptNumber: receiptNumber,
-        dateTime: new Date().toLocaleString('en-US', {
-          month: 'short',
-          day: '2-digit',
-          year: 'numeric',
-          hour: '2-digit',
-          minute: '2-digit',
-          hour12: true
-        }).replace(',', '')
-      }
-
-      const bookingData = {
-        destinationId: bookingStore.selectedDestinationId || 1,
-        destinationName: bookingStore.selectedDestinationName || 'Siargao Island',
-        dates: bookingStore.booking.dates,
-        nights: bookingStore.booking.nights,
-        totalPrice: bookingStore.totalPrice,
-        paymentMethod: bookingStore.selectedPayment?.name || 'GCash',
-        receiptNumber: receiptNumber,
-        property: {
-          title: bookingStore.selectedProperty?.title || 'Accommodation',
-          location: bookingStore.selectedProperty?.location || '',
-          image: bookingStore.selectedProperty?.image || ''
-        }
-      }
-
+      const bookingData = bookingStore.completeBooking(paymentData)
       const newTrip = tripsStore.addCompletedTrip(bookingData)
+
       if (newTrip) {
         selectedTrip.value = newTrip
+        notificationsStore.addBookingConfirmationNotification(bookingData)
+        notificationsStore.addPaymentSuccessNotification({
+          amount: bookingStore.receiptData.amount,
+          paymentMethod: bookingStore.receiptData.paymentMethod
+        })
       }
 
       goToPage('payment-success')
     }
 
+    // ========== TRIPS ==========
     const openTripDetails = (trip) => {
       if (trip?.id) {
         const freshTrip = tripsStore.getTripById(trip.id)
@@ -648,21 +510,29 @@ export default {
 
     const handleTripSaved = (tripData) => {
       const editingTripId = tripsStore.editingTripId
+
       if (editingTripId) {
         const success = tripsStore.updateTripItinerary(editingTripId, tripData)
+
         if (success) {
           tripsStore.clearEditingTrip()
           const updatedTrip = tripsStore.getTripById(editingTripId)
+
           if (updatedTrip) {
             selectedTrip.value = updatedTrip
+            notificationsStore.addTripSavedNotification({
+              destinationName: updatedTrip.destinationName
+            })
           }
         }
       }
+
       goToPage('trip-details')
     }
 
     const goToItineraryBack = () => {
       const editingTripId = tripsStore.editingTripId
+
       if (editingTripId) {
         const trip = tripsStore.getTripById(editingTripId)
         if (trip) {
@@ -677,10 +547,6 @@ export default {
       }
     }
 
-    const handleTripDetailsBack = () => {
-      goToPage('trips')
-    }
-
     const goToItineraryFromSuccess = () => {
       if (tripsStore.upcomingTrips.length > 0) {
         const latestTrip = tripsStore.upcomingTrips[tripsStore.upcomingTrips.length - 1]
@@ -692,7 +558,7 @@ export default {
       }
     }
 
-    // Initialize showNav
+    // Initialize
     updateShowNav()
 
     return {
@@ -704,61 +570,58 @@ export default {
       bookingStore,
       notificationsStore,
 
-      // State
-      screen,
+      // Local State
       currentPage,
       currentBookingView,
       showNav,
-      loginForm,
-      signupForm,
-      receiptData,
       currentDestination,
       activeDestinationTab,
       selectedTrip,
 
       // Computed
-      isSignupFormValid,
       fromDateDisplay,
       toDateDisplay,
       currentPropertyImage,
       currentConfirmationImage,
 
-      // Methods
-      handleOnboardingComplete,
-      updateSignupField,
-      validatePassword,
-      validateConfirmPassword,
-      handleLogin,
-      handleSignup,
-      handleResetPassword,
-      socialLogin,
+      // Navigation
       goToPage,
       goToPreviousPage,
+      setActiveNav,
+
+      // Onboarding
+      handleOnboardingComplete,
+
+      // Auth
+      handleLogin,
+      handleSignup,
+      handleSocialLogin,
+      handleResetPassword,
+      handleLogout,
+
+      // Profile
+      handleSaveChanges,
+      handleConnectFacebook,
+      handleDeleteAccount,
+
+      // Destinations
       viewDestination,
       handlePlanTrip,
       handleWriteReview,
       toggleReviewHelpful,
-      setActiveNav,
-      handleLogout,
-      handleSaveChanges,
-      handleConnectFacebook,
-      handleDeleteAccount,
-      selectDate,
+
+      // Booking
       goToAccommodation,
       viewBooking,
-      showConfirmationView,
-      showListingView,
       handleViewMap,
       handleNext,
-      handleGcashPaymentSuccess,
       handlePaymentSuccess,
-      handleTripSaved,
-      handleNavClick,
-      selectedTrip,
+
+      // Trips
       openTripDetails,
       handleEditItinerary,
+      handleTripSaved,
       goToItineraryBack,
-      handleTripDetailsBack,
       goToItineraryFromSuccess
     }
   }

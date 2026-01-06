@@ -8,8 +8,10 @@
         <div class="nav-title">Itinerary</div>
       </div>
 
+
       <!-- Trip Details -->
       <h1 class="trip-title">{{ tripTitle }}</h1>
+
 
       <div class="trip-details">
         <div class="detail-row">
@@ -22,6 +24,7 @@
         </div>
       </div>
     </div>
+
 
     <!-- Day Navigation -->
     <div class="day-tabs-container">
@@ -37,6 +40,7 @@
         </div>
       </div>
     </div>
+
 
     <!-- Activity Cards Container -->
     <div class="activities-container">
@@ -59,6 +63,7 @@
           </div>
         </div>
 
+
         <div class="activity-content">
           <div class="activity-details">
             <!-- Notepad-style Textarea -->
@@ -74,10 +79,12 @@
       </div>
     </div>
 
+
     <!-- Add Button -->
     <div class="button-container">
       <button class="add-button" @click="addActivity">Add Activity</button>
     </div>
+
 
     <!-- Packlist Section -->
     <div class="packlist-container">
@@ -93,6 +100,7 @@
             <i class="fas fa-chevron-down"></i>
           </button>
         </div>
+
 
         <div class="packlist-card" v-show="packlistExpanded">
           <div class="packlist-categories">
@@ -150,6 +158,7 @@
             </div>
           </div>
 
+
           <button class="add-category-btn" @click="addCategory">
             <i class="fas fa-plus"></i> Add New Category
           </button>
@@ -157,10 +166,12 @@
       </div>
     </div>
 
+
     <!-- Save Button -->
     <div class="button-container">
       <button class="save-button" @click="saveTrip">Save Trip</button>
     </div>
+
 
     <!-- Time Selection Modal -->
     <div v-if="showTimeModal" class="modal-overlay" @click.self="closeTimeModal">
@@ -208,6 +219,7 @@
       </div>
     </div>
 
+
     <!-- Unsaved Changes Modal -->
     <div v-if="showLeaveModal" class="modal-overlay" @click.self="showLeaveModal = false">
       <div class="modal-content">
@@ -234,8 +246,10 @@
   </div>
 </template>
 
+
 <script>
 import { useTripsStore } from '../../stores/trips'
+
 
 export default {
   name: 'ItineraryPage',
@@ -247,13 +261,7 @@ export default {
       tripDates: 'Nov 21 - Nov 25, 2025',
       accommodationName: 'Cloud 9 Surf Resort',
       totalPrice: '0.00',
-      days: [
-        { id: 1, name: 'Day 1' },
-        { id: 2, name: 'Day 2' },
-        { id: 3, name: 'Day 3' },
-        { id: 4, name: 'Day 4' },
-        { id: 5, name: 'Day 5' }
-      ],
+      days: [], // ✅ Start with empty array, will be populated from booking data
       activities: [],
       categories: [],
       nextActivityId: 1,
@@ -304,8 +312,10 @@ export default {
     loadTripData() {
       const tripsStore = useTripsStore()
 
+
       // Get the editing trip ID from store
       this.currentTripId = tripsStore.editingTripId
+
 
       if (this.currentTripId) {
         // Load existing trip data
@@ -317,12 +327,15 @@ export default {
       }
     },
 
+
     loadExistingTripData(tripId) {
       const tripsStore = useTripsStore()
       const trip = tripsStore.getTripById(tripId)
 
+
       if (trip) {
         console.log('📖 Loading existing trip data:', trip)
+
 
         // Load trip details
         this.tripTitle = `Trip to ${trip.destinationName}`
@@ -330,11 +343,24 @@ export default {
         this.accommodationName = trip.accommodation?.title || 'Accommodation'
         this.totalPrice = trip.totalPrice
 
+
+        // ✅ Generate days based on trip nights
+        if (trip.nights) {
+          const numberOfDays = Math.max(trip.nights, 1)
+          this.days = Array.from({ length: numberOfDays }, (_, i) => ({
+            id: i + 1,
+            name: `Day ${i + 1}`
+          }))
+          this.activeDay = 1
+        }
+
+
         // Load itinerary activities
         if (trip.itinerary?.activities && trip.itinerary.activities.length > 0) {
           this.activities = JSON.parse(JSON.stringify(trip.itinerary.activities))
           this.nextActivityId = Math.max(...this.activities.map(a => a.id), 0) + 1
         }
+
 
         // Load packlist
         if (trip.packlist?.categories && trip.packlist.categories.length > 0) {
@@ -344,9 +370,11 @@ export default {
           this.nextItemId = Math.max(...allItemIds, 0) + 1
         }
 
+
         this.hasUnsavedChanges = false
       }
     },
+
 
     loadBookingData() {
       const bookingData = localStorage.getItem('lastBooking')
@@ -355,28 +383,36 @@ export default {
           const data = JSON.parse(bookingData)
           console.log('Loaded booking data:', data)
 
+
           if (data.destination) {
             this.tripTitle = `Trip to ${data.destination}`
           }
+
 
           if (data.dates) {
             this.tripDates = data.dates
           }
 
+
           if (data.property && data.property.title) {
             this.accommodationName = data.property.title
           }
+
 
           if (data.totalPrice) {
             this.totalPrice = parseFloat(data.totalPrice).toFixed(2)
           }
 
+
+          // ✅ Generate days based on nights selected by user
           if (data.nights) {
-            const numberOfDays = Math.min(data.nights + 1, 5)
+            const numberOfDays = Math.max(data.nights, 1)
             this.days = Array.from({ length: numberOfDays }, (_, i) => ({
               id: i + 1,
               name: `Day ${i + 1}`
             }))
+            this.activeDay = 1
+            console.log(`Generated ${numberOfDays} days based on ${data.nights} nights`)
           }
         } catch (error) {
           console.error('Error parsing booking data:', error)
@@ -384,9 +420,11 @@ export default {
       }
     },
 
+
     loadDraft() {
       const draftActivities = localStorage.getItem('itineraryDraft_activities')
       const draftPacklist = localStorage.getItem('itineraryDraft_packlist')
+
 
       if (draftActivities) {
         try {
@@ -398,6 +436,7 @@ export default {
           console.error('Error parsing draft activities:', error)
         }
       }
+
 
       if (draftPacklist) {
         try {
@@ -411,18 +450,22 @@ export default {
         }
       }
 
+
       this.hasUnsavedChanges = false
     },
+
 
     scheduleAutoSave() {
       if (this.autoSaveTimer) {
         clearTimeout(this.autoSaveTimer)
       }
 
+
       this.autoSaveTimer = setTimeout(() => {
         this.saveDraft()
       }, 2000)
     },
+
 
     saveDraft() {
       const draftActivities = {
@@ -430,24 +473,29 @@ export default {
         nextActivityId: this.nextActivityId
       }
 
+
       const draftPacklist = {
         categories: this.categories,
         nextCategoryId: this.nextCategoryId,
         nextItemId: this.nextItemId
       }
 
+
       localStorage.setItem('itineraryDraft_activities', JSON.stringify(draftActivities))
       localStorage.setItem('itineraryDraft_packlist', JSON.stringify(draftPacklist))
       console.log('Draft auto-saved')
     },
 
+
     setActiveDay(dayId) {
       this.activeDay = dayId
     },
 
+
     togglePacklist() {
       this.packlistExpanded = !this.packlistExpanded
     },
+
 
     addActivity() {
       const newActivity = {
@@ -459,6 +507,7 @@ export default {
       this.activities.push(newActivity)
     },
 
+
     updateActivity(activity) {
       const index = this.activities.findIndex(a => a.id === activity.id)
       if (index !== -1) {
@@ -466,12 +515,14 @@ export default {
       }
     },
 
+
     updateCategory(category) {
       const index = this.categories.findIndex(c => c.id === category.id)
       if (index !== -1) {
         this.categories.splice(index, 1, { ...category })
       }
     },
+
 
     addCategory() {
       const newCategory = {
@@ -482,15 +533,18 @@ export default {
       this.categories.push(newCategory)
     },
 
+
     deleteCategory(categoryId) {
       if (confirm('Delete this category and all its items?')) {
         this.categories = this.categories.filter(cat => cat.id !== categoryId)
       }
     },
 
+
     addItemToCategory(categoryId, event) {
       const input = event.target
       const text = input.value.trim()
+
 
       if (text) {
         const category = this.categories.find(cat => cat.id === categoryId)
@@ -506,6 +560,7 @@ export default {
       }
     },
 
+
     toggleItemCheck(categoryId, itemId) {
       const category = this.categories.find(cat => cat.id === categoryId)
       if (category) {
@@ -517,6 +572,7 @@ export default {
       }
     },
 
+
     deleteItem(categoryId, itemId) {
       const category = this.categories.find(cat => cat.id === categoryId)
       if (category) {
@@ -525,6 +581,7 @@ export default {
       }
     },
 
+
     // Time Modal Methods
     openTimeModal(activity) {
       this.currentActivity = activity
@@ -532,14 +589,17 @@ export default {
       this.showTimeModal = true
     },
 
+
     closeTimeModal() {
       this.showTimeModal = false
       this.currentActivity = null
     },
 
+
     selectTime(time) {
       this.selectedTime = time
     },
+
 
     confirmTimeSelection() {
       if (this.currentActivity) {
@@ -548,6 +608,7 @@ export default {
       }
       this.closeTimeModal()
     },
+
 
     getTimeLabel(time) {
       const labels = {
@@ -558,19 +619,24 @@ export default {
       return labels[time] || 'Select Time'
     },
 
+
     saveTrip() {
       const validActivities = this.activities.filter(activity =>
         activity.notes.trim() !== ''
       )
 
+
       const validCategories = this.categories.filter(category =>
         category.title.trim() !== '' || category.items.length > 0
       )
 
+
       console.log('Activities to save:', validActivities)
       console.log('Packlist to save:', validCategories)
 
+
       const tripsStore = useTripsStore()
+
 
       if (this.currentTripId) {
         // Update existing trip
@@ -579,23 +645,29 @@ export default {
           packlist: validCategories
         })
 
+
         if (success) {
           console.log('✅ Trip updated successfully')
+
 
           // Clear draft data
           localStorage.removeItem('itineraryDraft_activities')
           localStorage.removeItem('itineraryDraft_packlist')
 
+
           // Clear editing trip
           tripsStore.clearEditingTrip()
 
+
           this.hasUnsavedChanges = false
           alert('Trip saved successfully!')
+
 
           this.$emit('trip-saved', {
             activities: validActivities,
             packlist: validCategories
           })
+
 
           // Go back
           this.$emit('go-back')
@@ -607,13 +679,17 @@ export default {
         localStorage.setItem('itineraryActivities', JSON.stringify(validActivities))
         localStorage.setItem('itineraryPacklist', JSON.stringify(validCategories))
 
+
         // Clear draft data
         localStorage.removeItem('itineraryDraft_activities')
         localStorage.removeItem('itineraryDraft_packlist')
 
+
         this.hasUnsavedChanges = false
 
+
         alert('Trip saved successfully!')
+
 
         this.$emit('trip-saved', {
           activities: validActivities,
@@ -621,6 +697,7 @@ export default {
         })
       }
     },
+
 
     goBack() {
       if (this.hasUnsavedChanges) {
@@ -630,19 +707,23 @@ export default {
       }
     },
 
+
     confirmLeave() {
       this.showLeaveModal = false
       this.cleanupAndLeave()
     },
+
 
     cleanupAndLeave() {
       // Clear editing trip from store
       const tripsStore = useTripsStore()
       tripsStore.clearEditingTrip()
 
+
       // Clear draft data
       localStorage.removeItem('itineraryDraft_activities')
       localStorage.removeItem('itineraryDraft_packlist')
+
 
       this.$emit('go-back')
     }

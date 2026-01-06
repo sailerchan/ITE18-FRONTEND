@@ -2,33 +2,35 @@
   <nav class="bottom-nav">
     <div class="nav-items-container">
       <button
-        @click="navigate('homepage')"
         class="nav-item"
         :class="{ active: activePage === 'homepage' }"
+        @click="$emit('navigate', 'homepage')"
       >
-        <i class="fa-solid fa-house"></i>
+        <i class="fas fa-home"></i>
       </button>
 
       <button
-        @click="navigate('trips')"
         class="nav-item"
         :class="{ active: activePage === 'trips' }"
+        @click="$emit('navigate', 'trips')"
       >
         <i class="fas fa-route"></i>
       </button>
 
       <button
-        @click="navigate('notifications')"
         class="nav-item"
         :class="{ active: activePage === 'notifications' }"
+        @click="$emit('navigate', 'notifications')"
       >
         <i class="fas fa-bell"></i>
+        <!-- ✅ Show total new notifications -->
+        <span v-if="totalNewNotifications > 0" class="badge">{{ totalNewNotifications }}</span>
       </button>
 
       <button
-        @click="navigate('profile')"
         class="nav-item"
         :class="{ active: activePage === 'profile' }"
+        @click="$emit('navigate', 'profile')"
       >
         <i class="fas fa-user"></i>
       </button>
@@ -37,19 +39,50 @@
 </template>
 
 <script>
+import { useNotificationsStore } from '../stores/notifications'
+import { useTripsStore } from '../stores/trips'
+
 export default {
   name: 'BottomNav',
   props: {
     activePage: {
       type: String,
-      default: 'homepage'
+      required: true
     }
   },
   emits: ['navigate'],
-  methods: {
-    navigate(page) {
-      console.log('📱 BottomNav navigating to:', page)
-      this.$emit('navigate', page)
+  computed: {
+    totalNewNotifications() {
+      const notificationsStore = useNotificationsStore()
+      const tripsStore = useTripsStore()
+
+      // Count new notifications from store
+      const newStoreNotifications = notificationsStore.newNotificationsCount || 0
+
+      // Count upcoming trip notifications (within 7 days) - these are always "new"
+      const now = new Date()
+      const upcomingTrips = tripsStore.getSavedTrips || []
+
+      let tripNotifications = 0
+      upcomingTrips.forEach(trip => {
+        if (trip.dates) {
+          try {
+            const dateStr = trip.dates.split('-')[0].trim()
+            const year = trip.dates.split(',')[1]?.trim() || new Date().getFullYear()
+            const startDate = new Date(`${dateStr}, ${year}`)
+            const daysUntil = Math.ceil((startDate - now) / (1000 * 60 * 60 * 24))
+
+            // Only count trips within 7 days as "new notifications"
+            if (daysUntil >= 0 && daysUntil <= 7) {
+              tripNotifications++
+            }
+          } catch (error) {
+            // Skip invalid dates
+          }
+        }
+      })
+
+      return newStoreNotifications + tripNotifications
     }
   }
 }
@@ -67,13 +100,6 @@ export default {
   display: flex;
   justify-content: center;
   z-index: 1000;
-
-  /* These properties prevent movement during scrolling */
-  -webkit-backface-visibility: hidden;
-  backface-visibility: hidden;
-  transform: translateZ(0);
-  -webkit-transform: translateZ(0);
-  will-change: transform;
 }
 
 .nav-items-container {
@@ -97,91 +123,46 @@ export default {
   justify-content: center;
   transition: all 0.2s ease;
   -webkit-tap-highlight-color: transparent;
-  -webkit-backface-visibility: hidden;
-  backface-visibility: hidden;
+  position: relative;
 }
 
 .nav-item.active {
-  color: var(--teal-1, #386166);
-  background: rgba(56, 97, 102, 0.1);
+  color: #0c3437;
+  background: rgba(56,97,102,0.1);
 }
 
 .nav-item:hover {
-  background: rgba(0, 0, 0, 0.03);
+  background: rgba(0,0,0,0.03);
 }
 
-/* Remove the nav-label styles since we're not using text anymore */
-.nav-label {
-  display: none;
+.badge {
+  position: absolute;
+  top: 8px;
+  right: 8px;
+  background: #ef4444;
+  color: white;
+  font-size: 10px;
+  font-weight: 600;
+  padding: 2px 5px;
+  border-radius: 10px;
+  min-width: 16px;
+  height: 16px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  line-height: 1;
 }
 
-/* Responsive styles */
-@media (max-width: 320px) {
-  .bottom-nav {
-    padding: 12px 16px;
+@keyframes pulse {
+  0%, 100% {
+    transform: scale(1);
   }
-
-  .nav-item {
-    width: 44px;
-    height: 44px;
-    font-size: 18px;
-  }
-}
-
-@media (min-width: 321px) and (max-width: 374px) {
-  .bottom-nav {
-    padding: 14px 18px;
-  }
-
-  .nav-item {
-    width: 46px;
-    height: 46px;
+  50% {
+    transform: scale(1.1);
   }
 }
 
-@media (min-width: 768px) and (max-width: 1023px) {
-  .bottom-nav {
-    max-width: 768px;
-    left: 50%;
-    transform: translateX(-50%) translateZ(0);
-    -webkit-transform: translateX(-50%) translateZ(0);
-    border-radius: 24px 24px 0 0;
-  }
-}
-
-@media (min-width: 1024px) {
-  .bottom-nav {
-    max-width: 500px;
-    left: 50%;
-    transform: translateX(-50%) translateZ(0);
-    -webkit-transform: translateX(-50%) translateZ(0);
-    border-radius: 24px 24px 0 0;
-  }
-}
-
-/* Safe area insets */
-@supports (padding: max(0px)) {
-  .bottom-nav {
-    padding-bottom: max(16px, env(safe-area-inset-bottom));
-  }
-}
-
-/* For iOS Safari to prevent bouncing effects */
-@supports (-webkit-touch-callout: none) {
-  .bottom-nav {
-    position: fixed;
-    bottom: 0;
-    left: 0;
-    right: 0;
-    -webkit-transform: translate3d(0, 0, 0);
-    transform: translate3d(0, 0, 0);
-    -webkit-overflow-scrolling: touch;
-  }
-}
-
-/* Additional fix for mobile browsers */
-html, body {
-  overscroll-behavior: none;
-  -webkit-overflow-scrolling: touch;
+.badge {
+  animation: pulse 2s infinite;
 }
 </style>

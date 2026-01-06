@@ -25,7 +25,7 @@
             <div class="separator"></div>
 
             <div class="description">
-              <p v-for="paragraph in selectedProperty.description" :key="paragraph">{{ paragraph }}</p>
+              <p>{{ selectedProperty.description }}</p>
             </div>
           </div>
 

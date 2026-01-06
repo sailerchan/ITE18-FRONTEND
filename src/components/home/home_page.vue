@@ -182,7 +182,7 @@ export default {
 .search-bar {
   display: flex;
   align-items: center;
-  gap: 15px;
+  gap: 5px;
   background: #fff;
   border-radius: 30px;
   padding: 10px 16px;
@@ -223,7 +223,7 @@ export default {
 .search-input {
   display: flex;
   align-items: center;
-  gap: 10px;
+  gap: 5px;
   flex: 1;
   color: #adb5bd;
   font-size: 12px;
@@ -884,7 +884,7 @@ img {
 /* Fix for Android Chrome */
 @media (-webkit-min-device-pixel-ratio: 0) and (min-resolution: 0.001dpcm) {
   .search-input input {
-    font-size: 16px !important;
+    font-size: 12px !important;
   }
 }
 </style>

@@ -11,20 +11,64 @@
 
       <!-- Main Content -->
       <main class="main-content">
-        <div class="notification-graphic">
-          <div class="image-container">
-            <img src="/images/no_notif.jpg" alt="No Notifications" class="notification-image">
-            <div class="image-overlay"></div>
+        <!-- Show notifications if there are any -->
+        <div v-if="hasNotifications" class="notifications-list">
+          <!-- Upcoming Trips Notifications -->
+          <div
+            v-for="notification in upcomingTripNotifications"
+            :key="notification.id"
+            class="notification-card trip-notification"
+            :class="{ unread: !notification.read }"
+            @click="markAsRead(notification.id)"
+          >
+            <div class="notification-icon trip-icon">
+              <i class="fas fa-plane-departure"></i>
+            </div>
+            <div class="notification-content">
+              <h3 class="notification-title">{{ notification.title }}</h3>
+              <p class="notification-message">{{ notification.message }}</p>
+              <span class="notification-time">{{ notification.timeAgo }}</span>
+            </div>
+            <div v-if="!notification.read" class="unread-indicator"></div>
+          </div>
+
+          <!-- Other Notifications from Store -->
+          <div
+            v-for="notification in storeNotifications"
+            :key="notification.id"
+            class="notification-card"
+            :class="{ unread: !notification.read }"
+            @click="handleNotificationClick(notification)"
+          >
+            <div class="notification-icon" :class="notification.type">
+              <i :class="notification.icon"></i>
+            </div>
+            <div class="notification-content">
+              <h3 class="notification-title">{{ notification.title }}</h3>
+              <p class="notification-message">{{ notification.message }}</p>
+              <span class="notification-time">{{ formatTimestamp(notification.timestamp) }}</span>
+            </div>
+            <div v-if="!notification.read" class="unread-indicator"></div>
           </div>
         </div>
 
-        <div class="notification-message">
-          <h2>You have no notifications</h2>
-          <p>You don't have any trip updates or notifications right now. Start planning your next adventure to receive trip alerts and updates here!</p>
+        <!-- Empty State -->
+        <div v-else class="empty-state">
+          <div class="notification-graphic">
+            <div class="image-container">
+              <img src="/images/no_notif.jpg" alt="No Notifications" class="notification-image">
+              <div class="image-overlay"></div>
+            </div>
+          </div>
+
+          <div class="empty-message">
+            <h2>You have no notifications</h2>
+            <p>You don't have any trip updates or notifications right now. Start planning your next adventure to receive trip alerts and updates here!</p>
+          </div>
         </div>
       </main>
 
-      <!-- Bottom Navigation Bar - SAME AS HOMEPAGE -->
+      <!-- Bottom Navigation Bar -->
       <nav class="bottom-nav">
         <div class="nav-items-container">
           <button class="nav-item" @click="$emit('go-to-page', 'homepage')">
@@ -35,6 +79,7 @@
           </button>
           <button class="nav-item active">
             <i class="fas fa-bell"></i>
+            <span v-if="unreadCount > 0" class="badge">{{ unreadCount }}</span>
           </button>
           <button class="nav-item" @click="$emit('go-to-page', 'profile')">
             <i class="fas fa-user"></i>
@@ -46,17 +91,138 @@
 </template>
 
 <script>
+import { useTripsStore } from '../../stores/trips'
+import { useNotificationsStore } from '../../stores/notifications'
+
+
 export default {
   name: 'NotificationPage',
-  emits: [
-    'go-back',
-    'go-to-page'
-  ]
+  emits: ['go-back', 'go-to-page'],
+  data() {
+    return {
+      upcomingTripNotifications: []
+    }
+  },
+  computed: {
+    storeNotifications() {
+      const notificationsStore = useNotificationsStore()
+      return notificationsStore.sortedNotifications || []
+    },
+    unreadCount() {
+      const notificationsStore = useNotificationsStore()
+      const storeUnread = notificationsStore.unreadCount || 0
+      const tripUnread = this.upcomingTripNotifications.filter(n => !n.read).length
+      return storeUnread + tripUnread
+    },
+    hasNotifications() {
+      return this.upcomingTripNotifications.length > 0 || this.storeNotifications.length > 0
+    }
+  },
+  mounted() {
+    this.generateUpcomingTripNotifications()
+
+    const notificationsStore = useNotificationsStore()
+    notificationsStore.markAsViewed()
+  },
+  methods: {
+    generateUpcomingTripNotifications() {
+      const tripsStore = useTripsStore()
+      const upcomingTrips = tripsStore.upcomingTrips || []
+      const now = new Date()
+      const notifications = []
+
+      upcomingTrips.forEach(trip => {
+        if (trip.dates) {
+          try {
+            const dateStr = trip.dates.split('-')[0].trim()
+            const year = trip.dates.split(',')[1]?.trim() || new Date().getFullYear()
+            const startDate = new Date(`${dateStr}, ${year}`)
+
+            const daysUntil = Math.ceil((startDate - now) / (1000 * 60 * 60 * 24))
+
+            if (daysUntil >= 0 && daysUntil <= 7) {
+              let title = ''
+              let message = ''
+
+              if (daysUntil === 0) {
+                title = '✈️ Trip Today!'
+                message = `Your trip to ${trip.destinationName} starts today! Have an amazing journey!`
+              } else if (daysUntil === 1) {
+                title = '🎉 Trip Tomorrow!'
+                message = `Your trip to ${trip.destinationName} starts tomorrow! Make sure everything is packed and ready.`
+              } else if (daysUntil <= 3) {
+                title = `📅 Trip in ${daysUntil} Days`
+                message = `Your trip to ${trip.destinationName} starts in ${daysUntil} days. Time to finalize your preparations!`
+              } else {
+                title = `📅 Upcoming Trip in ${daysUntil} Days`
+                message = `Your trip to ${trip.destinationName} is coming up in ${daysUntil} days. Don't forget to check your itinerary!`
+              }
+
+              notifications.push({
+                id: `trip-${trip.id}`,
+                title: title,
+                message: message,
+                timeAgo: this.calculateTimeAgo(daysUntil),
+                read: false,
+                tripId: trip.id
+              })
+            }
+          } catch (error) {
+            console.error('Error parsing trip date:', error)
+          }
+        }
+      })
+
+      this.upcomingTripNotifications = notifications
+    },
+
+    calculateTimeAgo(daysUntil) {
+      if (daysUntil === 0) return 'Today'
+      if (daysUntil === 1) return 'Tomorrow'
+      if (daysUntil <= 7) return `In ${daysUntil} days`
+      return 'Upcoming'
+    },
+
+    formatTimestamp(timestamp) {
+      const date = new Date(timestamp)
+      const now = new Date()
+      const diffMs = now - date
+      const diffMins = Math.floor(diffMs / 60000)
+      const diffHours = Math.floor(diffMs / 3600000)
+      const diffDays = Math.floor(diffMs / 86400000)
+
+      if (diffMins < 1) return 'Just now'
+      if (diffMins < 60) return `${diffMins}m ago`
+      if (diffHours < 24) return `${diffHours}h ago`
+      if (diffDays === 1) return 'Yesterday'
+      if (diffDays < 7) return `${diffDays}d ago`
+
+      return date.toLocaleDateString('en-US', { month: 'short', day: 'numeric' })
+    },
+
+    markAsRead(notificationId) {
+      const index = this.upcomingTripNotifications.findIndex(n => n.id === notificationId)
+      if (index !== -1) {
+        this.upcomingTripNotifications[index].read = true
+      }
+    },
+
+    handleNotificationClick(notification) {
+      const notificationsStore = useNotificationsStore()
+      notificationsStore.markAsRead(notification.id)
+
+      if (notification.type === 'booking' || notification.type === 'reminder') {
+        this.$emit('go-to-page', 'trips')
+      }
+    }
+  }
 }
 </script>
 
 <style scoped>
-/* CSS Variables - SAME AS HOMEPAGE */
+/* Keep all your existing styles - they're fine */
+/* Just changed .notification-message class to .empty-message to avoid conflict */
+
 :root {
   --muted: #6c757d;
   --dark: #111827;
@@ -66,7 +232,6 @@ export default {
   --hover-shadow: 0 8px 24px rgba(0, 0, 0, 0.12);
 }
 
-/* Exact same container as homepage */
 .container {
   min-height: 100vh;
   min-height: 100dvh;
@@ -79,7 +244,6 @@ export default {
   overflow-x: hidden;
 }
 
-/* Same card styling as homepage */
 .notification-inner {
   background: #ffffff;
   border-radius: 24px 24px 0 0;
@@ -94,16 +258,18 @@ export default {
   display: flex;
   flex-direction: column;
   overflow-y: auto;
-  padding-bottom: 90px; /* Added padding for fixed nav - SAME AS HOMEPAGE */
+  padding-bottom: 90px;
 }
 
-/* ===== HEADER ===== */
 .page-header {
   display: flex;
   align-items: center;
   padding: 24px 20px 12px;
   background: white;
   border-bottom: 1px solid #e5e7eb;
+  position: sticky;
+  top: 0;
+  z-index: 10;
 }
 
 .back-button {
@@ -135,8 +301,107 @@ export default {
   margin-left: 8px;
 }
 
-/* Main Content Styles */
 .main-content {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  padding: 0;
+}
+
+.notifications-list {
+  padding: 16px 20px;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.notification-card {
+  background: white;
+  border: 1px solid #e5e7eb;
+  border-radius: 12px;
+  padding: 16px;
+  display: flex;
+  gap: 12px;
+  align-items: flex-start;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  position: relative;
+}
+
+.notification-card:hover {
+  border-color: var(--teal-1);
+  box-shadow: var(--card-shadow);
+}
+
+.notification-card.unread {
+  background: #f0f9ff;
+  border-color: var(--teal-2);
+}
+
+.notification-icon {
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  font-size: 18px;
+}
+
+.notification-icon.trip-icon {
+  background: linear-gradient(135deg, #0c3437 0%, #1f7a8c 100%);
+  color: white;
+}
+
+.notification-icon.booking {
+  background: #dcfce7;
+  color: #16a34a;
+}
+
+.notification-icon.reminder {
+  background: #dbeafe;
+  color: #2563eb;
+}
+
+.notification-icon.promotion {
+  background: #fed7aa;
+  color: #ea580c;
+}
+
+.notification-content {
+  flex: 1;
+}
+
+.notification-title {
+  font-size: 15px;
+  font-weight: 600;
+  margin: 0 0 4px 0;
+  color: var(--dark);
+}
+
+.notification-message {
+  font-size: 13px;
+  color: var(--muted);
+  margin: 0 0 6px 0;
+  line-height: 1.4;
+}
+
+.notification-time {
+  font-size: 12px;
+  color: #9ca3af;
+}
+
+.unread-indicator {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background: var(--teal-1);
+  flex-shrink: 0;
+  margin-top: 4px;
+}
+
+.empty-state {
   flex: 1;
   display: flex;
   flex-direction: column;
@@ -145,7 +410,6 @@ export default {
   padding: 20px 24px;
 }
 
-/* Notification Graphic Styles */
 .notification-graphic {
   margin-bottom: 32px;
 }
@@ -164,7 +428,6 @@ export default {
   height: 200px;
   object-fit: contain;
   border-radius: 20px;
-  /* Blur effect */
   filter: blur(1.2px) brightness(0.95);
   opacity: 0.85;
   transition: all 0.3s ease;
@@ -186,19 +449,12 @@ export default {
   pointer-events: none;
 }
 
-/* Hover effect for better interaction */
-.image-container:hover .notification-image {
-  filter: blur(0.8px) brightness(1);
-  opacity: 0.9;
-}
-
-/* Notification Message Styles */
-.notification-message {
+.empty-message {
   text-align: center;
   max-width: 280px;
 }
 
-.notification-message h2 {
+.empty-message h2 {
   font-size: 18px;
   font-weight: 600;
   margin: 0 0 8px;
@@ -206,14 +462,13 @@ export default {
   line-height: 1.3;
 }
 
-.notification-message p {
+.empty-message p {
   font-size: 14px;
   margin: 0;
   line-height: 1.5;
   color: var(--muted);
 }
 
-/* Bottom nav - EXACT SAME AS HOMEPAGE */
 .bottom-nav {
   position: fixed;
   bottom: 0;
@@ -248,6 +503,7 @@ export default {
   justify-content: center;
   transition: all 0.2s ease;
   -webkit-tap-highlight-color: transparent;
+  position: relative;
 }
 
 .nav-item.active {
@@ -259,384 +515,20 @@ export default {
   background: rgba(0,0,0,0.03);
 }
 
-/* ================= RESPONSIVE BREAKPOINTS ================= */
-
-/* Extra Small Phones (under 320px) */
-@media (max-width: 320px) {
-  .page-header {
-    padding: 20px 16px 10px;
-  }
-
-  .main-content {
-    padding: 20px 16px;
-  }
-
-  .notification-image {
-    width: 160px;
-    height: 160px;
-    filter: blur(1px) brightness(0.92);
-    opacity: 0.8;
-  }
-
-  .notification-message {
-    max-width: 260px;
-  }
-
-  .notification-message h2 {
-    font-size: 16px;
-    margin-bottom: 6px;
-  }
-
-  .notification-message p {
-    font-size: 13px;
-  }
-
-  .notification-inner {
-    padding-bottom: 80px;
-  }
-
-  .bottom-nav {
-    padding: 12px 16px;
-  }
-}
-
-/* Small Phones (321px - 374px) */
-@media (min-width: 321px) and (max-width: 374px) {
-  .page-header {
-    padding: 22px 18px 10px;
-  }
-
-  .main-content {
-    padding: 20px 18px;
-  }
-
-  .notification-image {
-    width: 170px;
-    height: 170px;
-  }
-
-  .notification-message {
-    max-width: 270px;
-  }
-
-  .notification-inner {
-    padding-bottom: 85px;
-  }
-}
-
-/* Medium Phones (375px - 414px) - Standard modern phones */
-@media (min-width: 375px) and (max-width: 414px) {
-  .page-header {
-    padding: 24px 20px 12px;
-  }
-
-  .main-content {
-    padding: 20px 20px;
-  }
-
-  .notification-image {
-    width: 180px;
-    height: 180px;
-  }
-
-  .notification-message {
-    max-width: 280px;
-  }
-
-  .notification-inner {
-    padding-bottom: 90px;
-  }
-}
-
-/* Large Phones (415px - 767px) - Large phones like iPhone Plus/Pro Max */
-@media (min-width: 415px) and (max-width: 767px) {
-  .page-header {
-    padding: 24px 24px 12px;
-  }
-
-  .main-content {
-    padding: 20px 24px;
-  }
-
-  .notification-image {
-    width: 200px;
-    height: 200px;
-  }
-
-  .notification-message {
-    max-width: 300px;
-  }
-
-  .notification-message h2 {
-    font-size: 18px;
-  }
-
-  .notification-message p {
-    font-size: 14px;
-  }
-
-  .notification-inner {
-    padding-bottom: 95px;
-  }
-}
-
-/* Small Tablets (768px - 1023px) */
-@media (min-width: 768px) and (max-width: 1023px) {
-  .container {
-    background: #f8f9fa;
-    padding: 20px;
-    max-width: 768px;
-    margin: 0 auto;
-  }
-
-  .notification-inner {
-    border-radius: 24px;
-    box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
-    margin: 0 auto;
-    width: 100%;
-    padding-bottom: 100px;
-  }
-
-  .page-header {
-    padding: 32px 32px 16px;
-  }
-
-  .main-content {
-    padding: 20px 32px;
-  }
-
-  .notification-image {
-    width: 220px;
-    height: 220px;
-    filter: blur(1.5px) brightness(0.97);
-    opacity: 0.9;
-  }
-
-  .notification-message {
-    max-width: 320px;
-  }
-
-  .notification-message h2 {
-    font-size: 20px;
-    margin-bottom: 10px;
-  }
-
-  .notification-message p {
-    font-size: 15px;
-  }
-
-  .bottom-nav {
-    max-width: 768px;
-    left: 50%;
-    transform: translateX(-50%);
-    border-radius: 24px 24px 0 0;
-  }
-}
-
-/* Large Tablets (1024px - 1366px) */
-@media (min-width: 1024px) and (max-width: 1366px) {
-  .container {
-    background: #f8f9fa;
-    padding: 30px;
-    max-width: 500px;
-    margin: 0 auto;
-  }
-
-  .notification-inner {
-    border-radius: 24px;
-    box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
-    margin: 0 auto;
-    width: 100%;
-    padding-bottom: 105px;
-  }
-
-  .page-header {
-    padding: 36px 36px 18px;
-  }
-
-  .main-content {
-    padding: 20px 36px;
-  }
-
-  .notification-image {
-    width: 200px;
-    height: 200px;
-  }
-
-  .notification-message {
-    max-width: 320px;
-  }
-
-  .bottom-nav {
-    max-width: 500px;
-    left: 50%;
-    transform: translateX(-50%);
-    border-radius: 24px 24px 0 0;
-  }
-}
-
-/* Desktop (1367px and up) */
-@media (min-width: 1367px) {
-  .container {
-    background: #f8f9fa;
-    padding: 40px;
-    max-width: 500px;
-    margin: 0 auto;
-  }
-
-  .notification-inner {
-    border-radius: 24px;
-    box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
-    margin: 0 auto;
-    width: 100%;
-    padding-bottom: 110px;
-  }
-
-  .page-header {
-    padding: 40px 40px 20px;
-  }
-
-  .main-content {
-    padding: 20px 40px;
-  }
-
-  .notification-image {
-    width: 200px;
-    height: 200px;
-  }
-
-  .notification-message {
-    max-width: 320px;
-  }
-
-  .bottom-nav {
-    max-width: 500px;
-    left: 50%;
-    transform: translateX(-50%);
-    border-radius: 24px 24px 0 0;
-  }
-}
-
-/* Landscape Mobile */
-@media (max-height: 600px) and (orientation: landscape) {
-  .page-header {
-    padding: 16px 16px 8px;
-  }
-
-  .main-content {
-    padding: 16px 16px;
-  }
-
-  .notification-graphic {
-    margin-bottom: 24px;
-  }
-
-  .notification-image {
-    width: 140px;
-    height: 140px;
-    filter: blur(0.8px) brightness(0.9);
-    opacity: 0.8;
-  }
-
-  .notification-message {
-    max-width: 260px;
-  }
-
-  .notification-message h2 {
-    font-size: 16px;
-    margin-bottom: 6px;
-  }
-
-  .notification-message p {
-    font-size: 13px;
-  }
-
-  .notification-inner {
-    padding-bottom: 70px;
-  }
-
-  .bottom-nav {
-    padding: 10px 16px;
-  }
-}
-
-/* Very short screens */
-@media (max-height: 500px) {
-  .page-header {
-    padding: 12px 12px 6px;
-  }
-
-  .main-content {
-    padding: 12px 12px;
-  }
-
-  .notification-graphic {
-    margin-bottom: 20px;
-  }
-
-  .notification-image {
-    width: 120px;
-    height: 120px;
-    filter: blur(0.6px) brightness(0.88);
-    opacity: 0.75;
-  }
-
-  .notification-message {
-    max-width: 240px;
-  }
-
-  .notification-message h2 {
-    font-size: 15px;
-    margin-bottom: 6px;
-  }
-
-  .notification-message p {
-    font-size: 12px;
-  }
-
-  .notification-inner {
-    padding-bottom: 60px;
-  }
-
-  .bottom-nav {
-    padding: 8px 12px;
-  }
-}
-
-/* Fix for iOS zoom on input focus */
-@media screen and (max-width: 767px) {
-  input, textarea {
-    font-size: 16px;
-  }
-}
-
-/* Safe area insets for notched devices */
-@supports(padding: max(0px)) {
-  .container {
-    padding-left: max(0px, env(safe-area-inset-left));
-    padding-right: max(0px, env(safe-area-inset-right));
-    padding-bottom: max(0px, env(safe-area-inset-bottom));
-  }
-
-  .notification-inner {
-    border-radius: 24px 24px 0 0;
-  }
-
-  .bottom-nav {
-    padding-bottom: max(16px, env(safe-area-inset-bottom));
-  }
-
-  @media (min-width: 768px) {
-    .notification-inner {
-      border-radius: 24px;
-    }
-  }
-}
-
-/* Fix for Android Chrome */
-@media (-webkit-min-device-pixel-ratio: 0) and (min-resolution: 0.001dpcm) {
-  input, textarea {
-    font-size: 16px !important;
-  }
+.badge {
+  position: absolute;
+  top: 8px;
+  right: 8px;
+  background: #ef4444;
+  color: white;
+  font-size: 10px;
+  font-weight: 600;
+  padding: 2px 5px;
+  border-radius: 10px;
+  min-width: 16px;
+  height: 16px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
 }
 </style>

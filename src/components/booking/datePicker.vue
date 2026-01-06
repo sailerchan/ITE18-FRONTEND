@@ -89,6 +89,8 @@
 </template>
 
 <script>
+import { useTripsStore } from '../../stores/trips'
+
 export default {
   name: 'DatePicker',
   props: {
@@ -142,7 +144,8 @@ export default {
       manualStartDate: '',
       manualEndDate: '',
       today: new Date(),
-      selectingStartDate: true
+      selectingStartDate: true,
+      bookedDateRanges: [] // ✅ Store booked date ranges
     }
   },
   computed: {
@@ -171,7 +174,91 @@ export default {
       return this.currentDate.getFullYear();
     }
   },
+  mounted() {
+    // ✅ Load booked dates when component mounts
+    this.loadBookedDates()
+  },
   methods: {
+    // ✅ NEW: Load all booked date ranges from saved trips
+    loadBookedDates() {
+      const tripsStore = useTripsStore()
+      const allTrips = [...tripsStore.upcomingTrips, ...tripsStore.pastTrips]
+
+      this.bookedDateRanges = allTrips
+        .filter(trip => trip.saved && trip.dates) // Only saved trips
+        .map(trip => {
+          try {
+            const dateParts = trip.dates.split('-')
+            const startStr = dateParts[0].trim()
+            const endStr = dateParts[1].trim()
+
+            // Parse year from end date
+            const yearMatch = endStr.match(/\d{4}/)
+            const year = yearMatch ? yearMatch[0] : new Date().getFullYear()
+
+            // Create start and end dates
+            const startDate = new Date(`${startStr}, ${year}`)
+            const endDate = new Date(`${endStr}, ${year}`)
+
+            return { startDate, endDate, tripId: trip.id }
+          } catch (error) {
+            console.error('Error parsing trip dates:', error)
+            return null
+          }
+        })
+        .filter(range => range !== null) // Remove invalid ranges
+    },
+
+    // ✅ NEW: Check if a date is booked
+    isDateBooked(day) {
+      const checkDate = new Date(this.currentYear, this.currentMonth, day)
+      checkDate.setHours(0, 0, 0, 0)
+
+      return this.bookedDateRanges.some(range => {
+        const start = new Date(range.startDate)
+        const end = new Date(range.endDate)
+        start.setHours(0, 0, 0, 0)
+        end.setHours(0, 0, 0, 0)
+
+        return checkDate >= start && checkDate <= end
+      })
+    },
+
+    // ✅ NEW: Check if manual date input is booked
+    isManualDateBooked(dateString) {
+      const date = this.parseDateString(dateString)
+      if (!date) return false
+
+      date.setHours(0, 0, 0, 0)
+
+      return this.bookedDateRanges.some(range => {
+        const start = new Date(range.startDate)
+        const end = new Date(range.endDate)
+        start.setHours(0, 0, 0, 0)
+        end.setHours(0, 0, 0, 0)
+
+        return date >= start && date <= end
+      })
+    },
+
+    // ✅ NEW: Check if date range overlaps with booked dates
+    isRangeOverlapping(startDate, endDate) {
+      const start = new Date(startDate)
+      const end = new Date(endDate)
+      start.setHours(0, 0, 0, 0)
+      end.setHours(0, 0, 0, 0)
+
+      return this.bookedDateRanges.some(range => {
+        const bookedStart = new Date(range.startDate)
+        const bookedEnd = new Date(range.endDate)
+        bookedStart.setHours(0, 0, 0, 0)
+        bookedEnd.setHours(0, 0, 0, 0)
+
+        // Check if ranges overlap
+        return (start <= bookedEnd && end >= bookedStart)
+      })
+    },
+
     formatDateInput(value) {
       let cleaned = value.replace(/\D/g, '');
 
@@ -219,6 +306,11 @@ export default {
         return false;
       }
 
+      // ✅ Check if date is booked
+      if (this.isManualDateBooked(dateString)) {
+        return false;
+      }
+
       return true;
     },
 
@@ -232,6 +324,12 @@ export default {
 
     validateStartDateFormat() {
       if (this.manualStartDate.length === 10) {
+        if (this.isManualDateBooked(this.manualStartDate)) {
+          alert('This date is already booked for another trip. Please select a different date.');
+          this.manualStartDate = '';
+          return;
+        }
+
         if (this.isValidDate(this.manualStartDate)) {
           const date = this.parseDateString(this.manualStartDate);
           this.$emit('select-date', date);
@@ -252,6 +350,12 @@ export default {
 
     validateEndDateFormat() {
       if (this.manualEndDate.length === 10) {
+        if (this.isManualDateBooked(this.manualEndDate)) {
+          alert('This date is already booked for another trip. Please select a different date.');
+          this.manualEndDate = '';
+          return;
+        }
+
         if (this.isValidDate(this.manualEndDate)) {
           const endDate = this.parseDateString(this.manualEndDate);
           const startDate = this.manualStartDate ? this.parseDateString(this.manualStartDate) : null;
@@ -263,6 +367,12 @@ export default {
           }
 
           if (endDate >= startDate) {
+            // ✅ Check if the range overlaps with booked dates
+            if (this.isRangeOverlapping(startDate, endDate)) {
+              alert('This date range overlaps with an existing trip. Please select different dates.');
+              this.manualEndDate = '';
+              return;
+            }
             this.$emit('select-date', endDate);
           } else {
             alert('End date must be after start date');
@@ -289,6 +399,11 @@ export default {
 
       if (this.isBeyondMaxDate(day)) {
         classes.push('past-date');
+      }
+
+      // ✅ Add booked-date class
+      if (this.isDateBooked(day)) {
+        classes.push('booked-date');
       }
 
       if (this.selectedStart && this.isSameDate(currentViewDate, this.selectedStart)) {
@@ -330,11 +445,24 @@ export default {
     },
 
     handleDateClick(day) {
-      if (this.isPastDate(day) || this.isBeyondMaxDate(day)) {
+      // ✅ Prevent clicking on past, beyond max, or booked dates
+      if (this.isPastDate(day) || this.isBeyondMaxDate(day) || this.isDateBooked(day)) {
+        if (this.isDateBooked(day)) {
+          alert('This date is already booked for another trip. Please select a different date.');
+        }
         return;
       }
 
       const clickedDate = new Date(this.currentYear, this.currentMonth, day);
+
+      // ✅ If selecting end date, check if range overlaps
+      if (this.selectedStart && !this.selectedEnd) {
+        if (this.isRangeOverlapping(this.selectedStart, clickedDate)) {
+          alert('This date range overlaps with an existing trip. Please select different dates.');
+          return;
+        }
+      }
+
       this.$emit('select-date', clickedDate);
     },
 
@@ -367,6 +495,11 @@ export default {
 
     handleNextClick() {
       if (this.selectedStart && this.selectedEnd) {
+        // ✅ Final check before proceeding
+        if (this.isRangeOverlapping(this.selectedStart, this.selectedEnd)) {
+          alert('This date range overlaps with an existing trip. Please select different dates.');
+          return;
+        }
         this.$emit('go-to-accommodation');
       } else {
         alert('Please select both start and end dates');
@@ -392,8 +525,9 @@ export default {
 }
 </script>
 
+
 <style scoped>
-/* Reset and Base Styles */
+
 * {
   box-sizing: border-box;
   margin: 0;
@@ -687,7 +821,29 @@ html, body {
   padding: 5px;
   border-radius: 8px;
 }
+.date-pill.booked-date {
+  background: linear-gradient(135deg, #fca5a5 0%, #ef4444 100%);
+  color: white;
+  cursor: not-allowed;
+  opacity: 0.7;
+  position: relative;
+}
 
+.date-pill.booked-date::after {
+  content: '✕';
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  font-size: 18px;
+  font-weight: bold;
+  color: white;
+}
+
+.date-pill.booked-date:hover {
+  background: linear-gradient(135deg, #fca5a5 0%, #ef4444 100%);
+  opacity: 0.8;
+}
 /* Action Buttons */
 .action-buttons {
   display: flex;

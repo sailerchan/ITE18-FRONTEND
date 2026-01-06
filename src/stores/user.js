@@ -1,105 +1,210 @@
+// stores/user.js
 import { defineStore } from 'pinia'
+import { ref, computed } from 'vue'
 
-export const useUserStore = defineStore('user', {
-  state: () => ({
+export const useUserStore = defineStore('user', () => {
+  // State
+  const firstName = ref('')
+  const lastName = ref('')
+  const email = ref('')
+  const location = ref('Tampakan, Soccsksargen, PH')
+  const isAuthenticated = ref(false)
+
+  // Login Form
+  const loginForm = ref({
+    email: '',
+    password: ''
+  })
+
+  // Signup Form
+  const signupForm = ref({
     firstName: '',
     lastName: '',
     email: '',
-    phoneNumber: '',
-    location: 'Butuan City, Philippines',
-    avatar: '/images/profilepicture.png',
-    isAuthenticated: false
-  }),
+    password: '',
+    confirmPassword: '',
+    passwordError: '',
+    confirmPasswordError: ''
+  })
 
-  getters: {
-    fullName: (state) => `${state.firstName} ${state.lastName}`.trim(),
-    displayName: (state) => {
-      if (state.firstName) return state.firstName
-      if (state.email) return state.email.split('@')[0]
-      return 'User'
-    },
-    userProfile: (state) => ({
-      firstName: state.firstName,
-      lastName: state.lastName,
-      email: state.email,
-      phoneNumber: state.phoneNumber,
-      location: state.location,
-      avatar: state.avatar
-    })
-  },
-
-  actions: {
-    updateFromSignup(data) {
-      this.firstName = data.firstName
-      this.lastName = data.lastName
-      this.email = data.email
-      this.isAuthenticated = true
-      this.saveToLocalStorage()
-    },
-
-    updateProfile(data) {
-      Object.assign(this, data)
-      this.saveToLocalStorage()
-    },
-
-    login(email) {
-      this.email = email
-      if (!this.firstName) {
-        this.firstName = email.split('@')[0]
-      }
-      this.isAuthenticated = true
-      this.saveToLocalStorage()
-    },
-
-    logout() {
-      this.$reset()
-      localStorage.removeItem('userProfile')
-      localStorage.removeItem('userName')
-      localStorage.removeItem('isAuthenticated')
-    },
-
-    saveToLocalStorage() {
-      const data = {
-        firstName: this.firstName,
-        lastName: this.lastName,
-        email: this.email,
-        phoneNumber: this.phoneNumber,
-        location: this.location,
-        avatar: this.avatar,
-        isAuthenticated: this.isAuthenticated
-      }
-      localStorage.setItem('userProfile', JSON.stringify(data))
-      localStorage.setItem('userName', this.displayName)
-      localStorage.setItem('isAuthenticated', 'true')
-    },
-
-    loadFromLocalStorage() {
-      const saved = localStorage.getItem('userProfile')
-      if (saved) {
-        try {
-          const data = JSON.parse(saved)
-          Object.assign(this, data)
-        } catch (error) {
-          console.error('Error loading user profile:', error)
-        }
-      }
-
-      // Fallback to old localStorage keys
-      const oldUserName = localStorage.getItem('userName')
-      const oldAuth = localStorage.getItem('isAuthenticated')
-      if (oldUserName && !this.firstName) {
-        this.firstName = oldUserName
-      }
-      if (oldAuth === 'true') {
-        this.isAuthenticated = true
-      }
-    },
-
-    clearUserProfile() {
-      this.$reset()
-      localStorage.removeItem('userProfile')
-      localStorage.removeItem('userName')
-      localStorage.removeItem('isAuthenticated')
+  // Computed
+  const displayName = computed(() => {
+    if (firstName.value) {
+      return `${firstName.value} ${lastName.value}`.trim()
     }
+    if (email.value) {
+      const name = email.value.split('@')[0]
+      return name.charAt(0).toUpperCase() + name.slice(1)
+    }
+    return 'User'
+  })
+
+  const isSignupFormValid = computed(() => {
+    return (
+      signupForm.value.firstName &&
+      signupForm.value.lastName &&
+      signupForm.value.email &&
+      signupForm.value.password &&
+      signupForm.value.confirmPassword &&
+      !signupForm.value.passwordError &&
+      !signupForm.value.confirmPasswordError
+    )
+  })
+
+  // Actions
+  const updateSignupField = (field, value) => {
+    signupForm.value[field] = value
+  }
+
+  const validatePassword = () => {
+    const password = signupForm.value.password
+    if (password.length < 8) {
+      signupForm.value.passwordError = 'Password must be at least 8 characters long'
+    } else if (!/(?=.*[a-z])(?=.*[A-Z])/.test(password)) {
+      signupForm.value.passwordError = 'Password must contain both uppercase and lowercase letters'
+    } else if (!/(?=.*\d)/.test(password)) {
+      signupForm.value.passwordError = 'Password must contain at least one number'
+    } else {
+      signupForm.value.passwordError = ''
+    }
+    if (signupForm.value.confirmPassword) {
+      validateConfirmPassword()
+    }
+  }
+
+  const validateConfirmPassword = () => {
+    if (signupForm.value.password !== signupForm.value.confirmPassword) {
+      signupForm.value.confirmPasswordError = 'Passwords do not match'
+    } else {
+      signupForm.value.confirmPasswordError = ''
+    }
+  }
+
+  const login = (userEmail) => {
+    const nameFromEmail = userEmail.split('@')[0]
+    email.value = userEmail
+    firstName.value = nameFromEmail.charAt(0).toUpperCase() + nameFromEmail.slice(1)
+    isAuthenticated.value = true
+
+    localStorage.setItem('userName', displayName.value)
+    localStorage.setItem('userEmail', email.value)
+    localStorage.setItem('isAuthenticated', 'true')
+  }
+
+  const signup = () => {
+    validatePassword()
+    validateConfirmPassword()
+
+    if (!isSignupFormValid.value) {
+      return false
+    }
+
+    firstName.value = signupForm.value.firstName
+    lastName.value = signupForm.value.lastName
+    email.value = signupForm.value.email
+    isAuthenticated.value = true
+
+    localStorage.setItem('userName', displayName.value)
+    localStorage.setItem('userEmail', email.value)
+    localStorage.setItem('isAuthenticated', 'true')
+
+    return true
+  }
+
+  const updateFromSignup = (data) => {
+    firstName.value = data.firstName
+    lastName.value = data.lastName
+    email.value = data.email
+    isAuthenticated.value = true
+
+    localStorage.setItem('userName', displayName.value)
+    localStorage.setItem('userEmail', email.value)
+    localStorage.setItem('isAuthenticated', 'true')
+  }
+
+  const updateProfile = (profileData) => {
+    if (profileData.firstName) firstName.value = profileData.firstName
+    if (profileData.lastName) lastName.value = profileData.lastName
+    if (profileData.email) email.value = profileData.email
+    if (profileData.location) location.value = profileData.location
+
+    localStorage.setItem('userName', displayName.value)
+    localStorage.setItem('userEmail', email.value)
+    localStorage.setItem('userLocation', location.value)
+  }
+
+  const logout = () => {
+    firstName.value = ''
+    lastName.value = ''
+    email.value = ''
+    isAuthenticated.value = false
+
+    loginForm.value = { email: '', password: '' }
+    signupForm.value = {
+      firstName: '',
+      lastName: '',
+      email: '',
+      password: '',
+      confirmPassword: '',
+      passwordError: '',
+      confirmPasswordError: ''
+    }
+
+    localStorage.removeItem('userName')
+    localStorage.removeItem('userEmail')
+    localStorage.removeItem('isAuthenticated')
+  }
+
+  const loadFromLocalStorage = () => {
+    const savedAuth = localStorage.getItem('isAuthenticated')
+    const savedEmail = localStorage.getItem('userEmail')
+    const savedName = localStorage.getItem('userName')
+    const savedLocation = localStorage.getItem('userLocation')
+
+    if (savedAuth === 'true') {
+      isAuthenticated.value = true
+      email.value = savedEmail || ''
+      if (savedName) {
+        const names = savedName.split(' ')
+        firstName.value = names[0] || ''
+        lastName.value = names.slice(1).join(' ') || ''
+      }
+      if (savedLocation) {
+        location.value = savedLocation
+      }
+    }
+  }
+
+  const clearUserProfile = () => {
+    firstName.value = ''
+    lastName.value = ''
+    email.value = ''
+  }
+
+  return {
+    // State
+    firstName,
+    lastName,
+    email,
+    location,
+    isAuthenticated,
+    loginForm,
+    signupForm,
+
+    // Computed
+    displayName,
+    isSignupFormValid,
+
+    // Actions
+    updateSignupField,
+    validatePassword,
+    validateConfirmPassword,
+    login,
+    signup,
+    updateFromSignup,
+    updateProfile,
+    logout,
+    loadFromLocalStorage,
+    clearUserProfile
   }
 })
