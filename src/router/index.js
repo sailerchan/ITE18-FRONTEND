@@ -8,110 +8,110 @@ const routes = [
   {
     path: '/login',
     name: 'login',
-    component: () => import('../components/log_in.vue'),
+    component: () => import('../components/auth/log_in.vue'),
     meta: { requiresAuth: false }
   },
   {
     path: '/signup',
     name: 'signup',
-    component: () => import('../components/sign_up.vue'),
+    component: () => import('../components/auth/sign_up.vue'),
     meta: { requiresAuth: false }
   },
   {
     path: '/forgot-password',
     name: 'forgot-password',
-    component: () => import('../components/forgotpassword_page.vue'),
+    component: () => import('../components/auth/forgotpassword_page.vue'),
     meta: { requiresAuth: false }
   },
   {
     path: '/home',
     name: 'home',
-    component: () => import('../components/home_page.vue'),
+    component: () => import('../components/home/home_page.vue'),
     meta: { requiresAuth: true, showNav: true }
   },
   {
     path: '/trips',
     name: 'trips',
-    component: () => import('../components/TripsPage.vue'),
+    component: () => import('../components/trips/TripsPage.vue'),
     meta: { requiresAuth: true, showNav: true }
   },
   {
     path: '/notifications',
     name: 'notifications',
-    component: () => import('../components/NotificationPage.vue'),
+    component: () => import('../components/notification/NotificationPage.vue'),
     meta: { requiresAuth: true, showNav: true }
   },
   {
     path: '/profile',
     name: 'profile',
-    component: () => import('../components/ProfilePage.vue'),
+    component: () => import('../components/profile/ProfilePage.vue'),
     meta: { requiresAuth: true, showNav: true }
   },
   {
     path: '/personal-information',
     name: 'personal-information',
-    component: () => import('../components/PersonalInformation.vue'),
+    component: () => import('../components/profile/PersonalInformation.vue'),
     meta: { requiresAuth: true, showNav: false } // No nav on this page
   },
   {
     path: '/change-password',
     name: 'change-password',
-    component: () => import('../components/changePassword.vue'),
+    component: () => import('../components/profile/changePassword.vue'),
     meta: { requiresAuth: true, showNav: false } // No nav on this page
   },
   {
     path: '/destination-details/:id?',
     name: 'destination-details',
-    component: () => import('../components/destination-details.vue'),
+    component: () => import('../components/home/destination-details.vue'),
     props: true,
     meta: { requiresAuth: true, showNav: false } // No nav on this page
   },
   {
     path: '/datepicker',
     name: 'datepicker',
-    component: () => import('../components/datePicker.vue'),
+    component: () => import('../components/booking/datePicker.vue'),
     meta: { requiresAuth: true, showNav: false } // No nav on this page
   },
   {
     path: '/accommodation',
     name: 'accommodation',
-    component: () => import('../components/accomodation_page.vue'),
+    component: () => import('../components/booking/accomodation_page.vue'),
     meta: { requiresAuth: true, showNav: false } // No nav on this page
   },
   {
     path: '/booking',
     name: 'booking',
-    component: () => import('../components/booking-page.vue'),
+    component: () => import('../components/booking/booking-page.vue'),
     meta: { requiresAuth: true, showNav: false } // No nav on this page
   },
   {
     path: '/mastercard-details',
     name: 'mastercard-details',
-    component: () => import('../components/mastercard_details.vue'),
+    component: () => import('../components/booking/mastercard_details.vue'),
     meta: { requiresAuth: true, showNav: false } // No nav on this page
   },
   {
     path: '/gcash-detail',
     name: 'gcash-detail',
-    component: () => import('../components/gcash_detail.vue'),
+    component: () => import('../components/booking/gcash_detail.vue'),
     meta: { requiresAuth: true, showNav: false } // No nav on this page
   },
   {
     path: '/gcash-confirm',
     name: 'gcash-confirm',
-    component: () => import('../components/GcashPaymentConfirm.vue'),
+    component: () => import('../components/booking/GcashPaymentConfirm.vue'),
     meta: { requiresAuth: true, showNav: false } // No nav on this page
   },
   {
     path: '/payment-success',
     name: 'payment-success',
-    component: () => import('../components/paymentsuccess.vue'),
+    component: () => import('../components/booking/paymentsuccess.vue'),
     meta: { requiresAuth: true, showNav: false } // No nav on this page
   },
   {
     path: '/itinerary',
     name: 'itinerary',
-    component: () => import('../components/ItineraryPage.vue'),
+    component: () => import('../components/trips/ItineraryPage.vue'),
     meta: { requiresAuth: true, showNav: false} // No nav on itinerary
   },
   // Add a catch-all route for 404 errors

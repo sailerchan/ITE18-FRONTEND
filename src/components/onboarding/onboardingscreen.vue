@@ -28,7 +28,7 @@
 <script>
 export default {
   name: 'OnboardingExplore',
-  emits: 'go-to-page'
+  emits: ['go-to-page']  
 }
 </script>
 
@@ -44,7 +44,7 @@ export default {
 }
 
 .explore-screen {
-  background: linear-gradient(180deg, #F7F5ED 0%, #075258 100%);
+  background: white;
   color: black;
 }
 
@@ -88,10 +88,10 @@ width: 100%;
 padding: 14px 90px;
 border-radius: 50px;
 border: none;
-background: #d3d4d429;
+background: #0c3437;
 color: white;
 font-size: 16px;
-font-weight: 600;
+font-weight: 400;
 font-family: 'Poppins', sans-serif;
 margin: 0px auto;  /* auto left/right centers it */
 display: block;     /* makes button block-level so auto margins work */

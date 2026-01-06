@@ -60,7 +60,7 @@
 
       <!-- Action Button - Changed to "Go to Itinerary" -->
       <button class="okay-button" @click="goToItinerary">
-        Go to Itinerary
+        Add Itinerary
       </button>
     </main>
   </div>

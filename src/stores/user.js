@@ -1,99 +1,105 @@
 import { defineStore } from 'pinia'
-import { ref, computed } from 'vue'
 
-export const useUserStore = defineStore('user', () => {
-  // State
-  const userProfile = ref({
+export const useUserStore = defineStore('user', {
+  state: () => ({
     firstName: '',
     lastName: '',
     email: '',
-    location: '',
-    avatar: '',
-    password: '' // Store temporarily during signup, clear after
-  })
+    phoneNumber: '',
+    location: 'Butuan City, Philippines',
+    avatar: '/images/profilepicture.png',
+    isAuthenticated: false
+  }),
 
-  const isAuthenticated = ref(false)
+  getters: {
+    fullName: (state) => `${state.firstName} ${state.lastName}`.trim(),
+    displayName: (state) => {
+      if (state.firstName) return state.firstName
+      if (state.email) return state.email.split('@')[0]
+      return 'User'
+    },
+    userProfile: (state) => ({
+      firstName: state.firstName,
+      lastName: state.lastName,
+      email: state.email,
+      phoneNumber: state.phoneNumber,
+      location: state.location,
+      avatar: state.avatar
+    })
+  },
 
-  // Getters
-  const fullName = computed(() => {
-    return `${userProfile.value.firstName} ${userProfile.value.lastName}`.trim()
-  })
+  actions: {
+    updateFromSignup(data) {
+      this.firstName = data.firstName
+      this.lastName = data.lastName
+      this.email = data.email
+      this.isAuthenticated = true
+      this.saveToLocalStorage()
+    },
 
-  // Actions
-  const setUserProfile = (data) => {
-    userProfile.value = {
-      ...userProfile.value,
-      ...data
-    }
-    saveToLocalStorage()
-  }
+    updateProfile(data) {
+      Object.assign(this, data)
+      this.saveToLocalStorage()
+    },
 
-  const updateFromSignup = (signupData) => {
-    userProfile.value.firstName = signupData.firstName || ''
-    userProfile.value.lastName = signupData.lastName || ''
-    userProfile.value.email = signupData.email || ''
-    // Don't store password in profile for security
-    isAuthenticated.value = true
-    saveToLocalStorage()
-  }
+    login(email) {
+      this.email = email
+      if (!this.firstName) {
+        this.firstName = email.split('@')[0]
+      }
+      this.isAuthenticated = true
+      this.saveToLocalStorage()
+    },
 
-  const saveToLocalStorage = () => {
-    try {
-      // Don't save password to localStorage
-      const { password, ...profileToSave } = userProfile.value
-      localStorage.setItem('userProfile', JSON.stringify(profileToSave))
-      localStorage.setItem('isAuthenticated', JSON.stringify(isAuthenticated.value))
-      console.log('✅ User profile saved to localStorage')
-    } catch (error) {
-      console.error('❌ Error saving to localStorage:', error)
-    }
-  }
+    logout() {
+      this.$reset()
+      localStorage.removeItem('userProfile')
+      localStorage.removeItem('userName')
+      localStorage.removeItem('isAuthenticated')
+    },
 
-  const loadFromLocalStorage = () => {
-    try {
-      const savedProfile = localStorage.getItem('userProfile')
-      const savedAuth = localStorage.getItem('isAuthenticated')
+    saveToLocalStorage() {
+      const data = {
+        firstName: this.firstName,
+        lastName: this.lastName,
+        email: this.email,
+        phoneNumber: this.phoneNumber,
+        location: this.location,
+        avatar: this.avatar,
+        isAuthenticated: this.isAuthenticated
+      }
+      localStorage.setItem('userProfile', JSON.stringify(data))
+      localStorage.setItem('userName', this.displayName)
+      localStorage.setItem('isAuthenticated', 'true')
+    },
 
-      if (savedProfile) {
-        userProfile.value = JSON.parse(savedProfile)
-        console.log('✅ Loaded user profile from localStorage')
+    loadFromLocalStorage() {
+      const saved = localStorage.getItem('userProfile')
+      if (saved) {
+        try {
+          const data = JSON.parse(saved)
+          Object.assign(this, data)
+        } catch (error) {
+          console.error('Error loading user profile:', error)
+        }
       }
 
-      if (savedAuth) {
-        isAuthenticated.value = JSON.parse(savedAuth)
+      // Fallback to old localStorage keys
+      const oldUserName = localStorage.getItem('userName')
+      const oldAuth = localStorage.getItem('isAuthenticated')
+      if (oldUserName && !this.firstName) {
+        this.firstName = oldUserName
       }
-    } catch (error) {
-      console.error('❌ Error loading from localStorage:', error)
+      if (oldAuth === 'true') {
+        this.isAuthenticated = true
+      }
+    },
+
+    clearUserProfile() {
+      this.$reset()
+      localStorage.removeItem('userProfile')
+      localStorage.removeItem('userName')
+      localStorage.removeItem('isAuthenticated')
     }
-  }
-
-  const clearUserProfile = () => {
-    userProfile.value = {
-      firstName: '',
-      lastName: '',
-      email: '',
-      location: '',
-      avatar: '',
-      password: ''
-    }
-    isAuthenticated.value = false
-    localStorage.removeItem('userProfile')
-    localStorage.removeItem('isAuthenticated')
-  }
-
-  return {
-    // State
-    userProfile,
-    isAuthenticated,
-
-    // Getters
-    fullName,
-
-    // Actions
-    setUserProfile,
-    updateFromSignup,
-    loadFromLocalStorage,
-    saveToLocalStorage,
-    clearUserProfile
   }
 })

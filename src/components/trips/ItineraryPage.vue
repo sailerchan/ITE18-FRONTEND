@@ -235,7 +235,7 @@
 </template>
 
 <script>
-import { useTripsStore } from '../stores/trips'
+import { useTripsStore } from '../../stores/trips'
 
 export default {
   name: 'ItineraryPage',

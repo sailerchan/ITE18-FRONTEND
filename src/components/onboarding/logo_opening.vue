@@ -31,7 +31,7 @@ export default {
 }
 
 .logo-image {
-  width: 400px;
+  width: 300px;
   height: auto;
   object-fit: contain;
 }

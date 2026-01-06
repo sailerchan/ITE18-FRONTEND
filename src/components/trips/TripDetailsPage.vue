@@ -85,7 +85,7 @@
 
 <script>
 import { computed, watch, ref, onMounted } from 'vue'
-import { useTripsStore } from '../stores/trips'
+import { useTripsStore } from '../../stores/trips'
 
 export default {
   name: 'TripDetailsPage',
