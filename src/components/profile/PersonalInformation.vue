@@ -298,6 +298,8 @@ export default {
   display: flex;
   flex-direction: column;
   align-items: center;
+    margin-top: 30px;
+
 }
 
 .avatar-image {
@@ -309,16 +311,16 @@ export default {
   align-items: center;
   justify-content: center;
   margin-bottom: 10px;
-  border: 3px solid rgba(255, 255, 255, 0.3);
+    border: 1px solid black;
   backdrop-filter: blur(10px);
   overflow: hidden;
 }
 
 .profile-picture {
-  width: 100%;
-  height: 100%;
+  width: 85%;
+  height: 90%;
   object-fit: cover;
-  border-radius: 20px;
+  border-radius: 50%;
 }
 
 .edit-photo {

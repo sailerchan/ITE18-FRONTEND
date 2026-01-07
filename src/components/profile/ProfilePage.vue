@@ -1,20 +1,26 @@
 <template>
   <div class="container">
     <div class="profile-inner">
-      <!-- I. Header and User Identity Section -->
-      <div class="profile-header">
-        <h1 class="screen-title">Profile</h1>
 
-        <div class="user-info">
-          <div class="avatar">
-            <div class="avatar-image">
-              <img src="/images/profilepicture.png" alt="Profile Picture" class="profile-picture">
-            </div>
-          </div>
-          <h2 class="user-name">{{ userName }}</h2>
-          <p class="user-location">{{ currentLocation }}</p>
-        </div>
+      <!-- I. Header and User Identity Section -->
+<header class="page-header">
+  <button class="back-button" @click="$emit('go-to-page', 'homepage')">
+    <i class="fas fa-arrow-left"></i>
+  </button>
+  <h1 class="page-title">Profile</h1>
+</header>
+
+<div class="profile-header">
+  <div class="user-info">
+    <div class="avatar">
+      <div class="avatar-image">
+        <img src="/images/profilepicture.png" alt="Profile Picture" class="profile-picture">
       </div>
+    </div>
+    <h2 class="user-name">{{ userName }}</h2>
+    <p class="user-location">{{ currentLocation }}</p>
+  </div>
+</div>
 
       <!-- II. Account Settings List -->
       <div class="main-content">
@@ -249,10 +255,9 @@ export default {
 
 /* I. Header and User Identity Section - FIXED TO BE AT THE TOP */
 .profile-header {
-  background: #0C3437;
-  border-radius: 0 0 25px 25px; /* RESTORED rounded bottom corners */
-  padding: 25px 20px 25px; /* Reduced top padding from 45px to 25px */
-  color: white;
+  background: none;
+  padding: 25px 20px 25px;
+  color: black;
   text-align: center;
   position: relative;
   z-index: 10;
@@ -263,18 +268,54 @@ export default {
   flex-direction: column;
   justify-content: center; /* Centers content vertically */
 }
+.page-header {
+  display: flex;
+  align-items: center;
+  padding: 24px 20px 12px; /* same as Trips */
+  background: white;
+  border-bottom: 1px solid #e5e7eb; /* separator line */
+}
 
-.screen-title {
+.back-button {
+  background: none;
+  border: none;
+  font-size: 18px;
+  color: #111827;
+  padding: 8px;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  -webkit-tap-highlight-color: transparent;
+  width: 40px;
+  height: 40px;
+  border-radius: 12px;
+  transition: all 0.2s ease;
+  margin-right: 8px;
+}
+
+.back-button:hover {
+  background: rgba(0,0,0,0.03);
+}
+
+.page-title {
   font-size: 18px;
   font-weight: 600;
-  margin-bottom: 20px;
-  letter-spacing: 0.5px;
+  color: #111827;
+  margin: 0;
+}
+.profile-header {
+  background: none;
+  padding: 16px 20px 20px; /* no big top padding now */
+  text-align: center;
+  border-radius: 0 0 25px 25px;
 }
 
 .user-info {
   display: flex;
   flex-direction: column;
   align-items: center;
+  margin-top: 30px;
 }
 
 .avatar-image {
@@ -285,15 +326,15 @@ export default {
   display: flex;
   align-items: center;
   justify-content: center;
-  margin-bottom: 15px;
-  border: 3px solid rgba(255, 255, 255, 0.3);
+  margin-bottom: 10px;
+  border: 1px solid black;
   backdrop-filter: blur(10px);
   overflow: hidden;
 }
 
 .profile-picture {
-  width: 100%;
-  height: 100%;
+  width: 85%;
+  height: 90%;
   object-fit: cover;
   border-radius: 50%;
 }
