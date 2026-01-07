@@ -3,7 +3,7 @@
     <div class="notification-inner">
       <!-- Header with Back Button -->
       <header class="page-header">
-        <button class="back-button" @click="$emit('go-back')">
+        <button class="back-button" @click.stop="handleGoBack">
           <i class="fas fa-arrow-left"></i>
         </button>
         <h1 class="page-title">Notification</h1>
@@ -71,17 +71,17 @@
       <!-- Bottom Navigation Bar -->
       <nav class="bottom-nav">
         <div class="nav-items-container">
-          <button class="nav-item" @click="$emit('go-to-page', 'homepage')">
+          <button class="nav-item" @click.stop="handleNavClick('homepage')">
             <i class="fas fa-home"></i>
           </button>
-          <button class="nav-item" @click="$emit('go-to-page', 'trips')">
+          <button class="nav-item" @click.stop="handleNavClick('trips')">
             <i class="fas fa-route"></i>
           </button>
           <button class="nav-item active">
             <i class="fas fa-bell"></i>
             <span v-if="unreadCount > 0" class="badge">{{ unreadCount }}</span>
           </button>
-          <button class="nav-item" @click="$emit('go-to-page', 'profile')">
+          <button class="nav-item" @click.stop="handleNavClick('profile')">
             <i class="fas fa-user"></i>
           </button>
         </div>
@@ -93,7 +93,6 @@
 <script>
 import { useTripsStore } from '../../stores/trips'
 import { useNotificationsStore } from '../../stores/notifications'
-
 
 export default {
   name: 'NotificationPage',
@@ -120,11 +119,18 @@ export default {
   },
   mounted() {
     this.generateUpcomingTripNotifications()
-
     const notificationsStore = useNotificationsStore()
-    notificationsStore.markAsViewed()
+    notificationsStore.markAsViewed?.()
   },
   methods: {
+    handleGoBack() {
+      this.$emit('go-back')
+    },
+
+    handleNavClick(page) {
+      this.$emit('go-to-page', page)
+    },
+
     generateUpcomingTripNotifications() {
       const tripsStore = useTripsStore()
       const upcomingTrips = tripsStore.upcomingTrips || []
@@ -220,9 +226,6 @@ export default {
 </script>
 
 <style scoped>
-/* Keep all your existing styles - they're fine */
-/* Just changed .notification-message class to .empty-message to avoid conflict */
-
 :root {
   --muted: #6c757d;
   --dark: #111827;
@@ -269,7 +272,7 @@ export default {
   border-bottom: 1px solid #e5e7eb;
   position: sticky;
   top: 0;
-  z-index: 10;
+  z-index: 100; /* Increased z-index */
 }
 
 .back-button {
@@ -287,6 +290,7 @@ export default {
   height: 40px;
   border-radius: 12px;
   transition: all 0.2s ease;
+  z-index: 101; /* Ensure it's above other elements */
 }
 
 .back-button:hover {
@@ -306,6 +310,8 @@ export default {
   display: flex;
   flex-direction: column;
   padding: 0;
+  position: relative;
+  z-index: 1; /* Lower than header */
 }
 
 .notifications-list {
@@ -479,7 +485,7 @@ export default {
   padding: 16px 24px;
   display: flex;
   justify-content: center;
-  z-index: 1000;
+  z-index: 1000; /* High z-index for nav */
 }
 
 .nav-items-container {
@@ -504,6 +510,7 @@ export default {
   transition: all 0.2s ease;
   -webkit-tap-highlight-color: transparent;
   position: relative;
+  z-index: 1001; /* Ensure clickable */
 }
 
 .nav-item.active {
