@@ -8,13 +8,13 @@
       <div class="welcome-text">Welcome back, traveler!</div>
       <p class="card-title">Let's continue your travel plans. Enter your details to sign in.</p>
 
-      <form @submit.prevent="$emit('handle-login')">
+      <form @submit.prevent="handleLoginSubmit">
         <div class="form-group floating-group">
           <div class="input-box">
             <input type="email" id="email" class="form-input"
                    placeholder=" "
                    :value="loginForm.email"
-                   @input="$emit('update:login-email', $event.target.value)"
+                   @input="$emit('update:email', $event.target.value)"
                    @focus="handleFocus"
                    @blur="handleBlur"
                    required>
@@ -27,13 +27,13 @@
             <input type="password" id="password" class="form-input"
                    placeholder=" "
                    :value="loginForm.password"
-                   @input="$emit('update:login-password', $event.target.value)"
+                   @input="$emit('update:password', $event.target.value)"
                    @focus="handleFocus"
                    @blur="handleBlur"
                    required>
             <label for="password" class="floating-label">Password</label>
           </div>
-          <a href="#" class="forgot-password" @click="$emit('go-to-page', 'forgot-password')"><u>Forgot Password?</u></a>
+          <a href="#" class="forgot-password" @click.prevent="$emit('go-to-page', 'forgot-password')"><u>Forgot Password?</u></a>
         </div>
 
         <button type="submit" class="sign-in-btn">Log In</button>
@@ -55,7 +55,7 @@
       </div>
 
       <div class="sign-up-section">
-        New here? <a href="#" class="sign-up-link" @click="$emit('go-to-page', 'signup')"><u>Sign Up</u></a> to begin your journey!
+        New here? <a href="#" class="sign-up-link" @click.prevent="$emit('go-to-page', 'signup')"><u>Sign Up</u></a> to begin your journey!
       </div>
     </div>
   </div>
@@ -71,8 +71,8 @@ export default {
     }
   },
   emits: [
-    'update:login-email',
-    'update:login-password',
+    'update:email',
+    'update:password',
     'handle-login',
     'social-login',
     'go-to-page'
@@ -85,6 +85,10 @@ export default {
     handleBlur() {
       // This method ensures the label stays up if there's content
       // The CSS will handle the visual effect
+    },
+    handleLoginSubmit() {
+      // Emit the login event
+      this.$emit('handle-login')
     }
   }
 }

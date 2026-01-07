@@ -8,15 +8,15 @@
     />
 
     <!-- Login Component -->
-    <Login
-      v-else-if="currentPage === 'login'"
-      :login-form="userStore.loginForm"
-      @update:email="userStore.loginForm.email = $event"
-      @update:password="userStore.loginForm.password = $event"
-      @handle-login="handleLogin"
-      @social-login="handleSocialLogin"
-      @go-to-page="goToPage"
-    />
+  <Login
+  v-else-if="currentPage === 'login'"
+  :login-form="userStore.loginForm"
+  @update:email="userStore.loginForm.email = $event"
+  @update:password="userStore.loginForm.password = $event"
+  @handle-login="handleLogin"
+  @social-login="handleSocialLogin"
+  @go-to-page="goToPage"
+/>
 
     <!-- Signup Component -->
     <Signup
@@ -396,7 +396,6 @@ export default {
     // ========== PROFILE ==========
     const handleSaveChanges = (profileData) => {
       userStore.updateProfile(profileData)
-      alert('Personal information saved successfully!')
       goToPage('profile')
     }
 

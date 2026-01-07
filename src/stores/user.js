@@ -8,6 +8,7 @@ export const useUserStore = defineStore('user', () => {
   const lastName = ref('')
   const email = ref('')
   const location = ref('Butuan City, PH')
+  const avatar = ref('/images/profilepicture.png')
   const isAuthenticated = ref(false)
 
   // Login Form
@@ -24,7 +25,9 @@ export const useUserStore = defineStore('user', () => {
     password: '',
     confirmPassword: '',
     passwordError: '',
-    confirmPasswordError: ''
+    confirmPasswordError: '',
+    isPasswordValid: false,
+  isConfirmPasswordValid: false 
   })
 
   // Computed
@@ -37,6 +40,24 @@ export const useUserStore = defineStore('user', () => {
       return name.charAt(0).toUpperCase() + name.slice(1)
     }
     return 'User'
+  })
+
+  // User Profile - for Personal Information page
+  const userProfile = computed({
+    get: () => ({
+      firstName: firstName.value,
+      lastName: lastName.value,
+      email: email.value,
+      location: location.value,
+      avatar: avatar.value
+    }),
+    set: (newProfile) => {
+      if (newProfile.firstName !== undefined) firstName.value = newProfile.firstName
+      if (newProfile.lastName !== undefined) lastName.value = newProfile.lastName
+      if (newProfile.email !== undefined) email.value = newProfile.email
+      if (newProfile.location !== undefined) location.value = newProfile.location
+      if (newProfile.avatar !== undefined) avatar.value = newProfile.avatar
+    }
   })
 
   const isSignupFormValid = computed(() => {
@@ -80,15 +101,26 @@ export const useUserStore = defineStore('user', () => {
     }
   }
 
-  const login = (userEmail) => {
+  const login = (userEmail, userPassword) => {
+    // For demo purposes, extract name from email
+    // In production, this would come from your backend
     const nameFromEmail = userEmail.split('@')[0]
+    const nameParts = nameFromEmail.split('.')
+
+    if (nameParts.length > 1) {
+      // If email is like john.doe@example.com
+      firstName.value = nameParts[0].charAt(0).toUpperCase() + nameParts[0].slice(1)
+      lastName.value = nameParts[1].charAt(0).toUpperCase() + nameParts[1].slice(1)
+    } else {
+      // If email is like johndoe@example.com
+      firstName.value = nameFromEmail.charAt(0).toUpperCase() + nameFromEmail.slice(1)
+      lastName.value = ''
+    }
+
     email.value = userEmail
-    firstName.value = nameFromEmail.charAt(0).toUpperCase() + nameFromEmail.slice(1)
     isAuthenticated.value = true
 
-    localStorage.setItem('userName', displayName.value)
-    localStorage.setItem('userEmail', email.value)
-    localStorage.setItem('isAuthenticated', 'true')
+    saveToLocalStorage()
   }
 
   const signup = () => {
@@ -104,10 +136,7 @@ export const useUserStore = defineStore('user', () => {
     email.value = signupForm.value.email
     isAuthenticated.value = true
 
-    localStorage.setItem('userName', displayName.value)
-    localStorage.setItem('userEmail', email.value)
-    localStorage.setItem('isAuthenticated', 'true')
-
+    saveToLocalStorage()
     return true
   }
 
@@ -117,9 +146,7 @@ export const useUserStore = defineStore('user', () => {
     email.value = data.email
     isAuthenticated.value = true
 
-    localStorage.setItem('userName', displayName.value)
-    localStorage.setItem('userEmail', email.value)
-    localStorage.setItem('isAuthenticated', 'true')
+    saveToLocalStorage()
   }
 
   const updateProfile = (profileData) => {
@@ -127,16 +154,26 @@ export const useUserStore = defineStore('user', () => {
     if (profileData.lastName) lastName.value = profileData.lastName
     if (profileData.email) email.value = profileData.email
     if (profileData.location) location.value = profileData.location
+    if (profileData.avatar) avatar.value = profileData.avatar
 
-    localStorage.setItem('userName', displayName.value)
+    saveToLocalStorage()
+  }
+
+  const saveToLocalStorage = () => {
+    localStorage.setItem('userFirstName', firstName.value)
+    localStorage.setItem('userLastName', lastName.value)
     localStorage.setItem('userEmail', email.value)
     localStorage.setItem('userLocation', location.value)
+    localStorage.setItem('userAvatar', avatar.value)
+    localStorage.setItem('isAuthenticated', 'true')
   }
 
   const logout = () => {
     firstName.value = ''
     lastName.value = ''
     email.value = ''
+    location.value = 'Butuan City, PH'
+    avatar.value = '/images/profilepicture.png'
     isAuthenticated.value = false
 
     loginForm.value = { email: '', password: '' }
@@ -150,28 +187,24 @@ export const useUserStore = defineStore('user', () => {
       confirmPasswordError: ''
     }
 
-    localStorage.removeItem('userName')
+    localStorage.removeItem('userFirstName')
+    localStorage.removeItem('userLastName')
     localStorage.removeItem('userEmail')
+    localStorage.removeItem('userLocation')
+    localStorage.removeItem('userAvatar')
     localStorage.removeItem('isAuthenticated')
   }
 
   const loadFromLocalStorage = () => {
     const savedAuth = localStorage.getItem('isAuthenticated')
-    const savedEmail = localStorage.getItem('userEmail')
-    const savedName = localStorage.getItem('userName')
-    const savedLocation = localStorage.getItem('userLocation')
 
     if (savedAuth === 'true') {
       isAuthenticated.value = true
-      email.value = savedEmail || ''
-      if (savedName) {
-        const names = savedName.split(' ')
-        firstName.value = names[0] || ''
-        lastName.value = names.slice(1).join(' ') || ''
-      }
-      if (savedLocation) {
-        location.value = savedLocation
-      }
+      firstName.value = localStorage.getItem('userFirstName') || ''
+      lastName.value = localStorage.getItem('userLastName') || ''
+      email.value = localStorage.getItem('userEmail') || ''
+      location.value = localStorage.getItem('userLocation') || 'Butuan City, PH'
+      avatar.value = localStorage.getItem('userAvatar') || '/images/profilepicture.png'
     }
   }
 
@@ -179,6 +212,9 @@ export const useUserStore = defineStore('user', () => {
     firstName.value = ''
     lastName.value = ''
     email.value = ''
+    location.value = 'Butuan City, PH'
+    avatar.value = '/images/profilepicture.png'
+    saveToLocalStorage()
   }
 
   return {
@@ -187,12 +223,14 @@ export const useUserStore = defineStore('user', () => {
     lastName,
     email,
     location,
+    avatar,
     isAuthenticated,
     loginForm,
     signupForm,
 
     // Computed
     displayName,
+    userProfile,
     isSignupFormValid,
 
     // Actions
@@ -205,6 +243,7 @@ export const useUserStore = defineStore('user', () => {
     updateProfile,
     logout,
     loadFromLocalStorage,
+    saveToLocalStorage,
     clearUserProfile
   }
 })

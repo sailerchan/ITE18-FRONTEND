@@ -54,7 +54,7 @@
         <div class="form-group floating-group">
           <div class="input-box">
             <input type="password" id="password" class="form-input"
-                   :class="{ 'error': signupForm.passwordError, 'success': signupForm.password && !signupForm.passwordError }"
+                   :class="{ 'error': signupForm.passwordError, 'success': signupForm.password && signupForm.isPasswordValid }"
                    placeholder=" "
                    :value="signupForm.password"
                    @input="$emit('update:password', $event.target.value)"
@@ -63,25 +63,28 @@
                    required>
             <label for="password" class="floating-label">Password</label>
             <span class="error-message" v-if="signupForm.passwordError">{{ signupForm.passwordError }}</span>
-            <span class="success-message" v-if="signupForm.password && !signupForm.passwordError">Password looks good!</span>
+            <span class="success-message" v-if="signupForm.password && signupForm.isPasswordValid">Password looks good!</span>
           </div>
         </div>
 
         <div class="form-group floating-group">
-          <div class="input-box">
-            <input type="password" id="confirmPassword" class="form-input"
-                   :class="{ 'error': signupForm.confirmPasswordError, 'success': signupForm.confirmPassword && !signupForm.confirmPasswordError }"
-                   placeholder=" "
-                   :value="signupForm.confirmPassword"
-                   @input="$emit('update:confirmPassword', $event.target.value)"
-                   @focus="handleFocus"
-                   @blur="handleBlurAndValidateConfirmPassword"
-                   required>
-            <label for="confirmPassword" class="floating-label">Confirm Password</label>
-            <span class="error-message" v-if="signupForm.confirmPasswordError">{{ signupForm.confirmPasswordError }}</span>
-            <span class="success-message" v-if="signupForm.confirmPassword && !signupForm.confirmPasswordError">Passwords match!</span>
-          </div>
-        </div>
+  <div class="input-box">
+    <input type="password" id="confirmPassword" class="form-input"
+           :class="{
+             'error': signupForm.confirmPasswordError,
+             'success': signupForm.confirmPassword && signupForm.isConfirmPasswordValid
+           }"
+           placeholder=" "
+           :value="signupForm.confirmPassword"
+           @input="$emit('update:confirmPassword', $event.target.value)"
+           @focus="handleFocus"
+           @blur="handleBlurAndValidateConfirmPassword"
+           required>
+    <label for="confirmPassword" class="floating-label">Confirm Password</label>
+    <span class="error-message" v-if="signupForm.confirmPasswordError">{{ signupForm.confirmPasswordError }}</span>
+    <span class="success-message" v-if="signupForm.confirmPassword && signupForm.isConfirmPasswordValid">Passwords match!</span>
+  </div>
+</div>
 
         <button type="submit" class="sign-in-btn" :disabled="!isSignupFormValid">
           Sign Up
@@ -105,15 +108,13 @@
 
       <div class="sign-up-section">
         Already have an account?
-        <a href="#" class="sign-up-link" @click="$emit('go-to-page', 'login')">Log in.</a>
+        <a href="#" class="sign-up-link" @click.prevent="$emit('go-to-page', 'login')">Log in.</a>
       </div>
     </div>
   </div>
 </template>
 
 <script>
-import { useUserStore } from '@/stores/user'
-
 export default {
   name: 'sign_up',
   props: {
@@ -138,13 +139,6 @@ export default {
     'go-to-page',
     'social-login'
   ],
-  setup() {
-    const userStore = useUserStore()
-
-    return {
-      userStore
-    }
-  },
   methods: {
     handleFocus(event) {
       event.target.parentElement.classList.add('focused')
@@ -165,20 +159,20 @@ export default {
     },
 
     handleSignupSubmit() {
-      // Save signup data to Pinia store
-      this.userStore.updateFromSignup({
-        firstName: this.signupForm.firstName,
-        lastName: this.signupForm.lastName,
-        email: this.signupForm.email
-      })
+      // Validate all fields before submitting
+      this.$emit('validate-password')
+      this.$emit('validate-confirm-password')
 
-      // Emit the handle-signup event
-      this.$emit('handle-signup')
+      // Check if form is valid
+      if (this.isSignupFormValid) {
+        this.$emit('handle-signup')
+      } else {
+        alert('Please fill in all required fields correctly')
+      }
     }
   }
 }
 </script>
-
 
 <style scoped>
 /* Base styles matching your login page design */
@@ -235,6 +229,7 @@ export default {
   text-align: center;
   color: #0c3437;
 }
+
 .card-title {
   font-size: 12px;
   font-weight: 400;
@@ -242,34 +237,25 @@ export default {
   text-align: center;
   color: #545454;
 }
+
 .name-row {
   display: flex;
   gap: 12px;
   margin-bottom: 10px;
 }
 
-.name-group {
+.name-row .form-group {
   flex: 1;
   margin-bottom: 0;
 }
 
-.name-group .form-input {
-  width: 100%;
-}
 .floating-group {
   position: relative;
   margin-bottom: 20px;
 }
+
 .form-group {
   margin-bottom: 10px;
-}
-
-.form-label {
-  display: block;
-  margin-bottom: 2px;
-  margin-bottom: 4px;
-  color: #333333;
-  font-size: 15px;
 }
 
 .input-box {
@@ -287,6 +273,7 @@ export default {
   transition: all 0.3s ease;
   box-sizing: border-box;
 }
+
 .floating-label {
   position: absolute;
   top: 50%;
@@ -319,7 +306,6 @@ export default {
 
 .form-input::placeholder {
   color: #ffffff;
-;
 }
 
 .form-input.error {
@@ -335,15 +321,16 @@ export default {
 .error-message {
   display: block;
   color: #dc3545;
-  font-size: 14px;
+  font-size: 12px;
   margin-top: 6px;
   font-weight: 500;
+  line-height: 1.4;
 }
 
 .success-message {
   display: block;
   color: #28a745;
-  font-size: 14px;
+  font-size: 12px;
   margin-top: 6px;
   font-weight: 500;
 }
@@ -398,7 +385,6 @@ export default {
   gap: 0;
 }
 
-
 .social-btn {
   width: 15px;
   display: flex;
@@ -412,20 +398,20 @@ export default {
   cursor: pointer;
   transition: background-color 0.3s;
   -webkit-tap-highlight-color: transparent;
-   flex: 1; /* Added this line */
+  flex: 1;
 }
 
 .social-icon {
-  width: 20px; /* Adjust size as needed */
-  height: 20px; /* Adjust size as needed */
+  width: 20px;
+  height: 20px;
   object-fit: contain;
 }
+
 .sign-up-section {
   text-align: center;
   margin-top: 24px;
   font-size: 13px;
   color: #333;
-
 }
 
 .sign-up-link {
@@ -441,8 +427,8 @@ export default {
     height: 28vh;
     min-height: 200px;
     padding-bottom: 25px;
-
   }
+
   .name-row {
     gap: 8px;
   }
@@ -461,15 +447,10 @@ export default {
     font-size: 22px;
   }
 
-  .welcome-text span {
-    font-size: 26px;
-  }
-
   .card-title {
     font-size: 14px;
   }
 }
-
 
 /* Medium Phones (375px - 414px) */
 @media (min-width: 375px) and (max-width: 414px) {
@@ -610,7 +591,7 @@ export default {
 /* Prevent zoom on iOS input focus */
 @media screen and (max-width: 767px) {
   .form-input {
-    font-size: 15px; /* Prevents zoom on iOS */
+    font-size: 15px;
   }
 }
 
