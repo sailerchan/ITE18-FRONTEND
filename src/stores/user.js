@@ -7,7 +7,7 @@ export const useUserStore = defineStore('user', () => {
   const firstName = ref('')
   const lastName = ref('')
   const email = ref('')
-  const location = ref('Tampakan, Soccsksargen, PH')
+  const location = ref('Butuan City, PH')
   const isAuthenticated = ref(false)
 
   // Login Form
